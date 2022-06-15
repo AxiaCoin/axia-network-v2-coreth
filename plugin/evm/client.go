@@ -31,7 +31,7 @@ type Client interface {
 	ExportKey(ctx context.Context, userPass api.UserPass, addr string) (*crypto.PrivateKeySECP256K1R, string, error)
 	ImportKey(ctx context.Context, userPass api.UserPass, privateKey *crypto.PrivateKeySECP256K1R) (string, error)
 	Import(ctx context.Context, userPass api.UserPass, to string, sourceChain string) (ids.ID, error)
-	ExportAVAX(ctx context.Context, userPass api.UserPass, amount uint64, to string) (ids.ID, error)
+	ExportAXC(ctx context.Context, userPass api.UserPass, amount uint64, to string) (ids.ID, error)
 	Export(ctx context.Context, userPass api.UserPass, amount uint64, to string, assetID string) (ids.ID, error)
 	StartCPUProfiler(ctx context.Context) (bool, error)
 	StopCPUProfiler(ctx context.Context) (bool, error)
@@ -50,7 +50,7 @@ type client struct {
 // NewClient returns a Client for interacting with EVM [chain]
 func NewClient(uri, chain string) Client {
 	return &client{
-		requester:      rpc.NewEndpointRequester(fmt.Sprintf("%s/ext/bc/%s/avax", uri, chain), "avax"),
+		requester:      rpc.NewEndpointRequester(fmt.Sprintf("%s/ext/bc/%s/axc", uri, chain), "axc"),
 		adminRequester: rpc.NewEndpointRequester(fmt.Sprintf("%s/ext/bc/%s/admin", uri, chain), "admin"),
 	}
 }
@@ -166,19 +166,19 @@ func (c *client) Import(ctx context.Context, user api.UserPass, to, sourceChain 
 	return res.TxID, err
 }
 
-// ExportAVAX sends AVAX from this chain to the address specified by [to].
+// ExportAXC sends AXC from this chain to the address specified by [to].
 // Returns the ID of the newly created atomic transaction
-func (c *client) ExportAVAX(
+func (c *client) ExportAXC(
 	ctx context.Context,
 	user api.UserPass,
 	amount uint64,
 	to string,
 ) (ids.ID, error) {
-	return c.Export(ctx, user, amount, to, "AVAX")
+	return c.Export(ctx, user, amount, to, "AXC")
 }
 
 // Export sends an asset from this chain to the P/C-Chain.
-// After this tx is accepted, the AVAX must be imported to the P/C-chain with an importTx.
+// After this tx is accepted, the AXC must be imported to the P/C-chain with an importTx.
 // Returns the ID of the newly created atomic transaction
 func (c *client) Export(
 	ctx context.Context,
@@ -189,7 +189,7 @@ func (c *client) Export(
 ) (ids.ID, error) {
 	res := &api.JSONTxID{}
 	err := c.requester.SendRequest(ctx, "export", &ExportArgs{
-		ExportAVAXArgs: ExportAVAXArgs{
+		ExportAXCArgs: ExportAXCArgs{
 			UserPass: user,
 			Amount:   cjson.Uint64(amount),
 			To:       to,
