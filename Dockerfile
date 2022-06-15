@@ -8,17 +8,17 @@ ARG AVALANCHE_VERSION
 RUN mkdir -p $GOPATH/src/github.com/ava-labs
 WORKDIR $GOPATH/src/github.com/ava-labs
 
-RUN git clone -b $AVALANCHE_VERSION --single-branch https://github.com/ava-labs/avalanchego.git
+RUN git clone -b $AVALANCHE_VERSION --single-branch https://github.com/axiacoin/axia-network-v2.git
 
 # Copy coreth repo into desired location
 COPY . coreth
 
 # Set the workdir to AvalancheGo and update coreth dependency to local version
-WORKDIR $GOPATH/src/github.com/ava-labs/avalanchego
+WORKDIR $GOPATH/src/github.com/axiacoin/axia-network-v2
 # Run go mod download here to improve caching of AvalancheGo specific depednencies
 RUN go mod download
 # Replace the coreth dependency
-RUN go mod edit -replace github.com/ava-labs/coreth=../coreth
+RUN go mod edit -replace github.com/axiacoin/axia-network-v2-coreth=../coreth
 RUN go mod download && go mod tidy -compat=1.17
 
 # Build the AvalancheGo binary with local version of coreth.
