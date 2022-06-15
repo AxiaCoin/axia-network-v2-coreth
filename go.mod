@@ -1,10 +1,10 @@
-module github.com/ava-labs/coreth
+module github.com/axiacoin/axia-network-v2-coreth
 
 go 1.17
 
 require (
 	github.com/VictoriaMetrics/fastcache v1.10.0
-	github.com/ava-labs/avalanchego v1.7.12-rc.4
+	github.com/axiacoin/axia-network-v2 v0.1.0
 	github.com/cespare/cp v0.1.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/deckarep/golang-set v1.8.0
