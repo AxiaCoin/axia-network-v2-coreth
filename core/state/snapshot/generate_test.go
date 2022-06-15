@@ -33,9 +33,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ava-labs/coreth/ethdb"
-	"github.com/ava-labs/coreth/ethdb/memorydb"
-	"github.com/ava-labs/coreth/trie"
+	"github.com/axiacoin/axia-network-v2-coreth/ethdb"
+	"github.com/axiacoin/axia-network-v2-coreth/ethdb/memorydb"
+	"github.com/axiacoin/axia-network-v2-coreth/trie"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/ethereum/go-ethereum/log"

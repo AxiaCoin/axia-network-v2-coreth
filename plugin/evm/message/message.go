@@ -7,12 +7,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ava-labs/avalanchego/codec"
+	"github.com/axiacoin/axia-network-v2/codec"
 
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/units"
+	"github.com/axiacoin/axia-network-v2/ids"
+	"github.com/axiacoin/axia-network-v2/utils/units"
 )
 
 const (

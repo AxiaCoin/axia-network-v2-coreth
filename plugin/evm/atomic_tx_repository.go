@@ -12,13 +12,13 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 
-	"github.com/ava-labs/avalanchego/codec"
-	"github.com/ava-labs/avalanchego/database"
-	"github.com/ava-labs/avalanchego/database/prefixdb"
-	"github.com/ava-labs/avalanchego/database/versiondb"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/units"
-	"github.com/ava-labs/avalanchego/utils/wrappers"
+	"github.com/axiacoin/axia-network-v2/codec"
+	"github.com/axiacoin/axia-network-v2/database"
+	"github.com/axiacoin/axia-network-v2/database/prefixdb"
+	"github.com/axiacoin/axia-network-v2/database/versiondb"
+	"github.com/axiacoin/axia-network-v2/ids"
+	"github.com/axiacoin/axia-network-v2/utils/units"
+	"github.com/axiacoin/axia-network-v2/utils/wrappers"
 )
 
 const (

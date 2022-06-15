@@ -7,13 +7,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/ava-labs/avalanchego/codec"
-	"github.com/ava-labs/avalanchego/ids"
+	"github.com/axiacoin/axia-network-v2/codec"
+	"github.com/axiacoin/axia-network-v2/ids"
 
-	"github.com/ava-labs/coreth/core/rawdb"
-	"github.com/ava-labs/coreth/ethdb"
-	"github.com/ava-labs/coreth/plugin/evm/message"
-	"github.com/ava-labs/coreth/sync/handlers/stats"
+	"github.com/axiacoin/axia-network-v2-coreth/core/rawdb"
+	"github.com/axiacoin/axia-network-v2-coreth/ethdb"
+	"github.com/axiacoin/axia-network-v2-coreth/plugin/evm/message"
+	"github.com/axiacoin/axia-network-v2-coreth/sync/handlers/stats"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 )

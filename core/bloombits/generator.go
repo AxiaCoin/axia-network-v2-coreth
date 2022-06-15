@@ -29,7 +29,7 @@ package bloombits
 import (
 	"errors"
 
-	"github.com/ava-labs/coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
 )
 
 var (

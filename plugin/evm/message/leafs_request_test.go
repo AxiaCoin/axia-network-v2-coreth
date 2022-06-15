@@ -10,7 +10,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/ava-labs/avalanchego/ids"
+	"github.com/axiacoin/axia-network-v2/ids"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/assert"

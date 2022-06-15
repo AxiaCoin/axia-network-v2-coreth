@@ -4,8 +4,8 @@
 package handlers
 
 import (
-	"github.com/ava-labs/coreth/core/state/snapshot"
-	"github.com/ava-labs/coreth/ethdb"
+	"github.com/axiacoin/axia-network-v2-coreth/core/state/snapshot"
+	"github.com/axiacoin/axia-network-v2-coreth/ethdb"
 )
 
 var (

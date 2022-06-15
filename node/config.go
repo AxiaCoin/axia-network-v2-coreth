@@ -32,10 +32,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ava-labs/coreth/accounts"
-	"github.com/ava-labs/coreth/accounts/external"
-	"github.com/ava-labs/coreth/accounts/keystore"
-	"github.com/ava-labs/coreth/rpc"
+	"github.com/axiacoin/axia-network-v2-coreth/accounts"
+	"github.com/axiacoin/axia-network-v2-coreth/accounts/external"
+	"github.com/axiacoin/axia-network-v2-coreth/accounts/keystore"
+	"github.com/axiacoin/axia-network-v2-coreth/rpc"
 	"github.com/ethereum/go-ethereum/log"
 )
 

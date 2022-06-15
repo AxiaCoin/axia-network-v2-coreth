@@ -35,6 +35,6 @@ RUN mkdir -p /avalanchego/build
 WORKDIR /avalanchego/build
 
 # Copy the executables into the container
-COPY --from=builder /go/src/github.com/ava-labs/avalanchego/build .
+COPY --from=builder /go/src/github.com/axiacoin/axia-network-v2/build .
 
 CMD [ "./avalanchego" ]

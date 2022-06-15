@@ -30,7 +30,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/ava-labs/coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
 	"github.com/ethereum/go-ethereum/common"
 )
 

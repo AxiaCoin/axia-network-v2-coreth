@@ -7,8 +7,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ava-labs/avalanchego/codec"
-	"github.com/ava-labs/avalanchego/ids"
+	"github.com/axiacoin/axia-network-v2/codec"
+	"github.com/axiacoin/axia-network-v2/ids"
 )
 
 // Request represents a Network request type

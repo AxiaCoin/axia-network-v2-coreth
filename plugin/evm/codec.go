@@ -6,10 +6,10 @@ package evm
 import (
 	"fmt"
 
-	"github.com/ava-labs/avalanchego/codec"
-	"github.com/ava-labs/avalanchego/codec/linearcodec"
-	"github.com/ava-labs/avalanchego/utils/wrappers"
-	"github.com/ava-labs/avalanchego/vms/secp256k1fx"
+	"github.com/axiacoin/axia-network-v2/codec"
+	"github.com/axiacoin/axia-network-v2/codec/linearcodec"
+	"github.com/axiacoin/axia-network-v2/utils/wrappers"
+	"github.com/axiacoin/axia-network-v2/vms/secp256k1fx"
 )
 
 // Codec does serialization and deserialization

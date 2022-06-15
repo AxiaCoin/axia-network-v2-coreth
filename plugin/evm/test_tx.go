@@ -7,16 +7,16 @@ import (
 	"math/big"
 	"math/rand"
 
-	"github.com/ava-labs/avalanchego/utils"
+	"github.com/axiacoin/axia-network-v2/utils"
 
-	"github.com/ava-labs/avalanchego/chains/atomic"
-	"github.com/ava-labs/avalanchego/codec"
-	"github.com/ava-labs/avalanchego/codec/linearcodec"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/snow"
-	"github.com/ava-labs/avalanchego/utils/wrappers"
-	"github.com/ava-labs/coreth/core/state"
-	"github.com/ava-labs/coreth/params"
+	"github.com/axiacoin/axia-network-v2/chains/atomic"
+	"github.com/axiacoin/axia-network-v2/codec"
+	"github.com/axiacoin/axia-network-v2/codec/linearcodec"
+	"github.com/axiacoin/axia-network-v2/ids"
+	"github.com/axiacoin/axia-network-v2/snow"
+	"github.com/axiacoin/axia-network-v2/utils/wrappers"
+	"github.com/axiacoin/axia-network-v2-coreth/core/state"
+	"github.com/axiacoin/axia-network-v2-coreth/params"
 )
 
 type TestTx struct {

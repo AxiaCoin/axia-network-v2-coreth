@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ava-labs/avalanchego/utils/logging"
-	"github.com/ava-labs/avalanchego/utils/ulimit"
-	"github.com/ava-labs/avalanchego/vms/rpcchainvm"
+	"github.com/axiacoin/axia-network-v2/utils/logging"
+	"github.com/axiacoin/axia-network-v2/utils/ulimit"
+	"github.com/axiacoin/axia-network-v2/vms/rpcchainvm"
 
-	"github.com/ava-labs/coreth/plugin/evm"
+	"github.com/axiacoin/axia-network-v2-coreth/plugin/evm"
 )
 
 func main() {

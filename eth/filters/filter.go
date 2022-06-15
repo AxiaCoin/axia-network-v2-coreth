@@ -32,13 +32,13 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ava-labs/coreth/core/vm"
+	"github.com/axiacoin/axia-network-v2-coreth/core/vm"
 
-	"github.com/ava-labs/coreth/core"
-	"github.com/ava-labs/coreth/core/bloombits"
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/coreth/ethdb"
-	"github.com/ava-labs/coreth/rpc"
+	"github.com/axiacoin/axia-network-v2-coreth/core"
+	"github.com/axiacoin/axia-network-v2-coreth/core/bloombits"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/ethdb"
+	"github.com/axiacoin/axia-network-v2-coreth/rpc"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/event"
 )

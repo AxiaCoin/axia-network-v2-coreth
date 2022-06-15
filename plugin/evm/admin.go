@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ava-labs/avalanchego/api"
-	"github.com/ava-labs/avalanchego/utils/profiler"
+	"github.com/axiacoin/axia-network-v2/api"
+	"github.com/axiacoin/axia-network-v2/utils/profiler"
 	"github.com/ethereum/go-ethereum/log"
 )
 

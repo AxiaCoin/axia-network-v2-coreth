@@ -4,8 +4,8 @@
 package evm
 
 import (
-	"github.com/ava-labs/avalanchego/database"
-	"github.com/ava-labs/coreth/ethdb"
+	"github.com/axiacoin/axia-network-v2/database"
+	"github.com/axiacoin/axia-network-v2-coreth/ethdb"
 )
 
 var _ ethdb.Database = &Database{}

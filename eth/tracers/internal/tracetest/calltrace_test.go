@@ -36,13 +36,13 @@ import (
 	"testing"
 	"unicode"
 
-	"github.com/ava-labs/coreth/core"
-	"github.com/ava-labs/coreth/core/rawdb"
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/coreth/core/vm"
-	"github.com/ava-labs/coreth/eth/tracers"
-	"github.com/ava-labs/coreth/params"
-	"github.com/ava-labs/coreth/tests"
+	"github.com/axiacoin/axia-network-v2-coreth/core"
+	"github.com/axiacoin/axia-network-v2-coreth/core/rawdb"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/core/vm"
+	"github.com/axiacoin/axia-network-v2-coreth/eth/tracers"
+	"github.com/axiacoin/axia-network-v2-coreth/params"
+	"github.com/axiacoin/axia-network-v2-coreth/tests"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/common/math"
@@ -50,7 +50,7 @@ import (
 	"github.com/ethereum/go-ethereum/rlp"
 
 	// Force-load native, to trigger registration
-	_ "github.com/ava-labs/coreth/eth/tracers/native"
+	_ "github.com/axiacoin/axia-network-v2-coreth/eth/tracers/native"
 )
 
 // To generate a new callTracer test, copy paste the makeTest method below into

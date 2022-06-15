@@ -6,12 +6,12 @@ package statesync
 import (
 	"fmt"
 
-	"github.com/ava-labs/coreth/core/rawdb"
-	"github.com/ava-labs/coreth/core/state/snapshot"
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/coreth/ethdb"
-	"github.com/ava-labs/coreth/trie"
-	"github.com/ava-labs/coreth/utils"
+	"github.com/axiacoin/axia-network-v2-coreth/core/rawdb"
+	"github.com/axiacoin/axia-network-v2-coreth/core/state/snapshot"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/ethdb"
+	"github.com/axiacoin/axia-network-v2-coreth/trie"
+	"github.com/axiacoin/axia-network-v2-coreth/utils"
 	"github.com/ethereum/go-ethereum/common"
 )
 

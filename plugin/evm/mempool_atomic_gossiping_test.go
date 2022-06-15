@@ -6,13 +6,13 @@ package evm
 import (
 	"testing"
 
-	"github.com/ava-labs/coreth/params"
+	"github.com/axiacoin/axia-network-v2-coreth/params"
 
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/crypto"
-	"github.com/ava-labs/avalanchego/vms/components/axc"
-	"github.com/ava-labs/avalanchego/vms/components/chain"
-	"github.com/ava-labs/avalanchego/vms/secp256k1fx"
+	"github.com/axiacoin/axia-network-v2/ids"
+	"github.com/axiacoin/axia-network-v2/utils/crypto"
+	"github.com/axiacoin/axia-network-v2/vms/components/axc"
+	"github.com/axiacoin/axia-network-v2/vms/components/chain"
+	"github.com/axiacoin/axia-network-v2/vms/secp256k1fx"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -10,9 +10,9 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/ava-labs/avalanchego/utils/wrappers"
-	"github.com/ava-labs/coreth/accounts/keystore"
-	"github.com/ava-labs/coreth/core/types"
+	"github.com/axiacoin/axia-network-v2/utils/wrappers"
+	"github.com/axiacoin/axia-network-v2-coreth/accounts/keystore"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/rlp"

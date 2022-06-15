@@ -30,10 +30,10 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ava-labs/coreth/consensus/dummy"
-	"github.com/ava-labs/coreth/core/rawdb"
-	"github.com/ava-labs/coreth/core/vm"
-	"github.com/ava-labs/coreth/params"
+	"github.com/axiacoin/axia-network-v2-coreth/consensus/dummy"
+	"github.com/axiacoin/axia-network-v2-coreth/core/rawdb"
+	"github.com/axiacoin/axia-network-v2-coreth/core/vm"
+	"github.com/axiacoin/axia-network-v2-coreth/params"
 	"github.com/ethereum/go-ethereum/common"
 )
 

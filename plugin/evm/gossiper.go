@@ -9,23 +9,23 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ava-labs/avalanchego/codec"
+	"github.com/axiacoin/axia-network-v2/codec"
 
-	"github.com/ava-labs/coreth/peer"
+	"github.com/axiacoin/axia-network-v2-coreth/peer"
 
-	"github.com/ava-labs/avalanchego/cache"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/snow"
-	"github.com/ava-labs/avalanchego/utils/wrappers"
+	"github.com/axiacoin/axia-network-v2/cache"
+	"github.com/axiacoin/axia-network-v2/ids"
+	"github.com/axiacoin/axia-network-v2/snow"
+	"github.com/axiacoin/axia-network-v2/utils/wrappers"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rlp"
 
-	"github.com/ava-labs/coreth/core"
-	"github.com/ava-labs/coreth/core/state"
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/coreth/plugin/evm/message"
+	"github.com/axiacoin/axia-network-v2-coreth/core"
+	"github.com/axiacoin/axia-network-v2-coreth/core/state"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/plugin/evm/message"
 )
 
 const (

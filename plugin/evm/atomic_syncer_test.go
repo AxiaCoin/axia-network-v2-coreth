@@ -11,15 +11,15 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ava-labs/avalanchego/database/memdb"
-	"github.com/ava-labs/avalanchego/database/versiondb"
+	"github.com/axiacoin/axia-network-v2/database/memdb"
+	"github.com/axiacoin/axia-network-v2/database/versiondb"
 
-	"github.com/ava-labs/coreth/ethdb/memorydb"
-	"github.com/ava-labs/coreth/plugin/evm/message"
-	syncclient "github.com/ava-labs/coreth/sync/client"
-	"github.com/ava-labs/coreth/sync/handlers"
-	handlerstats "github.com/ava-labs/coreth/sync/handlers/stats"
-	"github.com/ava-labs/coreth/trie"
+	"github.com/axiacoin/axia-network-v2-coreth/ethdb/memorydb"
+	"github.com/axiacoin/axia-network-v2-coreth/plugin/evm/message"
+	syncclient "github.com/axiacoin/axia-network-v2-coreth/sync/client"
+	"github.com/axiacoin/axia-network-v2-coreth/sync/handlers"
+	handlerstats "github.com/axiacoin/axia-network-v2-coreth/sync/handlers/stats"
+	"github.com/axiacoin/axia-network-v2-coreth/trie"
 	"github.com/ethereum/go-ethereum/common"
 )
 

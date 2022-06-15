@@ -7,12 +7,12 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/ava-labs/avalanchego/chains/atomic"
-	"github.com/ava-labs/avalanchego/codec"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/wrappers"
+	"github.com/axiacoin/axia-network-v2/chains/atomic"
+	"github.com/axiacoin/axia-network-v2/codec"
+	"github.com/axiacoin/axia-network-v2/ids"
+	"github.com/axiacoin/axia-network-v2/utils/wrappers"
 
-	"github.com/ava-labs/coreth/trie"
+	"github.com/axiacoin/axia-network-v2-coreth/trie"
 	"github.com/ethereum/go-ethereum/common"
 )
 

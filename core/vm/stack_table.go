@@ -27,7 +27,7 @@
 package vm
 
 import (
-	"github.com/ava-labs/coreth/params"
+	"github.com/axiacoin/axia-network-v2-coreth/params"
 )
 
 func minSwapStack(n int) int {

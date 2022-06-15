@@ -4,9 +4,9 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ava-labs/coreth/eth/filters"
+	"github.com/axiacoin/axia-network-v2-coreth/eth/filters"
 
-	"github.com/ava-labs/coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
 	"github.com/ethereum/go-ethereum/common"
 )
 

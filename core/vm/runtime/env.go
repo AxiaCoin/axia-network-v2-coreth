@@ -27,8 +27,8 @@
 package runtime
 
 import (
-	"github.com/ava-labs/coreth/core"
-	"github.com/ava-labs/coreth/core/vm"
+	"github.com/axiacoin/axia-network-v2-coreth/core"
+	"github.com/axiacoin/axia-network-v2-coreth/core/vm"
 )
 
 func NewEnv(cfg *Config) *vm.EVM {

@@ -4,9 +4,9 @@
 package evm
 
 import (
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/snow"
-	"github.com/ava-labs/avalanchego/vms"
+	"github.com/axiacoin/axia-network-v2/ids"
+	"github.com/axiacoin/axia-network-v2/snow"
+	"github.com/axiacoin/axia-network-v2/vms"
 )
 
 var (

@@ -31,8 +31,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/coreth/ethdb"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/ethdb"
 	"github.com/ethereum/go-ethereum/common"
 )
 

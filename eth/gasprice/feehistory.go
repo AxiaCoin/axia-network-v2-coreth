@@ -33,8 +33,8 @@ import (
 	"math/big"
 	"sort"
 
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/coreth/rpc"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/rpc"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 )

@@ -36,10 +36,10 @@ import (
 	"time"
 
 	"github.com/VictoriaMetrics/fastcache"
-	"github.com/ava-labs/coreth/core/rawdb"
-	"github.com/ava-labs/coreth/ethdb"
-	"github.com/ava-labs/coreth/metrics"
-	"github.com/ava-labs/coreth/trie"
+	"github.com/axiacoin/axia-network-v2-coreth/core/rawdb"
+	"github.com/axiacoin/axia-network-v2-coreth/ethdb"
+	"github.com/axiacoin/axia-network-v2-coreth/metrics"
+	"github.com/axiacoin/axia-network-v2-coreth/trie"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 )

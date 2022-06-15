@@ -9,10 +9,10 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/ava-labs/avalanchego/utils/wrappers"
+	"github.com/axiacoin/axia-network-v2/utils/wrappers"
 
-	"github.com/ava-labs/coreth/plugin/evm/message"
-	syncclient "github.com/ava-labs/coreth/sync/client"
+	"github.com/axiacoin/axia-network-v2-coreth/plugin/evm/message"
+	syncclient "github.com/axiacoin/axia-network-v2-coreth/sync/client"
 	"github.com/ethereum/go-ethereum/common"
 )
 

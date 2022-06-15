@@ -11,14 +11,14 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ava-labs/avalanchego/chains/atomic"
-	"github.com/ava-labs/avalanchego/database"
-	"github.com/ava-labs/avalanchego/database/leveldb"
-	"github.com/ava-labs/avalanchego/database/memdb"
-	"github.com/ava-labs/avalanchego/database/versiondb"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/logging"
-	"github.com/ava-labs/avalanchego/utils/wrappers"
+	"github.com/axiacoin/axia-network-v2/chains/atomic"
+	"github.com/axiacoin/axia-network-v2/database"
+	"github.com/axiacoin/axia-network-v2/database/leveldb"
+	"github.com/axiacoin/axia-network-v2/database/memdb"
+	"github.com/axiacoin/axia-network-v2/database/versiondb"
+	"github.com/axiacoin/axia-network-v2/ids"
+	"github.com/axiacoin/axia-network-v2/utils/logging"
+	"github.com/axiacoin/axia-network-v2/utils/wrappers"
 
 	"github.com/ethereum/go-ethereum/common"
 )

@@ -28,16 +28,16 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ava-labs/avalanchego/utils/timer/mockable"
-	"github.com/ava-labs/coreth/accounts/keystore"
-	"github.com/ava-labs/coreth/consensus/dummy"
-	"github.com/ava-labs/coreth/core"
-	"github.com/ava-labs/coreth/core/rawdb"
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/coreth/core/vm"
-	"github.com/ava-labs/coreth/eth"
-	"github.com/ava-labs/coreth/eth/ethconfig"
-	"github.com/ava-labs/coreth/node"
+	"github.com/axiacoin/axia-network-v2/utils/timer/mockable"
+	"github.com/axiacoin/axia-network-v2-coreth/accounts/keystore"
+	"github.com/axiacoin/axia-network-v2-coreth/consensus/dummy"
+	"github.com/axiacoin/axia-network-v2-coreth/core"
+	"github.com/axiacoin/axia-network-v2-coreth/core/rawdb"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/core/vm"
+	"github.com/axiacoin/axia-network-v2-coreth/eth"
+	"github.com/axiacoin/axia-network-v2-coreth/eth/ethconfig"
+	"github.com/axiacoin/axia-network-v2-coreth/node"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -73,7 +73,7 @@ func TestMulticoin(t *testing.T) {
 	//if gopath == "" {
 	//	gopath = build.Default.GOPATH
 	//}
-	//counterSrc, err := filepath.Abs(gopath + "/src/github.com/ava-labs/coreth/examples/multicoin/mc_test.sol")
+	//counterSrc, err := filepath.Abs(gopath + "/src/github.com/axiacoin/axia-network-v2-coreth/examples/multicoin/mc_test.sol")
 	//if err != nil {
 	// 	t.Fatal(err)
 	// }

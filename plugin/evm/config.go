@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ava-labs/coreth/eth"
+	"github.com/axiacoin/axia-network-v2-coreth/eth"
 	"github.com/spf13/cast"
 )
 

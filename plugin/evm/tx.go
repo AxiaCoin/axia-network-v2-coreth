@@ -12,19 +12,19 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/ava-labs/coreth/core/state"
-	"github.com/ava-labs/coreth/params"
+	"github.com/axiacoin/axia-network-v2-coreth/core/state"
+	"github.com/axiacoin/axia-network-v2-coreth/params"
 
-	"github.com/ava-labs/avalanchego/chains/atomic"
-	"github.com/ava-labs/avalanchego/codec"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/snow"
-	"github.com/ava-labs/avalanchego/utils"
-	"github.com/ava-labs/avalanchego/utils/crypto"
-	"github.com/ava-labs/avalanchego/utils/hashing"
-	"github.com/ava-labs/avalanchego/utils/wrappers"
-	"github.com/ava-labs/avalanchego/vms/components/verify"
-	"github.com/ava-labs/avalanchego/vms/secp256k1fx"
+	"github.com/axiacoin/axia-network-v2/chains/atomic"
+	"github.com/axiacoin/axia-network-v2/codec"
+	"github.com/axiacoin/axia-network-v2/ids"
+	"github.com/axiacoin/axia-network-v2/snow"
+	"github.com/axiacoin/axia-network-v2/utils"
+	"github.com/axiacoin/axia-network-v2/utils/crypto"
+	"github.com/axiacoin/axia-network-v2/utils/hashing"
+	"github.com/axiacoin/axia-network-v2/utils/wrappers"
+	"github.com/axiacoin/axia-network-v2/vms/components/verify"
+	"github.com/axiacoin/axia-network-v2/vms/secp256k1fx"
 )
 
 var (

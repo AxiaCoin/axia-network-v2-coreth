@@ -6,9 +6,9 @@ package peer
 import (
 	"errors"
 
-	"github.com/ava-labs/avalanchego/ids"
+	"github.com/axiacoin/axia-network-v2/ids"
 
-	"github.com/ava-labs/avalanchego/version"
+	"github.com/axiacoin/axia-network-v2/version"
 )
 
 var (

@@ -5,7 +5,7 @@ package logger
 import (
 	"encoding/json"
 
-	"github.com/ava-labs/coreth/core/vm"
+	"github.com/axiacoin/axia-network-v2-coreth/core/vm"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/common/math"

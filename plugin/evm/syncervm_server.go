@@ -6,11 +6,11 @@ package evm
 import (
 	"fmt"
 
-	"github.com/ava-labs/avalanchego/database"
-	"github.com/ava-labs/avalanchego/snow/engine/snowman/block"
+	"github.com/axiacoin/axia-network-v2/database"
+	"github.com/axiacoin/axia-network-v2/snow/engine/snowman/block"
 
-	"github.com/ava-labs/coreth/core"
-	"github.com/ava-labs/coreth/plugin/evm/message"
+	"github.com/axiacoin/axia-network-v2-coreth/core"
+	"github.com/axiacoin/axia-network-v2-coreth/plugin/evm/message"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 )

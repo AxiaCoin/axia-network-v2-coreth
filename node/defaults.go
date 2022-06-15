@@ -27,7 +27,7 @@
 package node
 
 import (
-	"github.com/ava-labs/coreth/rpc"
+	"github.com/axiacoin/axia-network-v2-coreth/rpc"
 )
 
 const (

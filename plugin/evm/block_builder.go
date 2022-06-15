@@ -8,12 +8,12 @@ import (
 	"sync"
 	"time"
 
-	coreth "github.com/ava-labs/coreth/chain"
-	"github.com/ava-labs/coreth/params"
+	coreth "github.com/axiacoin/axia-network-v2-coreth/chain"
+	"github.com/axiacoin/axia-network-v2-coreth/params"
 
-	"github.com/ava-labs/avalanchego/snow"
-	commonEng "github.com/ava-labs/avalanchego/snow/engine/common"
-	"github.com/ava-labs/avalanchego/utils/timer"
+	"github.com/axiacoin/axia-network-v2/snow"
+	commonEng "github.com/axiacoin/axia-network-v2/snow/engine/common"
+	"github.com/axiacoin/axia-network-v2/utils/timer"
 	"github.com/ethereum/go-ethereum/log"
 )
 

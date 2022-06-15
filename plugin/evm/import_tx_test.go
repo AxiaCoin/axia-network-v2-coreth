@@ -7,15 +7,15 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ava-labs/coreth/params"
+	"github.com/axiacoin/axia-network-v2-coreth/params"
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/ava-labs/avalanchego/chains/atomic"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/constants"
-	"github.com/ava-labs/avalanchego/utils/crypto"
-	"github.com/ava-labs/avalanchego/vms/components/axc"
-	"github.com/ava-labs/avalanchego/vms/secp256k1fx"
+	"github.com/axiacoin/axia-network-v2/chains/atomic"
+	"github.com/axiacoin/axia-network-v2/ids"
+	"github.com/axiacoin/axia-network-v2/utils/constants"
+	"github.com/axiacoin/axia-network-v2/utils/crypto"
+	"github.com/axiacoin/axia-network-v2/vms/components/axc"
+	"github.com/axiacoin/axia-network-v2/vms/secp256k1fx"
 )
 
 // createImportTxOptions adds a UTXO to shared memory and generates a list of import transactions sending this UTXO

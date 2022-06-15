@@ -43,9 +43,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ava-labs/coreth/accounts"
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/coreth/interfaces"
+	"github.com/axiacoin/axia-network-v2-coreth/accounts"
+	"github.com/axiacoin/axia-network-v2-coreth/core/types"
+	"github.com/axiacoin/axia-network-v2-coreth/interfaces"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/log"
