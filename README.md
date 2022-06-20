@@ -42,7 +42,7 @@ As a network composed of multiple blockchains, Avalanche uses *atomic transactio
 
 ### Avalanche Native Tokens (ANTs)
 
-The C-Chain supports Avalanche Native Tokens, which are created on the X-Chain using precompiled contracts. These precompiled contracts *nativeAssetCall* and *nativeAssetBalance* support the same interface for ANTs as *CALL* and *BALANCE* do for AXC with the added parameter of *assetID* to specify the asset.
+The C-Chain supports Avalanche Native Tokens, which are created on the SwapChain using precompiled contracts. These precompiled contracts *nativeAssetCall* and *nativeAssetBalance* support the same interface for ANTs as *CALL* and *BALANCE* do for AXC with the added parameter of *assetID* to specify the asset.
 
 For the full documentation of precompiles for interacting with ANTs and using them in ARC-20s, see [here](https://docs.axc.network/build/references/coreth-arc20s).
 

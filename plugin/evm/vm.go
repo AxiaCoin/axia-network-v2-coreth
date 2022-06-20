@@ -94,7 +94,7 @@ const (
 )
 
 var (
-	// x2cRate is the conversion rate between the smallest denomination on the X-Chain
+	// x2cRate is the conversion rate between the smallest denomination on the SwapChain
 	// 1 nAXC and the smallest denomination on the C-Chain 1 wei. Where 1 nAXC = 1 gWei.
 	// This is only required for AXC because the denomination of 1 AXC is 9 decimal
 	// places on the X and P chains, but is 18 decimal places within the EVM.

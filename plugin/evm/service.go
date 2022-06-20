@@ -181,8 +181,8 @@ func (service *AxcAPI) ImportAXC(_ *http.Request, args *ImportArgs, response *ap
 	return service.Import(nil, args, response)
 }
 
-// Import issues a transaction to import AXC from the X-chain. The AXC
-// must have already been exported from the X-Chain.
+// Import issues a transaction to import AXC from the SwapChain. The AXC
+// must have already been exported from the SwapChain.
 func (service *AxcAPI) Import(_ *http.Request, args *ImportArgs, response *api.JSONTxID) error {
 	log.Info("EVM: ImportAXC called")
 
@@ -247,8 +247,8 @@ type ExportAXCArgs struct {
 	To string `json:"to"`
 }
 
-// ExportAXC exports AXC from the C-Chain to the X-Chain
-// It must be imported on the X-Chain to complete the transfer
+// ExportAXC exports AXC from the C-Chain to the SwapChain
+// It must be imported on the SwapChain to complete the transfer
 func (service *AxcAPI) ExportAXC(_ *http.Request, args *ExportAXCArgs, response *api.JSONTxID) error {
 	return service.Export(nil, &ExportArgs{
 		ExportAXCArgs: *args,
@@ -263,8 +263,8 @@ type ExportArgs struct {
 	AssetID string `json:"assetID"`
 }
 
-// Export exports an asset from the C-Chain to the X-Chain
-// It must be imported on the X-Chain to complete the transfer
+// Export exports an asset from the C-Chain to the SwapChain
+// It must be imported on the SwapChain to complete the transfer
 func (service *AxcAPI) Export(_ *http.Request, args *ExportArgs, response *api.JSONTxID) error {
 	log.Info("EVM: Export called")
 

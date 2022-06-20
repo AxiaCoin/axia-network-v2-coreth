@@ -273,7 +273,7 @@ func (vm *VM) newExportTx(
 	baseFee *big.Int, // fee to use post-AP3
 	keys []*crypto.PrivateKeySECP256K1R, // Pay the fee and provide the tokens
 ) (*Tx, error) {
-	outs := []*axc.TransferableOutput{{ // Exported to X-Chain
+	outs := []*axc.TransferableOutput{{ // Exported to SwapChain
 		Asset: axc.Asset{ID: assetID},
 		Out: &secp256k1fx.TransferOutput{
 			Amt: amount,
