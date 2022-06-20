@@ -17,7 +17,7 @@ import (
 	"sync"
 	"time"
 
-	avalanchegoMetrics "github.com/axiacoin/axia-network-v2/api/metrics"
+	axiagoMetrics "github.com/axiacoin/axia-network-v2/api/metrics"
 
 	coreth "github.com/axiacoin/axia-network-v2-coreth/chain"
 	"github.com/axiacoin/axia-network-v2-coreth/consensus/dummy"
@@ -52,7 +52,7 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rlp"
 
-	avalancheRPC "github.com/gorilla/rpc/v2"
+	axiaRPC "github.com/gorilla/rpc/v2"
 
 	"github.com/axiacoin/axia-network-v2/cache"
 	"github.com/axiacoin/axia-network-v2/codec"
@@ -81,7 +81,7 @@ import (
 
 	commonEng "github.com/axiacoin/axia-network-v2/snow/engine/common"
 
-	avalancheJSON "github.com/axiacoin/axia-network-v2/utils/json"
+	axiaJSON "github.com/axiacoin/axia-network-v2/utils/json"
 )
 
 const (
@@ -252,7 +252,7 @@ type VM struct {
 	networkCodec codec.Manager
 
 	// Metrics
-	multiGatherer avalanchegoMetrics.MultiGatherer
+	multiGatherer axiagoMetrics.MultiGatherer
 
 	bootstrapped bool
 	IsPlugin     bool
@@ -385,18 +385,18 @@ func (vm *VM) Initialize(
 
 	// Set the chain config for mainnet/fuji chain IDs
 	switch {
-	case g.Config.ChainID.Cmp(params.AvalancheMainnetChainID) == 0:
-		g.Config = params.AvalancheMainnetChainConfig
+	case g.Config.ChainID.Cmp(params.AxiaMainnetChainID) == 0:
+		g.Config = params.AxiaMainnetChainConfig
 		phase0BlockValidator.extDataHashes = mainnetExtDataHashes
-	case g.Config.ChainID.Cmp(params.AvalancheFujiChainID) == 0:
-		g.Config = params.AvalancheFujiChainConfig
+	case g.Config.ChainID.Cmp(params.AxiaFujiChainID) == 0:
+		g.Config = params.AxiaFujiChainConfig
 		phase0BlockValidator.extDataHashes = fujiExtDataHashes
-	case g.Config.ChainID.Cmp(params.AvalancheLocalChainID) == 0:
-		g.Config = params.AvalancheLocalChainConfig
+	case g.Config.ChainID.Cmp(params.AxiaLocalChainID) == 0:
+		g.Config = params.AxiaLocalChainConfig
 	}
 
 	// Ensure that non-standard commit interval is only allowed for the local network
-	if g.Config.ChainID.Cmp(params.AvalancheLocalChainID) != 0 {
+	if g.Config.ChainID.Cmp(params.AxiaLocalChainID) != 0 {
 		if vm.config.CommitInterval != defaultCommitInterval {
 			return fmt.Errorf("cannot start non-local network with commit interval %d", vm.config.CommitInterval)
 		}
@@ -482,7 +482,7 @@ func (vm *VM) Initialize(
 		return fmt.Errorf("failed to create atomic repository: %w", err)
 	}
 	bonusBlockHeights := make(map[uint64]ids.ID)
-	if vm.chainID.Cmp(params.AvalancheMainnetChainID) == 0 {
+	if vm.chainID.Cmp(params.AxiaMainnetChainID) == 0 {
 		bonusBlockHeights = bonusBlockMainnetHeights
 	}
 	if err := repairAtomicRepositoryForBonusBlockTxs(
@@ -515,7 +515,7 @@ func (vm *VM) Initialize(
 }
 
 func (vm *VM) initializeMetrics() error {
-	vm.multiGatherer = avalanchegoMetrics.NewMultiGatherer()
+	vm.multiGatherer = axiagoMetrics.NewMultiGatherer()
 	// If metrics are enabled, register the default metrics regitry
 	if metrics.Enabled {
 		gatherer := corethPrometheus.Gatherer(metrics.DefaultRegistry)
@@ -689,7 +689,7 @@ func (vm *VM) preBatchOnFinalizeAndAssemble(header *types.Header, state *state.S
 		// Note: snapshot is taken inside the loop because you cannot revert to the same snapshot more than
 		// once.
 		snapshot := state.Snapshot()
-		rules := vm.chainConfig.AvalancheRules(header.Number, new(big.Int).SetUint64(header.Time))
+		rules := vm.chainConfig.AxiaRules(header.Number, new(big.Int).SetUint64(header.Time))
 		if err := vm.verifyTx(tx, header.ParentHash, header.BaseFee, state, rules); err != nil {
 			// Discard the transaction from the mempool on failed verification.
 			vm.mempool.DiscardCurrentTx(tx.ID())
@@ -729,7 +729,7 @@ func (vm *VM) postBatchOnFinalizeAndAssemble(header *types.Header, state *state.
 		batchAtomicUTXOs  ids.Set
 		batchContribution *big.Int = new(big.Int).Set(common.Big0)
 		batchGasUsed      *big.Int = new(big.Int).Set(common.Big0)
-		rules                      = vm.chainConfig.AvalancheRules(header.Number, new(big.Int).SetUint64(header.Time))
+		rules                      = vm.chainConfig.AxiaRules(header.Number, new(big.Int).SetUint64(header.Time))
 		size              int
 	)
 
@@ -1104,9 +1104,9 @@ func (vm *VM) Version() (string, error) {
 //     By default the LockOption is WriteLock
 //     [lockOption] should have either 0 or 1 elements. Elements beside the first are ignored.
 func newHandler(name string, service interface{}, lockOption ...commonEng.LockOption) (*commonEng.HTTPHandler, error) {
-	server := avalancheRPC.NewServer()
-	server.RegisterCodec(avalancheJSON.NewCodec(), "application/json")
-	server.RegisterCodec(avalancheJSON.NewCodec(), "application/json;charset=UTF-8")
+	server := axiaRPC.NewServer()
+	server.RegisterCodec(axiaJSON.NewCodec(), "application/json")
+	server.RegisterCodec(axiaJSON.NewCodec(), "application/json;charset=UTF-8")
 	if err := server.RegisterService(service, name); err != nil {
 		return nil, err
 	}
@@ -1577,7 +1577,7 @@ func (vm *VM) GetCurrentNonce(address common.Address) (uint64, error) {
 // currentRules returns the chain rules for the current block.
 func (vm *VM) currentRules() params.Rules {
 	header := vm.chain.APIBackend().CurrentHeader()
-	return vm.chainConfig.AvalancheRules(header.Number, big.NewInt(int64(header.Time)))
+	return vm.chainConfig.AxiaRules(header.Number, big.NewInt(int64(header.Time)))
 }
 
 // getBlockValidator returns the block validator that should be used for a block that
@@ -1642,7 +1642,7 @@ func (vm *VM) estimateBaseFee(ctx context.Context) (*big.Int, error) {
 }
 
 func getAtomicRepositoryRepairHeights(chainID *big.Int) []uint64 {
-	if chainID.Cmp(params.AvalancheMainnetChainID) != 0 {
+	if chainID.Cmp(params.AxiaMainnetChainID) != 0 {
 		return nil
 	}
 	repairHeights := make([]uint64, 0, len(bonusBlockMainnetHeights)+len(canonicalBonusBlocks))

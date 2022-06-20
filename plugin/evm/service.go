@@ -66,7 +66,7 @@ func (api *SnowmanAPI) IssueBlock(ctx context.Context) error {
 	return nil
 }
 
-// AxcAPI offers Avalanche network related API methods
+// AxcAPI offers Axia network related API methods
 type AxcAPI struct{ vm *VM }
 
 // parseAssetID parses an assetID string into an ID

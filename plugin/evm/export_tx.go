@@ -184,7 +184,7 @@ func (tx *UnsignedExportTx) SemanticVerify(
 		fc.Produce(vm.ctx.AXCAssetID, txFee)
 	// Apply fees to export transactions before Apricot Phase 3
 	default:
-		fc.Produce(vm.ctx.AXCAssetID, params.AvalancheAtomicTxFee)
+		fc.Produce(vm.ctx.AXCAssetID, params.AxiaAtomicTxFee)
 	}
 	for _, out := range tx.ExportedOutputs {
 		fc.Produce(out.AssetID(), out.Output().Amount())
@@ -326,7 +326,7 @@ func (vm *VM) newExportTx(
 		axcIns, axcSigners, err = vm.GetSpendableAXCWithFee(keys, axcNeeded, cost, baseFee)
 	default:
 		var newAxcNeeded uint64
-		newAxcNeeded, err = math.Add64(axcNeeded, params.AvalancheAtomicTxFee)
+		newAxcNeeded, err = math.Add64(axcNeeded, params.AxiaAtomicTxFee)
 		if err != nil {
 			return nil, errOverflowExport
 		}

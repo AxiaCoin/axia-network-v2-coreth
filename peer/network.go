@@ -69,9 +69,9 @@ type network struct {
 	lock                          sync.RWMutex                       // lock for mutating state of this Network struct
 	self                          ids.NodeID                         // NodeID of this node
 	requestIDGen                  uint32                             // requestID counter used to track outbound requests
-	outstandingResponseHandlerMap map[uint32]message.ResponseHandler // maps avalanchego requestID => response handler
+	outstandingResponseHandlerMap map[uint32]message.ResponseHandler // maps axiago requestID => response handler
 	activeRequests                *semaphore.Weighted                // controls maximum number of active outbound requests
-	appSender                     common.AppSender                   // avalanchego AppSender for sending messages
+	appSender                     common.AppSender                   // axiago AppSender for sending messages
 	codec                         codec.Manager                      // Codec used for parsing messages
 	requestHandler                message.RequestHandler             // maps request type => handler
 	gossipHandler                 message.GossipHandler              // maps gossip type => handler
@@ -167,7 +167,7 @@ func (n *network) request(nodeID ids.NodeID, request []byte, responseHandler mes
 	return nil
 }
 
-// AppRequest is called by avalanchego -> VM when there is an incoming AppRequest from a peer
+// AppRequest is called by axiago -> VM when there is an incoming AppRequest from a peer
 // error returned by this function is expected to be treated as fatal by the engine
 // returns error if the requestHandler returns an error
 // sends a response back to the sender if length of response returned by the handler is >0
@@ -234,7 +234,7 @@ func (n *network) AppResponse(nodeID ids.NodeID, requestID uint32, response []by
 	return handler.OnResponse(nodeID, requestID, response)
 }
 
-// AppRequestFailed can be called by the avalanchego -> VM in following cases:
+// AppRequestFailed can be called by the axiago -> VM in following cases:
 // - node is benched
 // - failed to send message to [nodeID] due to a network issue
 // - timeout
@@ -274,7 +274,7 @@ func (n *network) Gossip(gossip []byte) error {
 	return n.appSender.SendAppGossip(gossip)
 }
 
-// AppGossip is called by avalanchego -> VM when there is an incoming AppGossip from a peer
+// AppGossip is called by axiago -> VM when there is an incoming AppGossip from a peer
 // error returned by this function is expected to be treated as fatal by the engine
 // returns error if request could not be parsed as message.Request or when the requestHandler returns an error
 func (n *network) AppGossip(nodeID ids.NodeID, gossipBytes []byte) error {

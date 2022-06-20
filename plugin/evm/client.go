@@ -134,7 +134,7 @@ func (c *client) ListAddresses(ctx context.Context, user api.UserPass) ([]string
 }
 
 // ExportKey returns the private key corresponding to [addr] controlled by [user]
-// in both Avalanche standard format and hex format
+// in both Axia standard format and hex format
 func (c *client) ExportKey(ctx context.Context, user api.UserPass, addr string) (*crypto.PrivateKeySECP256K1R, string, error) {
 	res := &ExportKeyReply{}
 	err := c.requester.SendRequest(ctx, "exportKey", &ExportKeyArgs{
