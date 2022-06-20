@@ -40,9 +40,9 @@ func createExportTxOptions(t *testing.T, vm *VM, issuer chan engCommon.Message, 
 		t.Fatal(err)
 	}
 
-	xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
+	swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
 	inputID := utxo.InputID()
-	if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
+	if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
 		Key:   inputID[:],
 		Value: utxoBytes,
 		Traits: [][]byte{
@@ -345,8 +345,8 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
-			if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{
+			swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
+			if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{
 				{
 					Key:   axcInputID[:],
 					Value: axcUTXOBytes,
@@ -540,7 +540,7 @@ func TestExportTxSemanticVerify(t *testing.T) {
 			shouldErr: false,
 		},
 		{
-			name: "P-chain before AP5",
+			name: "CoreChain before AP5",
 			tx: func() *Tx {
 				validExportTx := *validAXCExportTx
 				validExportTx.DestinationChain = constants.PlatformChainID
@@ -554,7 +554,7 @@ func TestExportTxSemanticVerify(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "P-chain after AP5",
+			name: "CoreChain after AP5",
 			tx: func() *Tx {
 				validExportTx := *validAXCExportTx
 				validExportTx.DestinationChain = constants.PlatformChainID
@@ -582,7 +582,7 @@ func TestExportTxSemanticVerify(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "P-chain multi-coin before AP5",
+			name: "CoreChain multi-coin before AP5",
 			tx: func() *Tx {
 				validExportTx := *validExportTx
 				validExportTx.DestinationChain = constants.PlatformChainID
@@ -598,7 +598,7 @@ func TestExportTxSemanticVerify(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "P-chain multi-coin after AP5",
+			name: "CoreChain multi-coin after AP5",
 			tx: func() *Tx {
 				validExportTx := *validExportTx
 				validExportTx.DestinationChain = constants.PlatformChainID
@@ -923,7 +923,7 @@ func TestExportTxSemanticVerify(t *testing.T) {
 func TestExportTxAccept(t *testing.T) {
 	_, vm, _, sharedMemory, _ := GenesisVM(t, true, genesisJSONApricotPhase0, "", "")
 
-	xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
+	swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
 
 	defer func() {
 		if err := vm.Shutdown(); err != nil {
@@ -1007,7 +1007,7 @@ func TestExportTxAccept(t *testing.T) {
 	if err := vm.ctx.SharedMemory.Apply(map[ids.ID]*atomic.Requests{chainID: {PutRequests: atomicRequests.PutRequests}}, commitBatch); err != nil {
 		t.Fatal(err)
 	}
-	indexedValues, _, _, err := xChainSharedMemory.Indexed(vm.ctx.ChainID, [][]byte{addr.Bytes()}, nil, nil, 3)
+	indexedValues, _, _, err := swapChainSharedMemory.Indexed(vm.ctx.ChainID, [][]byte{addr.Bytes()}, nil, nil, 3)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1028,7 +1028,7 @@ func TestExportTxAccept(t *testing.T) {
 	}
 	customInputID := customUTXOID.InputID()
 
-	fetchedValues, err := xChainSharedMemory.Get(vm.ctx.ChainID, [][]byte{
+	fetchedValues, err := swapChainSharedMemory.Get(vm.ctx.ChainID, [][]byte{
 		customInputID[:],
 		axcInputID[:],
 	})
@@ -1555,9 +1555,9 @@ func TestNewExportTx(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
+			swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
 			inputID := utxo.InputID()
-			if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
+			if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
 				Key:   inputID[:],
 				Value: utxoBytes,
 				Traits: [][]byte{
@@ -1736,9 +1736,9 @@ func TestNewExportTxMulticoin(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
+			swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
 			inputID2 := utxo2.InputID()
-			if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{
+			if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{
 				{
 					Key:   inputID[:],
 					Value: utxoBytes,

@@ -37,9 +37,9 @@ func createImportTxOptions(t *testing.T, vm *VM, sharedMemory *atomic.Memory) []
 		t.Fatal(err)
 	}
 
-	xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
+	swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
 	inputID := utxo.InputID()
-	if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
+	if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
 		Key:   inputID[:],
 		Value: utxoBytes,
 		Traits: [][]byte{
@@ -154,7 +154,7 @@ func TestImportTxVerify(t *testing.T) {
 			rules:       apricotRulesPhase0,
 			expectedErr: errWrongBlockchainID.Error(),
 		},
-		"P-chain source before AP5": {
+		"CoreChain source before AP5": {
 			generate: func(t *testing.T) UnsignedAtomicTx {
 				tx := *importTx
 				tx.SourceChain = constants.PlatformChainID
@@ -164,7 +164,7 @@ func TestImportTxVerify(t *testing.T) {
 			rules:       apricotRulesPhase0,
 			expectedErr: errWrongChainID.Error(),
 		},
-		"P-chain source after AP5": {
+		"CoreChain source after AP5": {
 			generate: func(t *testing.T) UnsignedAtomicTx {
 				tx := *importTx
 				tx.SourceChain = constants.PlatformChainID
@@ -838,9 +838,9 @@ func TestImportTxSemanticVerify(t *testing.T) {
 		"garbage UTXO": {
 			setup: func(t *testing.T, vm *VM, sharedMemory *atomic.Memory) *Tx {
 				utxoID := axc.UTXOID{TxID: ids.GenerateTestID()}
-				xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
+				swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
 				inputID := utxoID.InputID()
-				if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
+				if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
 					Key:   inputID[:],
 					Value: []byte("hey there"),
 					Traits: [][]byte{
