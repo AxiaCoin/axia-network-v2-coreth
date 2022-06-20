@@ -5,8 +5,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends bash=5.0-4 git=
 
 ARG AVALANCHE_VERSION
 
-RUN mkdir -p $GOPATH/src/github.com/ava-labs
-WORKDIR $GOPATH/src/github.com/ava-labs
+RUN mkdir -p $GOPATH/src/github.com/axiacoin
+WORKDIR $GOPATH/src/github.com/axiacoin
 
 RUN git clone -b $AVALANCHE_VERSION --single-branch https://github.com/axiacoin/axia-network-v2.git
 
