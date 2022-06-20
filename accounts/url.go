@@ -33,7 +33,7 @@ import (
 	"strings"
 )
 
-// URL represents the canonical identification URL of a wallet or account.
+// URL represents the canonical identification URL of a axiawallet or account.
 //
 // It is a simplified version of url.URL, with the important limitations (which
 // are considered features here) that it contains value-copyable components only,
@@ -44,7 +44,7 @@ import (
 // one single canonical form opposed to many allowed ones by the RFC 3986 spec.
 //
 // As such, these URLs should not be used outside of the scope of an Ethereum
-// wallet or account.
+// axiawallet or account.
 type URL struct {
 	Scheme string // Protocol scheme to identify a capable account backend
 	Path   string // Path for the backend to identify a unique entity
