@@ -268,7 +268,7 @@ func createSyncServerAndClientVMs(t *testing.T, test syncTest) *syncVMSetup {
 		switch i {
 		case 0:
 			// spend the UTXOs from shared memory
-			importTx, err = serverVM.newImportTx(serverVM.ctx.XChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+			importTx, err = serverVM.newImportTx(serverVM.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -280,7 +280,7 @@ func createSyncServerAndClientVMs(t *testing.T, test syncTest) *syncVMSetup {
 			exportTx, err = serverVM.newExportTx(
 				serverVM.ctx.AXCAssetID,
 				importAmount/2,
-				serverVM.ctx.XChainID,
+				serverVM.ctx.SwapChainID,
 				testShortIDAddrs[0],
 				initialBaseFee,
 				[]*crypto.PrivateKeySECP256K1R{testKeys[0]},
@@ -309,7 +309,7 @@ func createSyncServerAndClientVMs(t *testing.T, test syncTest) *syncVMSetup {
 	assert.NoError(t, serverVM.atomicTrie.Index(test.syncableInterval, nil))
 	assert.NoError(t, serverVM.db.Commit())
 
-	serverSharedMemories := newSharedMemories(serverAtomicMemory, serverVM.ctx.ChainID, serverVM.ctx.XChainID)
+	serverSharedMemories := newSharedMemories(serverAtomicMemory, serverVM.ctx.ChainID, serverVM.ctx.SwapChainID)
 	serverSharedMemories.assertOpsApplied(t, importTx.mustAtomicOps())
 	serverSharedMemories.assertOpsApplied(t, exportTx.mustAtomicOps())
 
@@ -506,7 +506,7 @@ func testSyncerVM(t *testing.T, vmSetup *syncVMSetup, test syncTest) {
 	assert.True(t, syncerVM.bootstrapped)
 
 	// check atomic memory was synced properly
-	syncerSharedMemories := newSharedMemories(syncerAtomicMemory, syncerVM.ctx.ChainID, syncerVM.ctx.XChainID)
+	syncerSharedMemories := newSharedMemories(syncerAtomicMemory, syncerVM.ctx.ChainID, syncerVM.ctx.SwapChainID)
 
 	for _, tx := range includedAtomicTxs {
 		syncerSharedMemories.assertOpsApplied(t, tx.mustAtomicOps())

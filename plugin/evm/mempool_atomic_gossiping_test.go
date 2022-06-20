@@ -121,7 +121,7 @@ func createImportTx(t *testing.T, vm *VM, txID ids.ID, feeAmount uint64) *Tx {
 	importTx := &UnsignedImportTx{
 		NetworkID:    testNetworkID,
 		BlockchainID: testCChainID,
-		SourceChain:  testXChainID,
+		SourceChain:  testSwapChainID,
 		ImportedInputs: []*axc.TransferableInput{
 			{
 				UTXOID: axc.UTXOID{
