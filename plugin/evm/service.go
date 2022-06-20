@@ -247,7 +247,7 @@ type ExportAXCArgs struct {
 	To string `json:"to"`
 }
 
-// ExportAXC exports AXC from the C-Chain to the SwapChain
+// ExportAXC exports AXC from the AXChain to the SwapChain
 // It must be imported on the SwapChain to complete the transfer
 func (service *AxcAPI) ExportAXC(_ *http.Request, args *ExportAXCArgs, response *api.JSONTxID) error {
 	return service.Export(nil, &ExportArgs{
@@ -263,7 +263,7 @@ type ExportArgs struct {
 	AssetID string `json:"assetID"`
 }
 
-// Export exports an asset from the C-Chain to the SwapChain
+// Export exports an asset from the AXChain to the SwapChain
 // It must be imported on the SwapChain to complete the transfer
 func (service *AxcAPI) Export(_ *http.Request, args *ExportArgs, response *api.JSONTxID) error {
 	log.Info("EVM: Export called")

@@ -55,8 +55,8 @@ func NewClient(uri, chain string) Client {
 	}
 }
 
-// NewCChainClient returns a Client for interacting with the C Chain
-func NewCChainClient(uri string) Client {
+// NewAXChainClient returns a Client for interacting with the C Chain
+func NewAXChainClient(uri string) Client {
 	return NewClient(uri, "C")
 }
 
@@ -177,8 +177,8 @@ func (c *client) ExportAXC(
 	return c.Export(ctx, user, amount, to, "AXC")
 }
 
-// Export sends an asset from this chain to the P/C-Chain.
-// After this tx is accepted, the AXC must be imported to the P/C-chain with an importTx.
+// Export sends an asset from this chain to the P/AXChain.
+// After this tx is accepted, the AXC must be imported to the P/AXChain with an importTx.
 // Returns the ID of the newly created atomic transaction
 func (c *client) Export(
 	ctx context.Context,
