@@ -6,12 +6,12 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
-      axiagoRepo:
-        description: 'axiago github repository'
+      axiaRepo:
+        description: 'axia github repository'
         required: true
         default: 'axiacoin/axia-network-v2'
-      axiagoBranch:
-        description: 'axiago branch'
+      axiaBranch:
+        description: 'axia branch'
         required: true
         default: 'master'
 
@@ -21,21 +21,21 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - name: check out ${{ github.event.inputs.axiagoRepo }} ${{ github.event.inputs.axiagoBranch }}
+      - name: check out ${{ github.event.inputs.axiaRepo }} ${{ github.event.inputs.axiaBranch }}
         if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: actions/checkout@v2
         with:
-          repository: ${{ github.event.inputs.axiagoRepo }}
-          ref: ${{ github.event.inputs.axiagoBranch }}
-          path: axiago
+          repository: ${{ github.event.inputs.axiaRepo }}
+          ref: ${{ github.event.inputs.axiaBranch }}
+          path: axia
           token: ${{ secrets.AXIA_PAT }}
       - uses: actions/setup-go@v1
         with:
           go-version: 1.17
-      - name: change axiago dep
+      - name: change axia dep
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
-          go mod edit -replace github.com/axiacoin/axia-network-v2=./axiago
+          go mod edit -replace github.com/axiacoin/axia-network-v2=./axia
           go mod tidy
           go clean -modcache # avoid conflicts with the golangci-lint-action cache
       - name: golangci-lint
@@ -53,21 +53,21 @@ jobs:
         os: [macos-11.0, ubuntu-18.04, windows-latest]
     steps:
     - uses: actions/checkout@v2
-    - name: check out ${{ github.event.inputs.axiagoRepo }} ${{ github.event.inputs.axiagoBranch }}
+    - name: check out ${{ github.event.inputs.axiaRepo }} ${{ github.event.inputs.axiaBranch }}
       if: ${{ github.event_name == 'workflow_dispatch' }}
       uses: actions/checkout@v2
       with:
-        repository: ${{ github.event.inputs.axiagoRepo }}
-        ref: ${{ github.event.inputs.axiagoBranch }}
-        path: axiago
+        repository: ${{ github.event.inputs.axiaRepo }}
+        ref: ${{ github.event.inputs.axiaBranch }}
+        path: axia
         token: ${{ secrets.AXIA_PAT }}
     - uses: actions/setup-go@v1
       with:
         go-version: ${{ matrix.go }}
-    - name: change axiago dep
+    - name: change axia dep
       if: ${{ github.event_name == 'workflow_dispatch' }}
       run: |
-        go mod edit -replace github.com/axiacoin/axia-network-v2=./axiago
+        go mod edit -replace github.com/axiacoin/axia-network-v2=./axia
         go mod tidy
     - run: go mod download
       shell: bash
@@ -86,21 +86,21 @@ jobs:
         os: [ubuntu-20.04]
     steps:
     - uses: actions/checkout@v2
-    - name: check out ${{ github.event.inputs.axiagoRepo }} ${{ github.event.inputs.axiagoBranch }}
+    - name: check out ${{ github.event.inputs.axiaRepo }} ${{ github.event.inputs.axiaBranch }}
       if: ${{ github.event_name == 'workflow_dispatch' }}
       uses: actions/checkout@v2
       with:
-        repository: ${{ github.event.inputs.axiagoRepo }}
-        ref: ${{ github.event.inputs.axiagoBranch }}
-        path: axiago
+        repository: ${{ github.event.inputs.axiaRepo }}
+        ref: ${{ github.event.inputs.axiaBranch }}
+        path: axia
         token: ${{ secrets.AXIA_PAT }}
     - uses: actions/setup-go@v1
       with:
         go-version: ${{ matrix.go }}
-    - name: change axiago dep
+    - name: change axia dep
       if: ${{ github.event_name == 'workflow_dispatch' }}
       run: |
-        go mod edit -replace github.com/axiacoin/axia-network-v2=./axiago
+        go mod edit -replace github.com/axiacoin/axia-network-v2=./axia
         go mod tidy
     - run: go mod download
       shell: bash
@@ -117,27 +117,27 @@ jobs:
         os: [ ubuntu-20.04 ]
     steps:
     - uses: actions/checkout@v2
-    - name: check out ${{ github.event.inputs.axiagoRepo }} ${{ github.event.inputs.axiagoBranch }}
+    - name: check out ${{ github.event.inputs.axiaRepo }} ${{ github.event.inputs.axiaBranch }}
       if: ${{ github.event_name == 'workflow_dispatch' }}
       uses: actions/checkout@v2
       with:
-        repository: ${{ github.event.inputs.axiagoRepo }}
-        ref: ${{ github.event.inputs.axiagoBranch }}
-        path: axiago
+        repository: ${{ github.event.inputs.axiaRepo }}
+        ref: ${{ github.event.inputs.axiaBranch }}
+        path: axia
         token: ${{ secrets.AXIA_PAT }}
     - uses: actions/setup-go@v1
       with:
         go-version: ${{ matrix.go }}
-    - name: change axiago dep
+    - name: change axia dep
       if: ${{ github.event_name == 'workflow_dispatch' }}
       run: |
-        go mod edit -replace github.com/axiacoin/axia-network-v2=./axiago
+        go mod edit -replace github.com/axiacoin/axia-network-v2=./axia
         go mod tidy
-    - name: prepare axiago directory for docker copy
+    - name: prepare axia directory for docker copy
       if: ${{ github.event_name == 'workflow_dispatch' }}
-      # mv axiago/ to nested dir axiago/axiago/
+      # mv axia/ to nested dir axia/axia/
       # required because docker instruction "COPY dir ." copies dir/* to .
-      run: mkdir axiago_tmp && mv axiago axiago_tmp && mv axiago_tmp axiago
+      run: mkdir axia_tmp && mv axia axia_tmp && mv axia_tmp axia
     - run: .github/workflows/run_e2e_tests.sh --parallelism 1 --client-id $KURTOSIS_CLIENT_ID --client-secret $KURTOSIS_CLIENT_SECRET
       shell: bash
       env:

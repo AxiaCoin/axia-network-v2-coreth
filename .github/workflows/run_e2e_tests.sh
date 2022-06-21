@@ -10,7 +10,7 @@ fi
 
 # Testing specific variables
 axia_testing_repo="avaplatform/axia-testing"
-axiago_repo="avaplatform/axiago"
+axia_repo="avaplatform/axia"
 # Define default axia testing version to use
 axia_testing_image="${axia_testing_repo}:master"
 
@@ -43,15 +43,15 @@ fi
 
 echo "Using $axia_testing_image for e2e tests"
 
-# Defines the axiago tag to use
+# Defines the axia tag to use
 # Either uses the same tag as the current branch or uses the default
 # Disable matchup in favor of explicit tag
 # TODO re-enable matchup when our workflow better supports it.
-# if docker_tag_exists $axiago_repo $current_branch; then
-#     echo "$axiago_repo:$current_branch exists; using this axiago image to run e2e tests"
+# if docker_tag_exists $axia_repo $current_branch; then
+#     echo "$axia_repo:$current_branch exists; using this axia image to run e2e tests"
 #     AXIA_VERSION=$current_branch
 # else
-#     echo "$axiago_repo $current_branch does NOT exist; using the default image to run e2e tests"
+#     echo "$axia_repo $current_branch does NOT exist; using the default image to run e2e tests"
 # fi
 
 # pulling the axia-testing image
@@ -60,11 +60,11 @@ docker pull $axia_testing_image
 # Setting the build ID
 git_commit_id=$( git rev-list -1 HEAD )
 
-# Build current axiago
+# Build current axia
 source "$CORETH_PATH"/scripts/build_image.sh
 
 # Target built version to use in axia-testing
-axia_image="avaplatform/axiago:$build_image_id"
+axia_image="avaplatform/axia:$build_image_id"
 
 echo "Running Axia Image: ${axia_image}"
 echo "Running Axia Testing Image: ${axia_testing_image}"
@@ -74,8 +74,8 @@ echo "Git Commit ID : ${git_commit_id}"
 # >>>>>>>> axia-testing custom parameters <<<<<<<<<<<<<
 custom_params_json="{
     \"isKurtosisCoreDevMode\": false,
-    \"axiagoImage\":\"${axia_image}\",
-    \"testBatch\":\"axiago\"
+    \"axiaImage\":\"${axia_image}\",
+    \"testBatch\":\"axia\"
 }"
 # >>>>>>>> axia-testing custom parameters <<<<<<<<<<<<<
 

@@ -8,14 +8,14 @@ This chain implements the Ethereum Virtual Machine and supports Solidity smart c
 
 ## Building
 
-Coreth is a dependency of AxiaGo which is used to implement the EVM based Virtual Machine for the Axia AXChain. In order to run with a local version of Coreth, users must update their Coreth dependency within AxiaGo to point to their local Coreth directory. If Coreth and AxiaGo are at the standard location within your GOPATH, this will look like the following:
+Coreth is a dependency of Axia which is used to implement the EVM based Virtual Machine for the Axia AXChain. In order to run with a local version of Coreth, users must update their Coreth dependency within Axia to point to their local Coreth directory. If Coreth and Axia are at the standard location within your GOPATH, this will look like the following:
 
 ```bash
 cd $GOPATH/src/github.com/axiacoin/axia-network-v2
 go mod edit -replace github.com/axiacoin/axia-network-v2-coreth=../coreth
 ```
 
-Note: the AXChain originally ran in a separate process from the main AxiaGo process and communicated with it over a local gRPC connection. When this was the case, AxiaGo's build script would download Coreth, compile it, and place the binary into the `axiago/build/plugins` directory.
+Note: the AXChain originally ran in a separate process from the main Axia process and communicated with it over a local gRPC connection. When this was the case, Axia's build script would download Coreth, compile it, and place the binary into the `axia/build/plugins` directory.
 
 ## API
 
@@ -27,8 +27,8 @@ The AXChain supports the following API namespaces:
 - `debug`
 
 Only the `eth` namespace is enabled by default. 
-To enable the other namespaces see the instructions for passing the AXChain config to AxiaGo [here.](https://docs.axc.network/nodes/maintain/chain-config-flags/#axchain-configs)
-Full documentation for the AXChain's API can be found [here.](https://docs.axc.network/apis/axiago/apis/axchain/)
+To enable the other namespaces see the instructions for passing the AXChain config to Axia [here.](https://docs.axc.network/nodes/maintain/chain-config-flags/#axchain-configs)
+Full documentation for the AXChain's API can be found [here.](https://docs.axc.network/apis/axia/apis/axchain/)
 
 ## Compatibility
 

@@ -43,7 +43,7 @@ var (
 func TestNetworkDoesNotConnectToItself(t *testing.T) {
 	selfNodeID := ids.GenerateTestNodeID()
 	n := NewNetwork(nil, nil, selfNodeID, 1)
-	assert.NoError(t, n.Connected(selfNodeID, version.NewDefaultApplication("axiago", 1, 0, 0)))
+	assert.NoError(t, n.Connected(selfNodeID, version.NewDefaultApplication("axia", 1, 0, 0)))
 	assert.EqualValues(t, 0, n.Size())
 }
 

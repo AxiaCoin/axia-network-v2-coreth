@@ -17,7 +17,7 @@ import (
 	"sync"
 	"time"
 
-	axiagoMetrics "github.com/axiacoin/axia-network-v2/api/metrics"
+	axiaMetrics "github.com/axiacoin/axia-network-v2/api/metrics"
 
 	coreth "github.com/axiacoin/axia-network-v2-coreth/chain"
 	"github.com/axiacoin/axia-network-v2-coreth/consensus/dummy"
@@ -252,7 +252,7 @@ type VM struct {
 	networkCodec codec.Manager
 
 	// Metrics
-	multiGatherer axiagoMetrics.MultiGatherer
+	multiGatherer axiaMetrics.MultiGatherer
 
 	bootstrapped bool
 	IsPlugin     bool
@@ -515,7 +515,7 @@ func (vm *VM) Initialize(
 }
 
 func (vm *VM) initializeMetrics() error {
-	vm.multiGatherer = axiagoMetrics.NewMultiGatherer()
+	vm.multiGatherer = axiaMetrics.NewMultiGatherer()
 	// If metrics are enabled, register the default metrics regitry
 	if metrics.Enabled {
 		gatherer := corethPrometheus.Gatherer(metrics.DefaultRegistry)

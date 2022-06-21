@@ -13,15 +13,15 @@ RUN git clone -b $AXIA_VERSION --single-branch https://github.com/axiacoin/axia-
 # Copy coreth repo into desired location
 COPY . coreth
 
-# Set the workdir to AxiaGo and update coreth dependency to local version
+# Set the workdir to Axia and update coreth dependency to local version
 WORKDIR $GOPATH/src/github.com/axiacoin/axia-network-v2
-# Run go mod download here to improve caching of AxiaGo specific depednencies
+# Run go mod download here to improve caching of Axia specific depednencies
 RUN go mod download
 # Replace the coreth dependency
 RUN go mod edit -replace github.com/axiacoin/axia-network-v2-coreth=../coreth
 RUN go mod download && go mod tidy -compat=1.17
 
-# Build the AxiaGo binary with local version of coreth.
+# Build the Axia binary with local version of coreth.
 RUN ./scripts/build_axia.sh
 # Create the plugins directory in the standard location so the build directory will be recognized
 # as valid.
@@ -31,10 +31,10 @@ RUN mkdir build/plugins
 FROM debian:11-slim AS execution
 
 # Maintain compatibility with previous images
-RUN mkdir -p /axiago/build
-WORKDIR /axiago/build
+RUN mkdir -p /axia/build
+WORKDIR /axia/build
 
 # Copy the executables into the container
 COPY --from=builder /go/src/github.com/axiacoin/axia-network-v2/build .
 
-CMD [ "./axiago" ]
+CMD [ "./axia" ]

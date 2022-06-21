@@ -12,7 +12,7 @@
 
 - Fix deadlock bug on shutdown causing historical re-generation on restart
 - Add API endpoint to fetch running VM Config
-- Add AxiaGo custom log formatting to AXChain logs
+- Add Axia custom log formatting to AXChain logs
 - Deprecate support for JS Tracer
 
 ## [v0.8.8](https://github.com/axiacoin/axia-network-v2-coreth/releases/tag/v0.8.8)
