@@ -94,7 +94,7 @@ func (tx *UnsignedExportTx) Verify(
 			return err
 		}
 		assetID := out.AssetID()
-		if assetID != ctx.AXCAssetID && tx.DestinationChain == constants.PlatformChainID {
+		if assetID != ctx.AXCAssetID && tx.DestinationChain == constants.CoreChainID {
 			return errWrongChainID
 		}
 	}

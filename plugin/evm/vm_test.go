@@ -138,7 +138,7 @@ func NewContext() *snow.Context {
 	_ = aliaser.Alias(testSwapChainID, testSwapChainID.String())
 	ctx.SNLookup = &snLookup{
 		chainsToAllychain: map[ids.ID]ids.ID{
-			constants.PlatformChainID: constants.PrimaryNetworkID,
+			constants.CoreChainID: constants.PrimaryNetworkID,
 			testSwapChainID:              constants.PrimaryNetworkID,
 			testAXChainID:              constants.PrimaryNetworkID,
 		},

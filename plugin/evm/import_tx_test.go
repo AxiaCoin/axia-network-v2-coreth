@@ -157,7 +157,7 @@ func TestImportTxVerify(t *testing.T) {
 		"CoreChain source before AP5": {
 			generate: func(t *testing.T) UnsignedAtomicTx {
 				tx := *importTx
-				tx.SourceChain = constants.PlatformChainID
+				tx.SourceChain = constants.CoreChainID
 				return &tx
 			},
 			ctx:         ctx,
@@ -167,7 +167,7 @@ func TestImportTxVerify(t *testing.T) {
 		"CoreChain source after AP5": {
 			generate: func(t *testing.T) UnsignedAtomicTx {
 				tx := *importTx
-				tx.SourceChain = constants.PlatformChainID
+				tx.SourceChain = constants.CoreChainID
 				return &tx
 			},
 			ctx:   ctx,

@@ -543,7 +543,7 @@ func TestExportTxSemanticVerify(t *testing.T) {
 			name: "CoreChain before AP5",
 			tx: func() *Tx {
 				validExportTx := *validAXCExportTx
-				validExportTx.DestinationChain = constants.PlatformChainID
+				validExportTx.DestinationChain = constants.CoreChainID
 				return &Tx{UnsignedAtomicTx: &validExportTx}
 			}(),
 			signers: [][]*crypto.PrivateKeySECP256K1R{
@@ -557,7 +557,7 @@ func TestExportTxSemanticVerify(t *testing.T) {
 			name: "CoreChain after AP5",
 			tx: func() *Tx {
 				validExportTx := *validAXCExportTx
-				validExportTx.DestinationChain = constants.PlatformChainID
+				validExportTx.DestinationChain = constants.CoreChainID
 				return &Tx{UnsignedAtomicTx: &validExportTx}
 			}(),
 			signers: [][]*crypto.PrivateKeySECP256K1R{
@@ -585,7 +585,7 @@ func TestExportTxSemanticVerify(t *testing.T) {
 			name: "CoreChain multi-coin before AP5",
 			tx: func() *Tx {
 				validExportTx := *validExportTx
-				validExportTx.DestinationChain = constants.PlatformChainID
+				validExportTx.DestinationChain = constants.CoreChainID
 				return &Tx{UnsignedAtomicTx: &validExportTx}
 			}(),
 			signers: [][]*crypto.PrivateKeySECP256K1R{
@@ -601,7 +601,7 @@ func TestExportTxSemanticVerify(t *testing.T) {
 			name: "CoreChain multi-coin after AP5",
 			tx: func() *Tx {
 				validExportTx := *validExportTx
-				validExportTx.DestinationChain = constants.PlatformChainID
+				validExportTx.DestinationChain = constants.CoreChainID
 				return &Tx{UnsignedAtomicTx: &validExportTx}
 			}(),
 			signers: [][]*crypto.PrivateKeySECP256K1R{
