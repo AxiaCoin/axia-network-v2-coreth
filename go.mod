@@ -41,7 +41,7 @@ require (
 
 require (
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
-	github.com/axiacoin/axia-network-v2 v0.1.6-0.20220621054443-2bdf6fb43a7c // indirect
+	github.com/axiacoin/axia-network-v2 v0.1.6-0.20220621085907-9ae3e3eefa35 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/btcsuite/btcd v0.21.0-beta // indirect
 	github.com/btcsuite/btcutil v1.0.2 // indirect
