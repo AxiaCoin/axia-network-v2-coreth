@@ -86,6 +86,8 @@ github.com/axiacoin/axia-network-v2 v0.1.6-0.20220621054443-2bdf6fb43a7c h1:uiwa
 github.com/axiacoin/axia-network-v2 v0.1.6-0.20220621054443-2bdf6fb43a7c/go.mod h1:q4LFdXFkz/nMm5XjtqbM641RKE6y8ui3xjLpvPBfyJA=
 github.com/axiacoin/axia-network-v2 v0.1.6-0.20220621085907-9ae3e3eefa35 h1:+e5qxVL/FsIZiU/uVpU8oOge4vsA0p+4YdTgqU/BcwY=
 github.com/axiacoin/axia-network-v2 v0.1.6-0.20220621085907-9ae3e3eefa35/go.mod h1:U++JYekaLhsVk8OJ6XMzqF4TSfKdXkJDQ+8V86RxaK4=
+github.com/axiacoin/axia-network-v2 v0.1.6-0.20220621133300-b7536be7217b h1:9NNIi5S8bJxLFl9PzW65Dzh5K48DlaJioC5KVd0f0oY=
+github.com/axiacoin/axia-network-v2 v0.1.6-0.20220621133300-b7536be7217b/go.mod h1:SncaBTPuMVDfs0rGUO7qriPUk7iYn+Ne6fGUOeo50eQ=
 github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLju8=
 github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
