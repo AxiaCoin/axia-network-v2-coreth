@@ -19,7 +19,7 @@ import (
 func testSharedMemory() atomic.SharedMemory {
 	m := &atomic.Memory{}
 	m.Initialize(logging.NoLog{}, memdb.New())
-	return m.NewSharedMemory(testCChainID)
+	return m.NewSharedMemory(testAXCChainID)
 }
 
 func TestIteratorCanIterate(t *testing.T) {

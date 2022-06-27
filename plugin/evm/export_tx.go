@@ -78,7 +78,7 @@ func (tx *UnsignedExportTx) Verify(
 			return errWrongChainID
 		}
 	} else {
-		if tx.DestinationChain != ctx.XChainID {
+		if tx.DestinationChain != ctx.SwapChainID {
 			return errWrongChainID
 		}
 	}

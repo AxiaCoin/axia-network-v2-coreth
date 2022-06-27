@@ -72,7 +72,7 @@ func (tx *UnsignedImportTx) Verify(
 			return errWrongChainID
 		}
 	} else {
-		if tx.SourceChain != ctx.XChainID {
+		if tx.SourceChain != ctx.SwapChainID {
 			return errWrongChainID
 		}
 	}
