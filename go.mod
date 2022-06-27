@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/VictoriaMetrics/fastcache v1.9.0
-	github.com/axiacoin/axia-network-v2 v0.0.0-20220627140818-cf8d7cea9fee
+	github.com/axiacoin/axia-network-v2 v0.0.0-20220627142101-882e1005aad8
 	github.com/cespare/cp v0.1.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/deckarep/golang-set v1.8.0
