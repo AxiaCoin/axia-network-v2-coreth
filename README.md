@@ -1,9 +1,9 @@
 # Coreth and the AX-Chain
 
-[Axia](https://docs.avax.network/learn/platform-overview) is a network composed of multiple blockchains.
+[Axia](https://docs.axc.network/learn/platform-overview) is a network composed of multiple blockchains.
 Each blockchain is an instance of a Virtual Machine (VM), much like an object in an object-oriented language is an instance of a class.
 That is, the VM defines the behavior of the blockchain.
-Coreth (from core Ethereum) is the [Virtual Machine (VM)](https://docs.avax.network/learn/platform-overview#virtual-machines) that defines the Contract Chain (AX-Chain).
+Coreth (from core Ethereum) is the [Virtual Machine (VM)](https://docs.axc.network/learn/platform-overview#virtual-machines) that defines the Contract Chain (AX-Chain).
 This chain implements the Ethereum Virtual Machine and supports Solidity smart contracts as well as most other Ethereum client functionality.
 
 ## Building
@@ -27,12 +27,12 @@ The AX-Chain supports the following API namespaces:
 - `debug`
 
 Only the `eth` namespace is enabled by default. 
-To enable the other namespaces see the instructions for passing in the `coreth-config` parameter to Axia: https://docs.avax.network/build/references/command-line-interface#plugins.
-Full documentation for the AX-Chain's API can be found [here.](https://docs.avax.network/build/axia-apis/ax-chain)
+To enable the other namespaces see the instructions for passing in the `coreth-config` parameter to Axia: https://docs.axc.network/build/references/command-line-interface#plugins.
+Full documentation for the AX-Chain's API can be found [here.](https://docs.axc.network/build/axia-apis/ax-chain)
 
 ## Compatibility
 
-The AX-Chain is compatible with almost all Ethereum tooling, including [Remix,](https://docs.avax.network/build/tutorials/smart-contracts/deploy-a-smart-contract-on-axia-using-remix-and-metamask) [Metamask](https://docs.avax.network/build/tutorials/smart-contracts/deploy-a-smart-contract-on-axia-using-remix-and-metamask) and [Truffle.](https://docs.avax.network/build/tutorials/smart-contracts/using-truffle-with-the-axia-ax-chain)
+The AX-Chain is compatible with almost all Ethereum tooling, including [Remix,](https://docs.axc.network/build/tutorials/smart-contracts/deploy-a-smart-contract-on-axia-using-remix-and-metamask) [Metamask](https://docs.axc.network/build/tutorials/smart-contracts/deploy-a-smart-contract-on-axia-using-remix-and-metamask) and [Truffle.](https://docs.axc.network/build/tutorials/smart-contracts/using-truffle-with-the-axia-ax-chain)
 
 ## Differences Between Axia AX-Chain and Ethereum
 
@@ -42,9 +42,9 @@ As a network composed of multiple blockchains, Axia uses *atomic transactions* t
 
 ### Axia Native Tokens (ANTs)
 
-The AX-Chain supports Axia Native Tokens, which are created on the Swap-Chain using precompiled contracts. These precompiled contracts *nativeAssetCall* and *nativeAssetBalance* support the same interface for ANTs as *CALL* and *BALANCE* do for AVAX with the added parameter of *assetID* to specify the asset.
+The AX-Chain supports Axia Native Tokens, which are created on the Swap-Chain using precompiled contracts. These precompiled contracts *nativeAssetCall* and *nativeAssetBalance* support the same interface for ANTs as *CALL* and *BALANCE* do for AXC with the added parameter of *assetID* to specify the asset.
 
-For the full documentation of precompiles for interacting with ANTs and using them in ARC-20s, see [here](https://docs.avax.network/build/references/coreth-arc20s).
+For the full documentation of precompiles for interacting with ANTs and using them in ARC-20s, see [here](https://docs.axc.network/build/references/coreth-arc20s).
 
 ### Block Timing
 

@@ -23,8 +23,8 @@ var errNoGasUsed = errors.New("no gas used")
 type Mempool struct {
 	lock sync.RWMutex
 
-	// AVAXAssetID is the fee paying currency of any atomic transaction
-	AVAXAssetID ids.ID
+	// AXCAssetID is the fee paying currency of any atomic transaction
+	AXCAssetID ids.ID
 	// maxSize is the maximum number of transactions allowed to be kept in mempool
 	maxSize int
 	// currentTxs is the set of transactions about to be added to a block.
@@ -47,9 +47,9 @@ type Mempool struct {
 }
 
 // NewMempool returns a Mempool with [maxSize]
-func NewMempool(AVAXAssetID ids.ID, maxSize int) *Mempool {
+func NewMempool(AXCAssetID ids.ID, maxSize int) *Mempool {
 	return &Mempool{
-		AVAXAssetID:  AVAXAssetID,
+		AXCAssetID:  AXCAssetID,
 		issuedTxs:    make(map[ids.ID]*Tx),
 		discardedTxs: &cache.LRU{Size: discardedTxsCacheSize},
 		currentTxs:   make(map[ids.ID]*Tx),
@@ -81,7 +81,7 @@ func (m *Mempool) has(txID ids.ID) bool {
 }
 
 // atomicTxGasPrice is the [gasPrice] paid by a transaction to burn a given
-// amount of [AVAXAssetID] given the value of [gasUsed].
+// amount of [AXCAssetID] given the value of [gasUsed].
 func (m *Mempool) atomicTxGasPrice(tx *Tx) (uint64, error) {
 	gasUsed, err := tx.GasUsed(true)
 	if err != nil {
@@ -90,7 +90,7 @@ func (m *Mempool) atomicTxGasPrice(tx *Tx) (uint64, error) {
 	if gasUsed == 0 {
 		return 0, errNoGasUsed
 	}
-	burned, err := tx.Burned(m.AVAXAssetID)
+	burned, err := tx.Burned(m.AXCAssetID)
 	if err != nil {
 		return 0, err
 	}

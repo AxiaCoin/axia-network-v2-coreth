@@ -10,7 +10,7 @@ import (
 
 	"github.com/axiacoin/axia-network-v2/ids"
 	"github.com/axiacoin/axia-network-v2/utils/crypto"
-	"github.com/axiacoin/axia-network-v2/vms/components/avax"
+	"github.com/axiacoin/axia-network-v2/vms/components/axc"
 	"github.com/axiacoin/axia-network-v2/vms/components/chain"
 	"github.com/axiacoin/axia-network-v2/vms/secp256k1fx"
 
@@ -122,13 +122,13 @@ func createImportTx(t *testing.T, vm *VM, txID ids.ID, feeAmount uint64) *Tx {
 		NetworkID:    testNetworkID,
 		BlockchainID: testAXChainID,
 		SourceChain:  testSwapChainID,
-		ImportedInputs: []*avax.TransferableInput{
+		ImportedInputs: []*axc.TransferableInput{
 			{
-				UTXOID: avax.UTXOID{
+				UTXOID: axc.UTXOID{
 					TxID:        txID,
 					OutputIndex: uint32(0),
 				},
-				Asset: avax.Asset{ID: testAvaxAssetID},
+				Asset: axc.Asset{ID: testAxcAssetID},
 				In: &secp256k1fx.TransferInput{
 					Amt: importAmount,
 					Input: secp256k1fx.Input{
@@ -137,11 +137,11 @@ func createImportTx(t *testing.T, vm *VM, txID ids.ID, feeAmount uint64) *Tx {
 				},
 			},
 			{
-				UTXOID: avax.UTXOID{
+				UTXOID: axc.UTXOID{
 					TxID:        txID,
 					OutputIndex: uint32(1),
 				},
-				Asset: avax.Asset{ID: testAvaxAssetID},
+				Asset: axc.Asset{ID: testAxcAssetID},
 				In: &secp256k1fx.TransferInput{
 					Amt: importAmount,
 					Input: secp256k1fx.Input{
@@ -154,18 +154,18 @@ func createImportTx(t *testing.T, vm *VM, txID ids.ID, feeAmount uint64) *Tx {
 			{
 				Address: testEthAddrs[0],
 				Amount:  importAmount - feeAmount,
-				AssetID: testAvaxAssetID,
+				AssetID: testAxcAssetID,
 			},
 			{
 				Address: testEthAddrs[1],
 				Amount:  importAmount,
-				AssetID: testAvaxAssetID,
+				AssetID: testAxcAssetID,
 			},
 		},
 	}
 
 	// Sort the inputs and outputs to ensure the transaction is canonical
-	avax.SortTransferableInputs(importTx.ImportedInputs)
+	axc.SortTransferableInputs(importTx.ImportedInputs)
 	SortEVMOutputs(importTx.Outs)
 
 	tx := &Tx{UnsignedAtomicTx: importTx}

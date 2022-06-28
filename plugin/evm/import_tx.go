@@ -15,7 +15,7 @@ import (
 	"github.com/axiacoin/axia-network-v2/snow"
 	"github.com/axiacoin/axia-network-v2/utils/crypto"
 	"github.com/axiacoin/axia-network-v2/utils/math"
-	"github.com/axiacoin/axia-network-v2/vms/components/avax"
+	"github.com/axiacoin/axia-network-v2/vms/components/axc"
 	"github.com/axiacoin/axia-network-v2/vms/components/verify"
 	"github.com/axiacoin/axia-network-v2/vms/secp256k1fx"
 	"github.com/ethereum/go-ethereum/common"
@@ -24,7 +24,7 @@ import (
 
 // UnsignedImportTx is an unsigned ImportTx
 type UnsignedImportTx struct {
-	avax.Metadata
+	axc.Metadata
 	// ID of the network on which this tx was issued
 	NetworkID uint32 `serialize:"true" json:"networkID"`
 	// ID of this blockchain.
@@ -32,7 +32,7 @@ type UnsignedImportTx struct {
 	// Which chain to consume the funds from
 	SourceChain ids.ID `serialize:"true" json:"sourceChain"`
 	// Inputs that consume UTXOs produced on the chain
-	ImportedInputs []*avax.TransferableInput `serialize:"true" json:"importedInputs"`
+	ImportedInputs []*axc.TransferableInput `serialize:"true" json:"importedInputs"`
 	// Outputs
 	Outs []EVMOutput `serialize:"true" json:"outputs"`
 }
@@ -88,7 +88,7 @@ func (tx *UnsignedImportTx) Verify(
 			return fmt.Errorf("atomic input failed verification: %w", err)
 		}
 	}
-	if !avax.IsSortedAndUniqueTransferableInputs(tx.ImportedInputs) {
+	if !axc.IsSortedAndUniqueTransferableInputs(tx.ImportedInputs) {
 		return errInputsNotSortedUnique
 	}
 
@@ -169,7 +169,7 @@ func (tx *UnsignedImportTx) SemanticVerify(
 	}
 
 	// Check the transaction consumes and produces the right amounts
-	fc := avax.NewFlowChecker()
+	fc := axc.NewFlowChecker()
 	switch {
 	// Apply dynamic fees to import transactions as of Apricot Phase 3
 	case rules.IsApricotPhase3:
@@ -181,11 +181,11 @@ func (tx *UnsignedImportTx) SemanticVerify(
 		if err != nil {
 			return err
 		}
-		fc.Produce(vm.ctx.AVAXAssetID, txFee)
+		fc.Produce(vm.ctx.AXCAssetID, txFee)
 
 	// Apply fees to import transactions as of Apricot Phase 2
 	case rules.IsApricotPhase2:
-		fc.Produce(vm.ctx.AVAXAssetID, params.AxiaAtomicTxFee)
+		fc.Produce(vm.ctx.AXCAssetID, params.AxiaAtomicTxFee)
 	}
 	for _, out := range tx.Outs {
 		fc.Produce(out.AssetID, out.Amount)
@@ -221,7 +221,7 @@ func (tx *UnsignedImportTx) SemanticVerify(
 	for i, in := range tx.ImportedInputs {
 		utxoBytes := allUTXOBytes[i]
 
-		utxo := &avax.UTXO{}
+		utxo := &axc.UTXO{}
 		if _, err := vm.codec.Unmarshal(utxoBytes, utxo); err != nil {
 			return fmt.Errorf("failed to unmarshal UTXO: %w", err)
 		}
@@ -282,9 +282,9 @@ func (vm *VM) newImportTxWithUTXOs(
 	to common.Address, // Address of recipient
 	baseFee *big.Int, // fee to use post-AP3
 	kc *secp256k1fx.Keychain, // Keychain to use for signing the atomic UTXOs
-	atomicUTXOs []*avax.UTXO, // UTXOs to spend
+	atomicUTXOs []*axc.UTXO, // UTXOs to spend
 ) (*Tx, error) {
-	importedInputs := []*avax.TransferableInput{}
+	importedInputs := []*axc.TransferableInput{}
 	signers := [][]*crypto.PrivateKeySECP256K1R{}
 
 	importedAmount := make(map[ids.ID]uint64)
@@ -294,7 +294,7 @@ func (vm *VM) newImportTxWithUTXOs(
 		if err != nil {
 			continue
 		}
-		input, ok := inputIntf.(avax.TransferableIn)
+		input, ok := inputIntf.(axc.TransferableIn)
 		if !ok {
 			continue
 		}
@@ -303,23 +303,23 @@ func (vm *VM) newImportTxWithUTXOs(
 		if err != nil {
 			return nil, err
 		}
-		importedInputs = append(importedInputs, &avax.TransferableInput{
+		importedInputs = append(importedInputs, &axc.TransferableInput{
 			UTXOID: utxo.UTXOID,
 			Asset:  utxo.Asset,
 			In:     input,
 		})
 		signers = append(signers, utxoSigners)
 	}
-	avax.SortTransferableInputsWithSigners(importedInputs, signers)
-	importedAVAXAmount := importedAmount[vm.ctx.AVAXAssetID]
+	axc.SortTransferableInputsWithSigners(importedInputs, signers)
+	importedAXCAmount := importedAmount[vm.ctx.AXCAssetID]
 
 	outs := make([]EVMOutput, 0, len(importedAmount))
 	// This will create unique outputs (in the context of sorting)
 	// since each output will have a unique assetID
 	for assetID, amount := range importedAmount {
-		// Skip the AVAX amount since it is included separately to account for
+		// Skip the AXC amount since it is included separately to account for
 		// the fee
-		if assetID == vm.ctx.AVAXAssetID || amount == 0 {
+		if assetID == vm.ctx.AXCAssetID || amount == 0 {
 			continue
 		}
 		outs = append(outs, EVMOutput{
@@ -371,21 +371,21 @@ func (vm *VM) newImportTxWithUTXOs(
 		txFeeWithChange = params.AxiaAtomicTxFee
 	}
 
-	// AVAX output
-	if importedAVAXAmount < txFeeWithoutChange { // imported amount goes toward paying tx fee
+	// AXC output
+	if importedAXCAmount < txFeeWithoutChange { // imported amount goes toward paying tx fee
 		return nil, errInsufficientFundsForFee
 	}
 
-	if importedAVAXAmount > txFeeWithChange {
+	if importedAXCAmount > txFeeWithChange {
 		outs = append(outs, EVMOutput{
 			Address: to,
-			Amount:  importedAVAXAmount - txFeeWithChange,
-			AssetID: vm.ctx.AVAXAssetID,
+			Amount:  importedAXCAmount - txFeeWithChange,
+			AssetID: vm.ctx.AXCAssetID,
 		})
 	}
 
 	// If no outputs are produced, return an error.
-	// Note: this can happen if there is exactly enough AVAX to pay the
+	// Note: this can happen if there is exactly enough AXC to pay the
 	// transaction fee, but no other funds to be imported.
 	if len(outs) == 0 {
 		return nil, errNoEVMOutputs
@@ -412,9 +412,9 @@ func (vm *VM) newImportTxWithUTXOs(
 // accounts accordingly with the imported EVMOutputs
 func (tx *UnsignedImportTx) EVMStateTransfer(ctx *snow.Context, state *state.StateDB) error {
 	for _, to := range tx.Outs {
-		if to.AssetID == ctx.AVAXAssetID {
-			log.Debug("crosschain", "src", tx.SourceChain, "addr", to.Address, "amount", to.Amount, "assetID", "AVAX")
-			// If the asset is AVAX, convert the input amount in nAVAX to gWei by
+		if to.AssetID == ctx.AXCAssetID {
+			log.Debug("crosschain", "src", tx.SourceChain, "addr", to.Address, "amount", to.Amount, "assetID", "AXC")
+			// If the asset is AXC, convert the input amount in nAXC to gWei by
 			// multiplying by the x2c rate.
 			amount := new(big.Int).Mul(
 				new(big.Int).SetUint64(to.Amount), x2cRate)
