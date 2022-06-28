@@ -24,7 +24,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-package scwallet
+package scaxiawallet
 
 import (
 	"bytes"
@@ -86,7 +86,7 @@ var (
 // List of APDU command-related constants
 const (
 	claISO7816  = 0
-	claSCWallet = 0x80
+	claSCAxiaWallet = 0x80
 
 	insSelect      = 0xA4
 	insGetResponse = 0xC0
@@ -107,7 +107,7 @@ const (
 	P1DeriveKeyFromMaster  = uint8(0x00)
 	P1DeriveKeyFromParent  = uint8(0x01)
 	P1DeriveKeyFromCurrent = uint8(0x10)
-	statusP1WalletStatus   = uint8(0x00)
+	statusP1AxiaWalletStatus   = uint8(0x00)
 	statusP1Path           = uint8(0x01)
 	signP1PrecomputedHash  = uint8(0x01)
 	signP2OnlyBlock        = uint8(0x81)
@@ -119,13 +119,13 @@ const (
 // requesting accounts like crazy.
 const selfDeriveThrottling = time.Second
 
-// Wallet represents a smartcard wallet instance.
-type Wallet struct {
-	Hub       *Hub   // A handle to the Hub that instantiated this wallet.
-	PublicKey []byte // The wallet's public key (used for communication and identification, not signing!)
+// AxiaWallet represents a smartcard axiawallet instance.
+type AxiaWallet struct {
+	Hub       *Hub   // A handle to the Hub that instantiated this axiawallet.
+	PublicKey []byte // The axiawallet's public key (used for communication and identification, not signing!)
 
 	lock    sync.Mutex // Lock that gates access to struct fields and communication with the card
-	card    *pcsc.Card // A handle to the smartcard interface for the wallet.
+	card    *pcsc.Card // A handle to the smartcard interface for the axiawallet.
 	session *Session   // The secure communication session with the card
 	log     log.Logger // Contextual logger to tag the base with its id
 
@@ -136,13 +136,13 @@ type Wallet struct {
 	deriveQuit      chan chan error             // Channel to terminate the self-deriver with
 }
 
-// NewWallet constructs and returns a new Wallet instance.
-func NewWallet(hub *Hub, card *pcsc.Card) *Wallet {
-	wallet := &Wallet{
+// NewAxiaWallet constructs and returns a new AxiaWallet instance.
+func NewAxiaWallet(hub *Hub, card *pcsc.Card) *AxiaWallet {
+	axiawallet := &AxiaWallet{
 		Hub:  hub,
 		card: card,
 	}
-	return wallet
+	return axiawallet
 }
 
 // transmit sends an APDU to the smartcard and receives and decodes the response.
@@ -190,9 +190,9 @@ type applicationInfo struct {
 	PublicKey   []byte `asn1:"tag:0"`
 }
 
-// connect connects to the wallet application and establishes a secure channel with it.
-// must be called before any other interaction with the wallet.
-func (w *Wallet) connect() error {
+// connect connects to the axiawallet application and establishes a secure channel with it.
+// must be called before any other interaction with the axiawallet.
+func (w *AxiaWallet) connect() error {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
@@ -209,14 +209,14 @@ func (w *Wallet) connect() error {
 	w.PublicKey = appinfo.PublicKey
 	w.log = log.New("url", w.URL())
 	w.session = &Session{
-		Wallet:  w,
+		AxiaWallet:  w,
 		Channel: channel,
 	}
 	return nil
 }
 
 // doselect is an internal (unlocked) function to send a SELECT APDU to the card.
-func (w *Wallet) doselect() (*applicationInfo, error) {
+func (w *AxiaWallet) doselect() (*applicationInfo, error) {
 	response, err := transmit(w.card, &commandAPDU{
 		Cla:  claISO7816,
 		Ins:  insSelect,
@@ -236,7 +236,7 @@ func (w *Wallet) doselect() (*applicationInfo, error) {
 }
 
 // ping checks the card's status and returns an error if unsuccessful.
-func (w *Wallet) ping() error {
+func (w *AxiaWallet) ping() error {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
@@ -244,14 +244,14 @@ func (w *Wallet) ping() error {
 	if !w.session.paired() {
 		return nil
 	}
-	if _, err := w.session.walletStatus(); err != nil {
+	if _, err := w.session.axiawalletStatus(); err != nil {
 		return err
 	}
 	return nil
 }
 
-// release releases any resources held by an open wallet instance.
-func (w *Wallet) release() error {
+// release releases any resources held by an open axiawallet instance.
+func (w *AxiaWallet) release() error {
 	if w.session != nil {
 		return w.session.release()
 	}
@@ -259,10 +259,10 @@ func (w *Wallet) release() error {
 }
 
 // pair is an internal (unlocked) function for establishing a new pairing
-// with the wallet.
-func (w *Wallet) pair(puk []byte) error {
+// with the axiawallet.
+func (w *AxiaWallet) pair(puk []byte) error {
 	if w.session.paired() {
-		return fmt.Errorf("wallet already paired")
+		return fmt.Errorf("axiawallet already paired")
 	}
 	pairing, err := w.session.pair(puk)
 	if err != nil {
@@ -274,13 +274,13 @@ func (w *Wallet) pair(puk []byte) error {
 	return w.session.authenticate(pairing)
 }
 
-// Unpair deletes an existing wallet pairing.
-func (w *Wallet) Unpair(pin []byte) error {
+// Unpair deletes an existing axiawallet pairing.
+func (w *AxiaWallet) Unpair(pin []byte) error {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
 	if !w.session.paired() {
-		return fmt.Errorf("wallet %x not paired", w.PublicKey)
+		return fmt.Errorf("axiawallet %x not paired", w.PublicKey)
 	}
 	if err := w.session.verifyPin(pin); err != nil {
 		return fmt.Errorf("failed to verify pin: %s", err)
@@ -294,10 +294,10 @@ func (w *Wallet) Unpair(pin []byte) error {
 	return nil
 }
 
-// URL retrieves the canonical path under which this wallet is reachable. It is
-// user by upper layers to define a sorting order over all wallets from multiple
+// URL retrieves the canonical path under which this axiawallet is reachable. It is
+// user by upper layers to define a sorting order over all axiawallets from multiple
 // backends.
-func (w *Wallet) URL() accounts.URL {
+func (w *AxiaWallet) URL() accounts.URL {
 	return accounts.URL{
 		Scheme: w.Hub.scheme,
 		Path:   fmt.Sprintf("%x", w.PublicKey[1:5]), // Byte #0 isn't unique; 1:5 covers << 64K cards, bump to 1:9 for << 4M
@@ -305,9 +305,9 @@ func (w *Wallet) URL() accounts.URL {
 }
 
 // Status returns a textual status to aid the user in the current state of the
-// wallet. It also returns an error indicating any failure the wallet might have
+// axiawallet. It also returns an error indicating any failure the axiawallet might have
 // encountered.
-func (w *Wallet) Status() (string, error) {
+func (w *AxiaWallet) Status() (string, error) {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
@@ -316,7 +316,7 @@ func (w *Wallet) Status() (string, error) {
 		return "Unpaired, waiting for pairing password", nil
 	}
 	// Yay, we have an encrypted session, retrieve the actual status
-	status, err := w.session.walletStatus()
+	status, err := w.session.axiawalletStatus()
 	if err != nil {
 		return fmt.Sprintf("Failed: %v", err), err
 	}
@@ -334,18 +334,18 @@ func (w *Wallet) Status() (string, error) {
 	}
 }
 
-// Open initializes access to a wallet instance. It is not meant to unlock or
+// Open initializes access to a axiawallet instance. It is not meant to unlock or
 // decrypt account keys, rather simply to establish a connection to hardware
-// wallets and/or to access derivation seeds.
+// axiawallets and/or to access derivation seeds.
 //
 // The passphrase parameter may or may not be used by the implementation of a
-// particular wallet instance. The reason there is no passwordless open method
-// is to strive towards a uniform wallet handling, oblivious to the different
+// particular axiawallet instance. The reason there is no passwordless open method
+// is to strive towards a uniform axiawallet handling, oblivious to the different
 // backend providers.
 //
-// Please note, if you open a wallet, you must close it to release any allocated
-// resources (especially important when working with hardware wallets).
-func (w *Wallet) Open(passphrase string) error {
+// Please note, if you open a axiawallet, you must close it to release any allocated
+// resources (especially important when working with hardware axiawallets).
+func (w *AxiaWallet) Open(passphrase string) error {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
@@ -379,7 +379,7 @@ func (w *Wallet) Open(passphrase string) error {
 	}
 	// The smart card was successfully paired, retrieve its status to check whether
 	// PIN verification or unblocking is needed.
-	status, err := w.session.walletStatus()
+	status, err := w.session.axiawalletStatus()
 	if err != nil {
 		return err
 	}
@@ -412,15 +412,15 @@ func (w *Wallet) Open(passphrase string) error {
 
 	go w.selfDerive()
 
-	// Notify anyone listening for wallet events that a new device is accessible
-	go w.Hub.updateFeed.Send(accounts.WalletEvent{Wallet: w, Kind: accounts.WalletOpened})
+	// Notify anyone listening for axiawallet events that a new device is accessible
+	go w.Hub.updateFeed.Send(accounts.AxiaWalletEvent{AxiaWallet: w, Kind: accounts.AxiaWalletOpened})
 
 	return nil
 }
 
-// Close stops and closes the wallet, freeing any resources.
-func (w *Wallet) Close() error {
-	// Ensure the wallet was opened
+// Close stops and closes the axiawallet, freeing any resources.
+func (w *AxiaWallet) Close() error {
+	// Ensure the axiawallet was opened
 	w.lock.Lock()
 	dQuit := w.deriveQuit
 	w.lock.Unlock()
@@ -447,9 +447,9 @@ func (w *Wallet) Close() error {
 
 // selfDerive is an account derivation loop that upon request attempts to find
 // new non-zero accounts.
-func (w *Wallet) selfDerive() {
-	w.log.Debug("Smart card wallet self-derivation started")
-	defer w.log.Debug("Smart card wallet self-derivation stopped")
+func (w *AxiaWallet) selfDerive() {
+	w.log.Debug("Smart card axiawallet self-derivation started")
+	defer w.log.Debug("Smart card axiawallet self-derivation stopped")
 
 	// Execute self-derivations until termination or error
 	var (
@@ -490,7 +490,7 @@ func (w *Wallet) selfDerive() {
 				// Retrieve the next derived Ethereum account
 				if nextAddrs[i] == (common.Address{}) {
 					if nextAcc, err = w.session.derive(nextPaths[i]); err != nil {
-						w.log.Warn("Smartcard wallet account derivation failed", "err", err)
+						w.log.Warn("Smartcard axiawallet account derivation failed", "err", err)
 						break
 					}
 					nextAddrs[i] = nextAcc.Address
@@ -502,12 +502,12 @@ func (w *Wallet) selfDerive() {
 				)
 				balance, err = w.deriveChain.BalanceAt(context, nextAddrs[i], nil)
 				if err != nil {
-					w.log.Warn("Smartcard wallet balance retrieval failed", "err", err)
+					w.log.Warn("Smartcard axiawallet balance retrieval failed", "err", err)
 					break
 				}
 				nonce, err = w.deriveChain.NonceAt(context, nextAddrs[i], nil)
 				if err != nil {
-					w.log.Warn("Smartcard wallet nonce retrieval failed", "err", err)
+					w.log.Warn("Smartcard axiawallet nonce retrieval failed", "err", err)
 					break
 				}
 				// If the next account is empty, stop self-derivation, but add for the last base path
@@ -524,7 +524,7 @@ func (w *Wallet) selfDerive() {
 
 				// Display a log message to the user for new (or previously empty accounts)
 				if _, known := pairing.Accounts[nextAddrs[i]]; !known || !empty || nextAddrs[i] != w.deriveNextAddrs[i] {
-					w.log.Info("Smartcard wallet discovered new account", "address", nextAddrs[i], "path", path, "balance", balance, "nonce", nonce)
+					w.log.Info("Smartcard axiawallet discovered new account", "address", nextAddrs[i], "path", path, "balance", balance, "nonce", nonce)
 				}
 				pairing.Accounts[nextAddrs[i]] = path
 
@@ -559,16 +559,16 @@ func (w *Wallet) selfDerive() {
 	}
 	// In case of error, wait for termination
 	if err != nil {
-		w.log.Debug("Smartcard wallet self-derivation failed", "err", err)
+		w.log.Debug("Smartcard axiawallet self-derivation failed", "err", err)
 		errc = <-w.deriveQuit
 	}
 	errc <- err
 }
 
-// Accounts retrieves the list of signing accounts the wallet is currently aware
-// of. For hierarchical deterministic wallets, the list will not be exhaustive,
+// Accounts retrieves the list of signing accounts the axiawallet is currently aware
+// of. For hierarchical deterministic axiawallets, the list will not be exhaustive,
 // rather only contain the accounts explicitly pinned during account derivation.
-func (w *Wallet) Accounts() []accounts.Account {
+func (w *AxiaWallet) Accounts() []accounts.Account {
 	// Attempt self-derivation if it's running
 	reqc := make(chan struct{}, 1)
 	select {
@@ -593,7 +593,7 @@ func (w *Wallet) Accounts() []accounts.Account {
 	return nil
 }
 
-func (w *Wallet) makeAccount(address common.Address, path accounts.DerivationPath) accounts.Account {
+func (w *AxiaWallet) makeAccount(address common.Address, path accounts.DerivationPath) accounts.Account {
 	return accounts.Account{
 		Address: address,
 		URL: accounts.URL{
@@ -603,8 +603,8 @@ func (w *Wallet) makeAccount(address common.Address, path accounts.DerivationPat
 	}
 }
 
-// Contains returns whether an account is part of this particular wallet or not.
-func (w *Wallet) Contains(account accounts.Account) bool {
+// Contains returns whether an account is part of this particular axiawallet or not.
+func (w *AxiaWallet) Contains(account accounts.Account) bool {
 	if pairing := w.Hub.pairing(w); pairing != nil {
 		_, ok := pairing.Accounts[account.Address]
 		return ok
@@ -612,8 +612,8 @@ func (w *Wallet) Contains(account accounts.Account) bool {
 	return false
 }
 
-// Initialize installs a keypair generated from the provided key into the wallet.
-func (w *Wallet) Initialize(seed []byte) error {
+// Initialize installs a keypair generated from the provided key into the axiawallet.
+func (w *AxiaWallet) Initialize(seed []byte) error {
 	go w.selfDerive()
 	// DO NOT lock at this stage, as the initialize
 	// function relies on Status()
@@ -622,8 +622,8 @@ func (w *Wallet) Initialize(seed []byte) error {
 
 // Derive attempts to explicitly derive a hierarchical deterministic account at
 // the specified derivation path. If requested, the derived account will be added
-// to the wallet's tracked account list.
-func (w *Wallet) Derive(path accounts.DerivationPath, pin bool) (accounts.Account, error) {
+// to the axiawallet's tracked account list.
+func (w *AxiaWallet) Derive(path accounts.DerivationPath, pin bool) (accounts.Account, error) {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
@@ -643,7 +643,7 @@ func (w *Wallet) Derive(path accounts.DerivationPath, pin bool) (accounts.Accoun
 	return account, nil
 }
 
-// SelfDerive sets a base account derivation path from which the wallet attempts
+// SelfDerive sets a base account derivation path from which the axiawallet attempts
 // to discover non zero accounts and automatically add them to list of tracked
 // accounts.
 //
@@ -651,13 +651,13 @@ func (w *Wallet) Derive(path accounts.DerivationPath, pin bool) (accounts.Accoun
 // opposed to descending into a child path to allow discovering accounts starting
 // from non zero components.
 //
-// Some hardware wallets switched derivation paths through their evolution, so
+// Some hardware axiawallets switched derivation paths through their evolution, so
 // this method supports providing multiple bases to discover old user accounts
 // too. Only the last base will be used to derive the next empty account.
 //
 // You can disable automatic account discovery by calling SelfDerive with a nil
 // chain state reader.
-func (w *Wallet) SelfDerive(bases []accounts.DerivationPath, chain interfaces.ChainStateReader) {
+func (w *AxiaWallet) SelfDerive(bases []accounts.DerivationPath, chain interfaces.ChainStateReader) {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
@@ -670,22 +670,22 @@ func (w *Wallet) SelfDerive(bases []accounts.DerivationPath, chain interfaces.Ch
 	w.deriveChain = chain
 }
 
-// SignData requests the wallet to sign the hash of the given data.
+// SignData requests the axiawallet to sign the hash of the given data.
 //
 // It looks up the account specified either solely via its address contained within,
 // or optionally with the aid of any location metadata from the embedded URL field.
 //
-// If the wallet requires additional authentication to sign the request (e.g.
+// If the axiawallet requires additional authentication to sign the request (e.g.
 // a password to decrypt the account, or a PIN code to verify the transaction),
 // an AuthNeededError instance will be returned, containing infos for the user
 // about which fields or actions are needed. The user may retry by providing
 // the needed details via SignDataWithPassphrase, or by other means (e.g. unlock
 // the account in a keystore).
-func (w *Wallet) SignData(account accounts.Account, mimeType string, data []byte) ([]byte, error) {
+func (w *AxiaWallet) SignData(account accounts.Account, mimeType string, data []byte) ([]byte, error) {
 	return w.signHash(account, crypto.Keccak256(data))
 }
 
-func (w *Wallet) signHash(account accounts.Account, hash []byte) ([]byte, error) {
+func (w *AxiaWallet) signHash(account accounts.Account, hash []byte) ([]byte, error) {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
@@ -697,18 +697,18 @@ func (w *Wallet) signHash(account accounts.Account, hash []byte) ([]byte, error)
 	return w.session.sign(path, hash)
 }
 
-// SignTx requests the wallet to sign the given transaction.
+// SignTx requests the axiawallet to sign the given transaction.
 //
 // It looks up the account specified either solely via its address contained within,
 // or optionally with the aid of any location metadata from the embedded URL field.
 //
-// If the wallet requires additional authentication to sign the request (e.g.
+// If the axiawallet requires additional authentication to sign the request (e.g.
 // a password to decrypt the account, or a PIN code to verify the transaction),
 // an AuthNeededError instance will be returned, containing infos for the user
 // about which fields or actions are needed. The user may retry by providing
 // the needed details via SignTxWithPassphrase, or by other means (e.g. unlock
 // the account in a keystore).
-func (w *Wallet) SignTx(account accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
+func (w *AxiaWallet) SignTx(account accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
 	signer := types.LatestSignerForChainID(chainID)
 	hash := signer.Hash(tx)
 	sig, err := w.signHash(account, hash[:])
@@ -718,16 +718,16 @@ func (w *Wallet) SignTx(account accounts.Account, tx *types.Transaction, chainID
 	return tx.WithSignature(signer, sig)
 }
 
-// SignDataWithPassphrase requests the wallet to sign the given hash with the
+// SignDataWithPassphrase requests the axiawallet to sign the given hash with the
 // given passphrase as extra authentication information.
 //
 // It looks up the account specified either solely via its address contained within,
 // or optionally with the aid of any location metadata from the embedded URL field.
-func (w *Wallet) SignDataWithPassphrase(account accounts.Account, passphrase, mimeType string, data []byte) ([]byte, error) {
+func (w *AxiaWallet) SignDataWithPassphrase(account accounts.Account, passphrase, mimeType string, data []byte) ([]byte, error) {
 	return w.signHashWithPassphrase(account, passphrase, crypto.Keccak256(data))
 }
 
-func (w *Wallet) signHashWithPassphrase(account accounts.Account, passphrase string, hash []byte) ([]byte, error) {
+func (w *AxiaWallet) signHashWithPassphrase(account accounts.Account, passphrase string, hash []byte) ([]byte, error) {
 	if !w.session.verified {
 		if err := w.Open(passphrase); err != nil {
 			return nil, err
@@ -737,33 +737,33 @@ func (w *Wallet) signHashWithPassphrase(account accounts.Account, passphrase str
 	return w.signHash(account, hash)
 }
 
-// SignText requests the wallet to sign the hash of a given piece of data, prefixed
+// SignText requests the axiawallet to sign the hash of a given piece of data, prefixed
 // by the Ethereum prefix scheme
 // It looks up the account specified either solely via its address contained within,
 // or optionally with the aid of any location metadata from the embedded URL field.
 //
-// If the wallet requires additional authentication to sign the request (e.g.
+// If the axiawallet requires additional authentication to sign the request (e.g.
 // a password to decrypt the account, or a PIN code to verify the transaction),
 // an AuthNeededError instance will be returned, containing infos for the user
 // about which fields or actions are needed. The user may retry by providing
 // the needed details via SignHashWithPassphrase, or by other means (e.g. unlock
 // the account in a keystore).
-func (w *Wallet) SignText(account accounts.Account, text []byte) ([]byte, error) {
+func (w *AxiaWallet) SignText(account accounts.Account, text []byte) ([]byte, error) {
 	return w.signHash(account, accounts.TextHash(text))
 }
 
-// SignTextWithPassphrase implements accounts.Wallet, attempting to sign the
+// SignTextWithPassphrase implements accounts.AxiaWallet, attempting to sign the
 // given hash with the given account using passphrase as extra authentication
-func (w *Wallet) SignTextWithPassphrase(account accounts.Account, passphrase string, text []byte) ([]byte, error) {
+func (w *AxiaWallet) SignTextWithPassphrase(account accounts.Account, passphrase string, text []byte) ([]byte, error) {
 	return w.signHashWithPassphrase(account, passphrase, crypto.Keccak256(accounts.TextHash(text)))
 }
 
-// SignTxWithPassphrase requests the wallet to sign the given transaction, with the
+// SignTxWithPassphrase requests the axiawallet to sign the given transaction, with the
 // given passphrase as extra authentication information.
 //
 // It looks up the account specified either solely via its address contained within,
 // or optionally with the aid of any location metadata from the embedded URL field.
-func (w *Wallet) SignTxWithPassphrase(account accounts.Account, passphrase string, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
+func (w *AxiaWallet) SignTxWithPassphrase(account accounts.Account, passphrase string, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
 	if !w.session.verified {
 		if err := w.Open(passphrase); err != nil {
 			return nil, err
@@ -775,7 +775,7 @@ func (w *Wallet) SignTxWithPassphrase(account accounts.Account, passphrase strin
 // findAccountPath returns the derivation path for the provided account.
 // It first checks for the address in the list of pinned accounts, and if it is
 // not found, attempts to parse the derivation path from the account's URL.
-func (w *Wallet) findAccountPath(account accounts.Account) (accounts.DerivationPath, error) {
+func (w *AxiaWallet) findAccountPath(account accounts.Account) (accounts.DerivationPath, error) {
 	pairing := w.Hub.pairing(w)
 	if path, ok := pairing.Accounts[account.Address]; ok {
 		return path, nil
@@ -783,7 +783,7 @@ func (w *Wallet) findAccountPath(account accounts.Account) (accounts.DerivationP
 
 	// Look for the path in the URL
 	if account.URL.Scheme != w.Hub.scheme {
-		return nil, fmt.Errorf("scheme %s does not match wallet scheme %s", account.URL.Scheme, w.Hub.scheme)
+		return nil, fmt.Errorf("scheme %s does not match axiawallet scheme %s", account.URL.Scheme, w.Hub.scheme)
 	}
 
 	parts := strings.SplitN(account.URL.Path, "/", 2)
@@ -792,15 +792,15 @@ func (w *Wallet) findAccountPath(account accounts.Account) (accounts.DerivationP
 	}
 
 	if parts[0] != fmt.Sprintf("%x", w.PublicKey[1:3]) {
-		return nil, fmt.Errorf("URL %s is not for this wallet", account.URL)
+		return nil, fmt.Errorf("URL %s is not for this axiawallet", account.URL)
 	}
 
 	return accounts.ParseDerivationPath(parts[1])
 }
 
-// Session represents a secured communication session with the wallet.
+// Session represents a secured communication session with the axiawallet.
 type Session struct {
-	Wallet   *Wallet               // A handle to the wallet that opened the session
+	AxiaWallet   *AxiaWallet               // A handle to the axiawallet that opened the session
 	Channel  *SecureChannelSession // A secure channel for encrypted messages
 	verified bool                  // Whether the pin has been verified in this session.
 }
@@ -813,7 +813,7 @@ func (s *Session) pair(secret []byte) (smartcardPairing, error) {
 	}
 
 	return smartcardPairing{
-		PublicKey:    s.Wallet.PublicKey,
+		PublicKey:    s.AxiaWallet.PublicKey,
 		PairingIndex: s.Channel.PairingIndex,
 		PairingKey:   s.Channel.PairingKey,
 		Accounts:     make(map[common.Address]accounts.DerivationPath),
@@ -828,19 +828,19 @@ func (s *Session) unpair() error {
 	return s.Channel.Unpair()
 }
 
-// verifyPin unlocks a wallet with the provided pin.
+// verifyPin unlocks a axiawallet with the provided pin.
 func (s *Session) verifyPin(pin []byte) error {
-	if _, err := s.Channel.transmitEncrypted(claSCWallet, insVerifyPin, 0, 0, pin); err != nil {
+	if _, err := s.Channel.transmitEncrypted(claSCAxiaWallet, insVerifyPin, 0, 0, pin); err != nil {
 		return err
 	}
 	s.verified = true
 	return nil
 }
 
-// unblockPin unblocks a wallet with the provided puk and resets the pin to the
+// unblockPin unblocks a axiawallet with the provided puk and resets the pin to the
 // new one specified.
 func (s *Session) unblockPin(pukpin []byte) error {
-	if _, err := s.Channel.transmitEncrypted(claSCWallet, insUnblockPin, 0, 0, pukpin); err != nil {
+	if _, err := s.Channel.transmitEncrypted(claSCAxiaWallet, insUnblockPin, 0, 0, pukpin); err != nil {
 		return err
 	}
 	s.verified = true
@@ -849,7 +849,7 @@ func (s *Session) unblockPin(pukpin []byte) error {
 
 // release releases resources associated with the channel.
 func (s *Session) release() error {
-	return s.Wallet.card.Disconnect(pcsc.LeaveCard)
+	return s.AxiaWallet.card.Disconnect(pcsc.LeaveCard)
 }
 
 // paired returns true if a valid pairing exists.
@@ -859,39 +859,39 @@ func (s *Session) paired() bool {
 
 // authenticate uses an existing pairing to establish a secure channel.
 func (s *Session) authenticate(pairing smartcardPairing) error {
-	if !bytes.Equal(s.Wallet.PublicKey, pairing.PublicKey) {
-		return fmt.Errorf("cannot pair using another wallet's pairing; %x != %x", s.Wallet.PublicKey, pairing.PublicKey)
+	if !bytes.Equal(s.AxiaWallet.PublicKey, pairing.PublicKey) {
+		return fmt.Errorf("cannot pair using another axiawallet's pairing; %x != %x", s.AxiaWallet.PublicKey, pairing.PublicKey)
 	}
 	s.Channel.PairingKey = pairing.PairingKey
 	s.Channel.PairingIndex = pairing.PairingIndex
 	return s.Channel.Open()
 }
 
-// walletStatus describes a smartcard wallet's status information.
-type walletStatus struct {
+// axiawalletStatus describes a smartcard axiawallet's status information.
+type axiawalletStatus struct {
 	PinRetryCount int  // Number of remaining PIN retries
 	PukRetryCount int  // Number of remaining PUK retries
 	Initialized   bool // Whether the card has been initialized with a private key
 }
 
-// walletStatus fetches the wallet's status from the card.
-func (s *Session) walletStatus() (*walletStatus, error) {
-	response, err := s.Channel.transmitEncrypted(claSCWallet, insStatus, statusP1WalletStatus, 0, nil)
+// axiawalletStatus fetches the axiawallet's status from the card.
+func (s *Session) axiawalletStatus() (*axiawalletStatus, error) {
+	response, err := s.Channel.transmitEncrypted(claSCAxiaWallet, insStatus, statusP1AxiaWalletStatus, 0, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	status := new(walletStatus)
+	status := new(axiawalletStatus)
 	if _, err := asn1.UnmarshalWithParams(response.Data, status, "tag:3"); err != nil {
 		return nil, err
 	}
 	return status, nil
 }
 
-// derivationPath fetches the wallet's current derivation path from the card.
+// derivationPath fetches the axiawallet's current derivation path from the card.
 //lint:ignore U1000 needs to be added to the console interface
 func (s *Session) derivationPath() (accounts.DerivationPath, error) {
-	response, err := s.Channel.transmitEncrypted(claSCWallet, insStatus, statusP1Path, 0, nil)
+	response, err := s.Channel.transmitEncrypted(claSCAxiaWallet, insStatus, statusP1Path, 0, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -900,7 +900,7 @@ func (s *Session) derivationPath() (accounts.DerivationPath, error) {
 	return path, binary.Read(buf, binary.BigEndian, &path)
 }
 
-// initializeData contains data needed to initialize the smartcard wallet.
+// initializeData contains data needed to initialize the smartcard axiawallet.
 type initializeData struct {
 	PublicKey  []byte `asn1:"tag:0"`
 	PrivateKey []byte `asn1:"tag:1"`
@@ -909,9 +909,9 @@ type initializeData struct {
 
 // initialize initializes the card with new key data.
 func (s *Session) initialize(seed []byte) error {
-	// Check that the wallet isn't currently initialized,
+	// Check that the axiawallet isn't currently initialized,
 	// otherwise the key would be overwritten.
-	status, err := s.Wallet.Status()
+	status, err := s.AxiaWallet.Status()
 	if err != nil {
 		return err
 	}
@@ -919,8 +919,8 @@ func (s *Session) initialize(seed []byte) error {
 		return fmt.Errorf("card is already initialized, cowardly refusing to proceed")
 	}
 
-	s.Wallet.lock.Lock()
-	defer s.Wallet.lock.Unlock()
+	s.AxiaWallet.lock.Lock()
+	defer s.AxiaWallet.lock.Unlock()
 
 	// HMAC the seed to produce the private key and chain code
 	mac := hmac.New(sha512.New, []byte("Bitcoin seed"))
@@ -944,7 +944,7 @@ func (s *Session) initialize(seed []byte) error {
 	// Nasty hack to force the top-level struct tag to be context-specific
 	data[0] = 0xA1
 
-	_, err = s.Channel.transmitEncrypted(claSCWallet, insLoadKey, 0x02, 0, data)
+	_, err = s.Channel.transmitEncrypted(claSCAxiaWallet, insLoadKey, 0x02, 0, data)
 	return err
 }
 
@@ -974,12 +974,12 @@ func (s *Session) derive(path accounts.DerivationPath) (accounts.Account, error)
 		}
 	}
 
-	_, err = s.Channel.transmitEncrypted(claSCWallet, insDeriveKey, p1, 0, data.Bytes())
+	_, err = s.Channel.transmitEncrypted(claSCAxiaWallet, insDeriveKey, p1, 0, data.Bytes())
 	if err != nil {
 		return accounts.Account{}, err
 	}
 
-	response, err := s.Channel.transmitEncrypted(claSCWallet, insSign, 0, 0, DerivationSignatureHash[:])
+	response, err := s.Channel.transmitEncrypted(claSCAxiaWallet, insSign, 0, 0, DerivationSignatureHash[:])
 	if err != nil {
 		return accounts.Account{}, err
 	}
@@ -1000,7 +1000,7 @@ func (s *Session) derive(path accounts.DerivationPath) (accounts.Account, error)
 	if err != nil {
 		return accounts.Account{}, err
 	}
-	return s.Wallet.makeAccount(crypto.PubkeyToAddress(*pub), path), nil
+	return s.AxiaWallet.makeAccount(crypto.PubkeyToAddress(*pub), path), nil
 }
 
 // keyExport contains information on an exported keypair.
@@ -1013,7 +1013,7 @@ type keyExport struct {
 // publicKey returns the public key for the current derivation path.
 //lint:ignore U1000 needs to be added to the console interface
 func (s *Session) publicKey() ([]byte, error) {
-	response, err := s.Channel.transmitEncrypted(claSCWallet, insExportKey, exportP1Any, exportP2Pubkey, nil)
+	response, err := s.Channel.transmitEncrypted(claSCAxiaWallet, insExportKey, exportP1Any, exportP2Pubkey, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -1044,7 +1044,7 @@ func (s *Session) sign(path accounts.DerivationPath, hash []byte) ([]byte, error
 	}
 	deriveTime := time.Now()
 
-	response, err := s.Channel.transmitEncrypted(claSCWallet, insSign, signP1PrecomputedHash, signP2OnlyBlock, hash)
+	response, err := s.Channel.transmitEncrypted(claSCAxiaWallet, insSign, signP1PrecomputedHash, signP2OnlyBlock, hash)
 	if err != nil {
 		return nil, err
 	}

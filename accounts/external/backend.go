@@ -43,10 +43,10 @@ import (
 )
 
 type ExternalBackend struct {
-	signers []accounts.Wallet
+	signers []accounts.AxiaWallet
 }
 
-func (eb *ExternalBackend) Wallets() []accounts.Wallet {
+func (eb *ExternalBackend) AxiaWallets() []accounts.AxiaWallet {
 	return eb.signers
 }
 
@@ -56,11 +56,11 @@ func NewExternalBackend(endpoint string) (*ExternalBackend, error) {
 		return nil, err
 	}
 	return &ExternalBackend{
-		signers: []accounts.Wallet{signer},
+		signers: []accounts.AxiaWallet{signer},
 	}, nil
 }
 
-func (eb *ExternalBackend) Subscribe(sink chan<- accounts.WalletEvent) event.Subscription {
+func (eb *ExternalBackend) Subscribe(sink chan<- accounts.AxiaWalletEvent) event.Subscription {
 	return event.NewSubscription(func(quit <-chan struct{}) error {
 		<-quit
 		return nil

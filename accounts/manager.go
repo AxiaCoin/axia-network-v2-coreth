@@ -35,7 +35,7 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
-// managerSubBufferSize determines how many incoming wallet events
+// managerSubBufferSize determines how many incoming axiawallet events
 // the manager will buffer in its channel.
 const managerSubBufferSize = 50
 
@@ -48,7 +48,7 @@ type Config struct {
 }
 
 // newBackendEvent lets the manager know it should
-// track the given backend for wallet updates.
+// track the given backend for axiawallet updates.
 type newBackendEvent struct {
 	backend   Backend
 	processed chan struct{} // Informs event emitter that backend has been integrated
@@ -59,12 +59,12 @@ type newBackendEvent struct {
 type Manager struct {
 	config      *Config                    // Global account manager configurations
 	backends    map[reflect.Type][]Backend // Index of backends currently registered
-	updaters    []event.Subscription       // Wallet update subscriptions for all backends
-	updates     chan WalletEvent           // Subscription sink for backend wallet changes
+	updaters    []event.Subscription       // AxiaWallet update subscriptions for all backends
+	updates     chan AxiaWalletEvent           // Subscription sink for backend axiawallet changes
 	newBackends chan newBackendEvent       // Incoming backends to be tracked by the manager
-	wallets     []Wallet                   // Cache of all wallets from all registered backends
+	axiawallets     []AxiaWallet                   // Cache of all axiawallets from all registered backends
 
-	feed event.Feed // Wallet feed notifying of arrivals/departures
+	feed event.Feed // AxiaWallet feed notifying of arrivals/departures
 
 	quit chan chan error
 	term chan struct{} // Channel is closed upon termination of the update loop
@@ -74,13 +74,13 @@ type Manager struct {
 // NewManager creates a generic account manager to sign transaction via various
 // supported backends.
 func NewManager(config *Config, backends ...Backend) *Manager {
-	// Retrieve the initial list of wallets from the backends and sort by URL
-	var wallets []Wallet
+	// Retrieve the initial list of axiawallets from the backends and sort by URL
+	var axiawallets []AxiaWallet
 	for _, backend := range backends {
-		wallets = merge(wallets, backend.Wallets()...)
+		axiawallets = merge(axiawallets, backend.AxiaWallets()...)
 	}
-	// Subscribe to wallet notifications from all backends
-	updates := make(chan WalletEvent, managerSubBufferSize)
+	// Subscribe to axiawallet notifications from all backends
+	updates := make(chan AxiaWalletEvent, managerSubBufferSize)
 
 	subs := make([]event.Subscription, len(backends))
 	for i, backend := range backends {
@@ -93,7 +93,7 @@ func NewManager(config *Config, backends ...Backend) *Manager {
 		updaters:    subs,
 		updates:     updates,
 		newBackends: make(chan newBackendEvent),
-		wallets:     wallets,
+		axiawallets:     axiawallets,
 		quit:        make(chan chan error),
 		term:        make(chan struct{}),
 	}
@@ -118,7 +118,7 @@ func (am *Manager) Config() *Config {
 	return am.config
 }
 
-// AddBackend starts the tracking of an additional backend for wallet updates.
+// AddBackend starts the tracking of an additional backend for axiawallet updates.
 // cmd/geth assumes once this func returns the backends have been already integrated.
 func (am *Manager) AddBackend(backend Backend) {
 	done := make(chan struct{})
@@ -126,8 +126,8 @@ func (am *Manager) AddBackend(backend Backend) {
 	<-done
 }
 
-// update is the wallet event loop listening for notifications from the backends
-// and updating the cache of wallets.
+// update is the axiawallet event loop listening for notifications from the backends
+// and updating the cache of axiawallets.
 func (am *Manager) update() {
 	// Close all subscriptions when the manager terminates
 	defer func() {
@@ -143,13 +143,13 @@ func (am *Manager) update() {
 	for {
 		select {
 		case event := <-am.updates:
-			// Wallet event arrived, update local cache
+			// AxiaWallet event arrived, update local cache
 			am.lock.Lock()
 			switch event.Kind {
-			case WalletArrived:
-				am.wallets = merge(am.wallets, event.Wallet)
-			case WalletDropped:
-				am.wallets = drop(am.wallets, event.Wallet)
+			case AxiaWalletArrived:
+				am.axiawallets = merge(am.axiawallets, event.AxiaWallet)
+			case AxiaWalletDropped:
+				am.axiawallets = drop(am.axiawallets, event.AxiaWallet)
 			}
 			am.lock.Unlock()
 
@@ -159,7 +159,7 @@ func (am *Manager) update() {
 			am.lock.Lock()
 			// Update caches
 			backend := event.backend
-			am.wallets = merge(am.wallets, backend.Wallets()...)
+			am.axiawallets = merge(am.axiawallets, backend.AxiaWallets()...)
 			am.updaters = append(am.updaters, backend.Subscribe(am.updates))
 			kind := reflect.TypeOf(backend)
 			am.backends[kind] = append(am.backends[kind], backend)
@@ -184,23 +184,23 @@ func (am *Manager) Backends(kind reflect.Type) []Backend {
 	return am.backends[kind]
 }
 
-// Wallets returns all signer accounts registered under this account manager.
-func (am *Manager) Wallets() []Wallet {
+// AxiaWallets returns all signer accounts registered under this account manager.
+func (am *Manager) AxiaWallets() []AxiaWallet {
 	am.lock.RLock()
 	defer am.lock.RUnlock()
 
-	return am.walletsNoLock()
+	return am.axiawalletsNoLock()
 }
 
-// walletsNoLock returns all registered wallets. Callers must hold am.lock.
-func (am *Manager) walletsNoLock() []Wallet {
-	cpy := make([]Wallet, len(am.wallets))
-	copy(cpy, am.wallets)
+// axiawalletsNoLock returns all registered axiawallets. Callers must hold am.lock.
+func (am *Manager) axiawalletsNoLock() []AxiaWallet {
+	cpy := make([]AxiaWallet, len(am.axiawallets))
+	copy(cpy, am.axiawallets)
 	return cpy
 }
 
-// Wallet retrieves the wallet associated with a particular URL.
-func (am *Manager) Wallet(url string) (Wallet, error) {
+// AxiaWallet retrieves the axiawallet associated with a particular URL.
+func (am *Manager) AxiaWallet(url string) (AxiaWallet, error) {
 	am.lock.RLock()
 	defer am.lock.RUnlock()
 
@@ -208,72 +208,72 @@ func (am *Manager) Wallet(url string) (Wallet, error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, wallet := range am.walletsNoLock() {
-		if wallet.URL() == parsed {
-			return wallet, nil
+	for _, axiawallet := range am.axiawalletsNoLock() {
+		if axiawallet.URL() == parsed {
+			return axiawallet, nil
 		}
 	}
-	return nil, ErrUnknownWallet
+	return nil, ErrUnknownAxiaWallet
 }
 
-// Accounts returns all account addresses of all wallets within the account manager
+// Accounts returns all account addresses of all axiawallets within the account manager
 func (am *Manager) Accounts() []common.Address {
 	am.lock.RLock()
 	defer am.lock.RUnlock()
 
 	addresses := make([]common.Address, 0) // return [] instead of nil if empty
-	for _, wallet := range am.wallets {
-		for _, account := range wallet.Accounts() {
+	for _, axiawallet := range am.axiawallets {
+		for _, account := range axiawallet.Accounts() {
 			addresses = append(addresses, account.Address)
 		}
 	}
 	return addresses
 }
 
-// Find attempts to locate the wallet corresponding to a specific account. Since
-// accounts can be dynamically added to and removed from wallets, this method has
-// a linear runtime in the number of wallets.
-func (am *Manager) Find(account Account) (Wallet, error) {
+// Find attempts to locate the axiawallet corresponding to a specific account. Since
+// accounts can be dynamically added to and removed from axiawallets, this method has
+// a linear runtime in the number of axiawallets.
+func (am *Manager) Find(account Account) (AxiaWallet, error) {
 	am.lock.RLock()
 	defer am.lock.RUnlock()
 
-	for _, wallet := range am.wallets {
-		if wallet.Contains(account) {
-			return wallet, nil
+	for _, axiawallet := range am.axiawallets {
+		if axiawallet.Contains(account) {
+			return axiawallet, nil
 		}
 	}
 	return nil, ErrUnknownAccount
 }
 
 // Subscribe creates an async subscription to receive notifications when the
-// manager detects the arrival or departure of a wallet from any of its backends.
-func (am *Manager) Subscribe(sink chan<- WalletEvent) event.Subscription {
+// manager detects the arrival or departure of a axiawallet from any of its backends.
+func (am *Manager) Subscribe(sink chan<- AxiaWalletEvent) event.Subscription {
 	return am.feed.Subscribe(sink)
 }
 
-// merge is a sorted analogue of append for wallets, where the ordering of the
-// origin list is preserved by inserting new wallets at the correct position.
+// merge is a sorted analogue of append for axiawallets, where the ordering of the
+// origin list is preserved by inserting new axiawallets at the correct position.
 //
 // The original slice is assumed to be already sorted by URL.
-func merge(slice []Wallet, wallets ...Wallet) []Wallet {
-	for _, wallet := range wallets {
-		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(wallet.URL()) >= 0 })
+func merge(slice []AxiaWallet, axiawallets ...AxiaWallet) []AxiaWallet {
+	for _, axiawallet := range axiawallets {
+		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(axiawallet.URL()) >= 0 })
 		if n == len(slice) {
-			slice = append(slice, wallet)
+			slice = append(slice, axiawallet)
 			continue
 		}
-		slice = append(slice[:n], append([]Wallet{wallet}, slice[n:]...)...)
+		slice = append(slice[:n], append([]AxiaWallet{axiawallet}, slice[n:]...)...)
 	}
 	return slice
 }
 
-// drop is the couterpart of merge, which looks up wallets from within the sorted
+// drop is the couterpart of merge, which looks up axiawallets from within the sorted
 // cache and removes the ones specified.
-func drop(slice []Wallet, wallets ...Wallet) []Wallet {
-	for _, wallet := range wallets {
-		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(wallet.URL()) >= 0 })
+func drop(slice []AxiaWallet, axiawallets ...AxiaWallet) []AxiaWallet {
+	for _, axiawallet := range axiawallets {
+		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(axiawallet.URL()) >= 0 })
 		if n == len(slice) {
-			// Wallet not found, may happen during startup
+			// AxiaWallet not found, may happen during startup
 			continue
 		}
 		slice = append(slice[:n], slice[n+1:]...)

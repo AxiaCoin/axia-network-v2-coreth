@@ -35,9 +35,9 @@ import (
 // provides the specified account.
 var ErrUnknownAccount = errors.New("unknown account")
 
-// ErrUnknownWallet is returned for any requested operation for which no backend
-// provides the specified wallet.
-var ErrUnknownWallet = errors.New("unknown wallet")
+// ErrUnknownAxiaWallet is returned for any requested operation for which no backend
+// provides the specified axiawallet.
+var ErrUnknownAxiaWallet = errors.New("unknown axiawallet")
 
 // ErrNotSupported is returned when an operation is requested from an account
 // backend that it does not support.
@@ -47,13 +47,13 @@ var ErrNotSupported = errors.New("not supported")
 // passphrase.
 var ErrInvalidPassphrase = errors.New("invalid password")
 
-// ErrWalletAlreadyOpen is returned if a wallet is attempted to be opened the
+// ErrAxiaWalletAlreadyOpen is returned if a axiawallet is attempted to be opened the
 // second time.
-var ErrWalletAlreadyOpen = errors.New("wallet already open")
+var ErrAxiaWalletAlreadyOpen = errors.New("axiawallet already open")
 
-// ErrWalletClosed is returned if a wallet is attempted to be opened the
+// ErrAxiaWalletClosed is returned if a axiawallet is attempted to be opened the
 // second time.
-var ErrWalletClosed = errors.New("wallet closed")
+var ErrAxiaWalletClosed = errors.New("axiawallet closed")
 
 // AuthNeededError is returned by backends for signing requests where the user
 // is required to provide further authentication before signing can succeed.

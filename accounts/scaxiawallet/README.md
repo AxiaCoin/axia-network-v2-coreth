@@ -1,4 +1,4 @@
-# Using the smartcard wallet
+# Using the smartcard axiawallet
 
 ## Requirements
 
@@ -25,13 +25,13 @@
   Start `geth` with the `console` command. You will notice the following warning:
 
   ```
-  WARN [04-09|16:58:38.898] Failed to open wallet                    url=keycard://044def09                          err="smartcard: pairing password needed"
+  WARN [04-09|16:58:38.898] Failed to open axiawallet                    url=keycard://044def09                          err="smartcard: pairing password needed"
   ```
 
-  Write down the URL (`keycard://044def09` in this example). Then ask `geth` to open the wallet:
+  Write down the URL (`keycard://044def09` in this example). Then ask `geth` to open the axiawallet:
 
   ```
-  > personal.openWallet("keycard://044def09", "pairing password")
+  > personal.openAxiaWallet("keycard://044def09", "pairing password")
   ```
 
   The pairing password has been generated during the card initialization process.
@@ -39,17 +39,17 @@
   The process needs to be repeated once more with the PIN:
 
   ```
-  > personal.openWallet("keycard://044def09", "PIN number")
+  > personal.openAxiaWallet("keycard://044def09", "PIN number")
   ```
   
   If everything goes well, you should see your new account when typing `personal` on the console:
 
   ```
   > personal
-  WARN [04-09|17:02:07.330] Smartcard wallet account derivation failed url=keycard://044def09 err="Unexpected response status Cla=0x80, Ins=0xd1, Sw=0x6985"
+  WARN [04-09|17:02:07.330] Smartcard axiawallet account derivation failed url=keycard://044def09 err="Unexpected response status Cla=0x80, Ins=0xd1, Sw=0x6985"
   {
     listAccounts: [],
-    listWallets: [{
+    listAxiaWallets: [{
         status: "Empty, waiting for initialization",
         url: "keycard://044def09"
     }],
@@ -57,17 +57,17 @@
   }
   ```
 
-  So the communication with the card is working, but there is no key associated with this wallet. Let's create it:
+  So the communication with the card is working, but there is no key associated with this axiawallet. Let's create it:
 
   ```
-  > personal.initializeWallet("keycard://044def09")
+  > personal.initializeAxiaWallet("keycard://044def09")
   "tilt ... impact"
   ```
 
-  You should get a list of words, this is your seed so write them down. Your wallet should now be initialized:
+  You should get a list of words, this is your seed so write them down. Your axiawallet should now be initialized:
 
   ```
-  > personal.listWallets
+  > personal.listAxiaWallets
   [{
     accounts: [{
         address: "0x678b7cd55c61917defb23546a41803c5bfefbc7a",
@@ -83,22 +83,22 @@
 ## Usage
 
   1. Start `geth` with the `console` command
-  2. Check the card's URL by checking `personal.listWallets`:
+  2. Check the card's URL by checking `personal.listAxiaWallets`:
 
 ```
-  listWallets: [{
+  listAxiaWallets: [{
       status: "Online, can derive public keys",
       url: "keycard://a4d73015"
   }]
 ```
 
-  3. Open the wallet, you will be prompted for your pairing password, then PIN:
+  3. Open the axiawallet, you will be prompted for your pairing password, then PIN:
 
 ```
-personal.openWallet("keycard://a4d73015")
+personal.openAxiaWallet("keycard://a4d73015")
 ```
 
-  4. Check that creation was successful by typing e.g. `personal`. Then use it like a regular wallet.
+  4. Check that creation was successful by typing e.g. `personal`. Then use it like a regular axiawallet.
 
 ## Known issues
 

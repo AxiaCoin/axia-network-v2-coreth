@@ -24,7 +24,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-package scwallet
+package scaxiawallet
 
 import (
 	"bytes"
@@ -58,7 +58,7 @@ const (
 	pairingSalt = "Keycard Pairing Password Salt"
 )
 
-// SecureChannelSession enables secure communication with a hardware wallet.
+// SecureChannelSession enables secure communication with a hardware axiawallet.
 type SecureChannelSession struct {
 	card          *pcsc.Card // A handle to the smartcard for communication
 	secret        []byte     // A shared secret generated from our ECDSA keys
@@ -138,7 +138,7 @@ func (s *SecureChannelSession) Unpair() error {
 		return fmt.Errorf("cannot unpair: not paired")
 	}
 
-	_, err := s.transmitEncrypted(claSCWallet, insUnpair, s.PairingIndex, 0, []byte{})
+	_, err := s.transmitEncrypted(claSCAxiaWallet, insUnpair, s.PairingIndex, 0, []byte{})
 	if err != nil {
 		return err
 	}
@@ -183,7 +183,7 @@ func (s *SecureChannelSession) mutuallyAuthenticate() error {
 		return err
 	}
 
-	response, err := s.transmitEncrypted(claSCWallet, insMutuallyAuthenticate, 0, 0, data)
+	response, err := s.transmitEncrypted(claSCAxiaWallet, insMutuallyAuthenticate, 0, 0, data)
 	if err != nil {
 		return err
 	}
@@ -201,7 +201,7 @@ func (s *SecureChannelSession) mutuallyAuthenticate() error {
 // open is an internal method that sends an open APDU.
 func (s *SecureChannelSession) open() (*responseAPDU, error) {
 	return transmit(s.card, &commandAPDU{
-		Cla:  claSCWallet,
+		Cla:  claSCAxiaWallet,
 		Ins:  insOpenSecureChannel,
 		P1:   s.PairingIndex,
 		P2:   0,
@@ -213,7 +213,7 @@ func (s *SecureChannelSession) open() (*responseAPDU, error) {
 // pair is an internal method that sends a pair APDU.
 func (s *SecureChannelSession) pair(p1 uint8, data []byte) (*responseAPDU, error) {
 	return transmit(s.card, &commandAPDU{
-		Cla:  claSCWallet,
+		Cla:  claSCAxiaWallet,
 		Ins:  insPair,
 		P1:   p1,
 		P2:   0,

@@ -228,9 +228,9 @@ func TestSignRace(t *testing.T) {
 	t.Errorf("Account did not lock within the timeout")
 }
 
-// Tests that the wallet notifier loop starts and stops correctly based on the
-// addition and removal of wallet event subscriptions.
-func TestWalletNotifierLifecycle(t *testing.T) {
+// Tests that the axiawallet notifier loop starts and stops correctly based on the
+// addition and removal of axiawallet event subscriptions.
+func TestAxiaWalletNotifierLifecycle(t *testing.T) {
 	// Create a temporary kesytore to test with
 	dir, ks := tmpKeyStore(t, false)
 	defer os.RemoveAll(dir)
@@ -242,10 +242,10 @@ func TestWalletNotifierLifecycle(t *testing.T) {
 	ks.mu.RUnlock()
 
 	if updating {
-		t.Errorf("wallet notifier running without subscribers")
+		t.Errorf("axiawallet notifier running without subscribers")
 	}
-	// Subscribe to the wallet feed and ensure the updater boots up
-	updates := make(chan accounts.WalletEvent)
+	// Subscribe to the axiawallet feed and ensure the updater boots up
+	updates := make(chan accounts.AxiaWalletEvent)
 
 	subs := make([]event.Subscription, 2)
 	for i := 0; i < len(subs); i++ {
@@ -259,7 +259,7 @@ func TestWalletNotifierLifecycle(t *testing.T) {
 		ks.mu.RUnlock()
 
 		if !updating {
-			t.Errorf("sub %d: wallet notifier not running after subscription", i)
+			t.Errorf("sub %d: axiawallet notifier not running after subscription", i)
 		}
 	}
 	// Unsubscribe and ensure the updater terminates eventually
@@ -268,7 +268,7 @@ func TestWalletNotifierLifecycle(t *testing.T) {
 		subs[i].Unsubscribe()
 
 		// Ensure the notifier shuts down at and only at the last close
-		for k := 0; k < int(walletRefreshCycle/(250*time.Millisecond))+2; k++ {
+		for k := 0; k < int(axiawalletRefreshCycle/(250*time.Millisecond))+2; k++ {
 			ks.mu.RLock()
 			updating = ks.updating
 			ks.mu.RUnlock()
@@ -282,25 +282,25 @@ func TestWalletNotifierLifecycle(t *testing.T) {
 			time.Sleep(250 * time.Millisecond)
 		}
 	}
-	t.Errorf("wallet notifier didn't terminate after unsubscribe")
+	t.Errorf("axiawallet notifier didn't terminate after unsubscribe")
 }
 
-type walletEvent struct {
-	accounts.WalletEvent
+type axiawalletEvent struct {
+	accounts.AxiaWalletEvent
 	a accounts.Account
 }
 
-// Tests that wallet notifications and correctly fired when accounts are added
+// Tests that axiawallet notifications and correctly fired when accounts are added
 // or deleted from the keystore.
-func TestWalletNotifications(t *testing.T) {
+func TestAxiaWalletNotifications(t *testing.T) {
 	t.Skip("FLAKY")
 	dir, ks := tmpKeyStore(t, false)
 	defer os.RemoveAll(dir)
 
-	// Subscribe to the wallet feed and collect events.
+	// Subscribe to the axiawallet feed and collect events.
 	var (
-		events  []walletEvent
-		updates = make(chan accounts.WalletEvent)
+		events  []axiawalletEvent
+		updates = make(chan accounts.AxiaWalletEvent)
 		sub     = ks.Subscribe(updates)
 	)
 	defer sub.Unsubscribe()
@@ -308,7 +308,7 @@ func TestWalletNotifications(t *testing.T) {
 		for {
 			select {
 			case ev := <-updates:
-				events = append(events, walletEvent{ev, ev.Wallet.Accounts()[0]})
+				events = append(events, axiawalletEvent{ev, ev.AxiaWallet.Accounts()[0]})
 			case <-sub.Err():
 				close(updates)
 				return
@@ -319,17 +319,17 @@ func TestWalletNotifications(t *testing.T) {
 	// Randomly add and remove accounts.
 	var (
 		live       = make(map[common.Address]accounts.Account)
-		wantEvents []walletEvent
+		wantEvents []axiawalletEvent
 	)
 	for i := 0; i < 1024; i++ {
 		if create := len(live) == 0 || rand.Int()%4 > 0; create {
-			// Add a new account and ensure wallet notifications arrives
+			// Add a new account and ensure axiawallet notifications arrives
 			account, err := ks.NewAccount("")
 			if err != nil {
 				t.Fatalf("failed to create test account: %v", err)
 			}
 			live[account.Address] = account
-			wantEvents = append(wantEvents, walletEvent{accounts.WalletEvent{Kind: accounts.WalletArrived}, account})
+			wantEvents = append(wantEvents, axiawalletEvent{accounts.AxiaWalletEvent{Kind: accounts.AxiaWalletArrived}, account})
 		} else {
 			// Delete a random account.
 			var account accounts.Account
@@ -341,16 +341,16 @@ func TestWalletNotifications(t *testing.T) {
 				t.Fatalf("failed to delete test account: %v", err)
 			}
 			delete(live, account.Address)
-			wantEvents = append(wantEvents, walletEvent{accounts.WalletEvent{Kind: accounts.WalletDropped}, account})
+			wantEvents = append(wantEvents, axiawalletEvent{accounts.AxiaWalletEvent{Kind: accounts.AxiaWalletDropped}, account})
 		}
 	}
 
 	// Shut down the event collector and check events.
 	sub.Unsubscribe()
 	for ev := range updates {
-		events = append(events, walletEvent{ev, ev.Wallet.Accounts()[0]})
+		events = append(events, axiawalletEvent{ev, ev.AxiaWallet.Accounts()[0]})
 	}
-	checkAccounts(t, live, ks.Wallets())
+	checkAccounts(t, live, ks.AxiaWallets())
 	checkEvents(t, wantEvents, events)
 }
 
@@ -436,10 +436,10 @@ func TestImportRace(t *testing.T) {
 	}
 }
 
-// checkAccounts checks that all known live accounts are present in the wallet list.
-func checkAccounts(t *testing.T, live map[common.Address]accounts.Account, wallets []accounts.Wallet) {
-	if len(live) != len(wallets) {
-		t.Errorf("wallet list doesn't match required accounts: have %d, want %d", len(wallets), len(live))
+// checkAccounts checks that all known live accounts are present in the axiawallet list.
+func checkAccounts(t *testing.T, live map[common.Address]accounts.Account, axiawallets []accounts.AxiaWallet) {
+	if len(live) != len(axiawallets) {
+		t.Errorf("axiawallet list doesn't match required accounts: have %d, want %d", len(axiawallets), len(live))
 		return
 	}
 	liveList := make([]accounts.Account, 0, len(live))
@@ -447,17 +447,17 @@ func checkAccounts(t *testing.T, live map[common.Address]accounts.Account, walle
 		liveList = append(liveList, account)
 	}
 	sort.Sort(accountsByURL(liveList))
-	for j, wallet := range wallets {
-		if accs := wallet.Accounts(); len(accs) != 1 {
-			t.Errorf("wallet %d: contains invalid number of accounts: have %d, want 1", j, len(accs))
+	for j, axiawallet := range axiawallets {
+		if accs := axiawallet.Accounts(); len(accs) != 1 {
+			t.Errorf("axiawallet %d: contains invalid number of accounts: have %d, want 1", j, len(accs))
 		} else if accs[0] != liveList[j] {
-			t.Errorf("wallet %d: account mismatch: have %v, want %v", j, accs[0], liveList[j])
+			t.Errorf("axiawallet %d: account mismatch: have %v, want %v", j, accs[0], liveList[j])
 		}
 	}
 }
 
 // checkEvents checks that all events in 'want' are present in 'have'. Events may be present multiple times.
-func checkEvents(t *testing.T, want []walletEvent, have []walletEvent) {
+func checkEvents(t *testing.T, want []axiawalletEvent, have []axiawalletEvent) {
 	for _, wantEv := range want {
 		nmatch := 0
 		for ; len(have) > 0; nmatch++ {

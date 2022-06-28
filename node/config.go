@@ -236,7 +236,7 @@ func makeAccountManager(conf *Config) (*accounts.Manager, error) {
 	}
 	if len(backends) == 0 {
 		// For now, we're using EITHER external signer OR local signers.
-		// If/when we implement some form of lockfile for USB and keystore wallets,
+		// If/when we implement some form of lockfile for USB and keystore axiawallets,
 		// we can have both, but it's very confusing for the user to see the same
 		// accounts in both externally and locally, plus very racey.
 		backends = append(backends, keystore.NewKeyStore(keydir, scryptN, scryptP))

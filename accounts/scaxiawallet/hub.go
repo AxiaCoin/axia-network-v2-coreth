@@ -24,23 +24,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// This package implements support for smartcard-based hardware wallets such as
-// the one written by Status: https://github.com/status-im/hardware-wallet
+// This package implements support for smartcard-based hardware axiawallets such as
+// the one written by Status: https://github.com/status-im/hardware-axiawallet
 //
-// This implementation of smartcard wallets have a different interaction process
-// to other types of hardware wallet. The process works like this:
+// This implementation of smartcard axiawallets have a different interaction process
+// to other types of hardware axiawallet. The process works like this:
 //
 // 1. (First use with a given client) Establish a pairing between hardware
-//    wallet and client. This requires a secret value called a 'pairing password'.
-//    You can pair with an unpaired wallet with `personal.openWallet(URI, pairing password)`.
-// 2. (First use only) Initialize the wallet, which generates a keypair, stores
-//    it on the wallet, and returns it so the user can back it up. You can
-//    initialize a wallet with `personal.initializeWallet(URI)`.
-// 3. Connect to the wallet using the pairing information established in step 1.
-//    You can connect to a paired wallet with `personal.openWallet(URI, PIN)`.
-// 4. Interact with the wallet as normal.
+//    axiawallet and client. This requires a secret value called a 'pairing password'.
+//    You can pair with an unpaired axiawallet with `personal.openAxiaWallet(URI, pairing password)`.
+// 2. (First use only) Initialize the axiawallet, which generates a keypair, stores
+//    it on the axiawallet, and returns it so the user can back it up. You can
+//    initialize a axiawallet with `personal.initializeAxiaWallet(URI)`.
+// 3. Connect to the axiawallet using the pairing information established in step 1.
+//    You can connect to a paired axiawallet with `personal.openAxiaWallet(URI, PIN)`.
+// 4. Interact with the axiawallet as normal.
 
-package scwallet
+package scaxiawallet
 
 import (
 	"encoding/json"
@@ -58,14 +58,14 @@ import (
 	pcsc "github.com/gballet/go-libpcsclite"
 )
 
-// Scheme is the URI prefix for smartcard wallets.
+// Scheme is the URI prefix for smartcard axiawallets.
 const Scheme = "keycard"
 
-// refreshCycle is the maximum time between wallet refreshes (if USB hotplug
+// refreshCycle is the maximum time between axiawallet refreshes (if USB hotplug
 // notifications don't work).
 const refreshCycle = time.Second
 
-// refreshThrottling is the minimum time between wallet refreshes to avoid thrashing.
+// refreshThrottling is the minimum time between axiawallet refreshes to avoid thrashing.
 const refreshThrottling = 500 * time.Millisecond
 
 // smartcardPairing contains information about a smart card we have paired with
@@ -77,17 +77,17 @@ type smartcardPairing struct {
 	Accounts     map[common.Address]accounts.DerivationPath `json:"accounts"`
 }
 
-// Hub is a accounts.Backend that can find and handle generic PC/SC hardware wallets.
+// Hub is a accounts.Backend that can find and handle generic PC/SC hardware axiawallets.
 type Hub struct {
-	scheme string // Protocol scheme prefixing account and wallet URLs.
+	scheme string // Protocol scheme prefixing account and axiawallet URLs.
 
 	context  *pcsc.Client
 	datadir  string
 	pairings map[string]smartcardPairing
 
-	refreshed   time.Time               // Time instance when the list of wallets was last refreshed
-	wallets     map[string]*Wallet      // Mapping from reader names to wallet instances
-	updateFeed  event.Feed              // Event feed to notify wallet additions/removals
+	refreshed   time.Time               // Time instance when the list of axiawallets was last refreshed
+	axiawallets     map[string]*AxiaWallet      // Mapping from reader names to axiawallet instances
+	updateFeed  event.Feed              // Event feed to notify axiawallet additions/removals
 	updateScope event.SubscriptionScope // Subscription scope tracking current live listeners
 	updating    bool                    // Whether the event notification loop is running
 
@@ -145,23 +145,23 @@ func (hub *Hub) writePairings() error {
 	return nil
 }
 
-func (hub *Hub) pairing(wallet *Wallet) *smartcardPairing {
-	if pairing, ok := hub.pairings[string(wallet.PublicKey)]; ok {
+func (hub *Hub) pairing(axiawallet *AxiaWallet) *smartcardPairing {
+	if pairing, ok := hub.pairings[string(axiawallet.PublicKey)]; ok {
 		return &pairing
 	}
 	return nil
 }
 
-func (hub *Hub) setPairing(wallet *Wallet, pairing *smartcardPairing) error {
+func (hub *Hub) setPairing(axiawallet *AxiaWallet, pairing *smartcardPairing) error {
 	if pairing == nil {
-		delete(hub.pairings, string(wallet.PublicKey))
+		delete(hub.pairings, string(axiawallet.PublicKey))
 	} else {
-		hub.pairings[string(wallet.PublicKey)] = *pairing
+		hub.pairings[string(axiawallet.PublicKey)] = *pairing
 	}
 	return hub.writePairings()
 }
 
-// NewHub creates a new hardware wallet manager for smartcards.
+// NewHub creates a new hardware axiawallet manager for smartcards.
 func NewHub(daemonPath string, scheme string, datadir string) (*Hub, error) {
 	context, err := pcsc.EstablishContext(daemonPath, pcsc.ScopeSystem)
 	if err != nil {
@@ -171,37 +171,37 @@ func NewHub(daemonPath string, scheme string, datadir string) (*Hub, error) {
 		scheme:  scheme,
 		context: context,
 		datadir: datadir,
-		wallets: make(map[string]*Wallet),
+		axiawallets: make(map[string]*AxiaWallet),
 		quit:    make(chan chan error),
 	}
 	if err := hub.readPairings(); err != nil {
 		return nil, err
 	}
-	hub.refreshWallets()
+	hub.refreshAxiaWallets()
 	return hub, nil
 }
 
-// Wallets implements accounts.Backend, returning all the currently tracked smart
-// cards that appear to be hardware wallets.
-func (hub *Hub) Wallets() []accounts.Wallet {
-	// Make sure the list of wallets is up to date
-	hub.refreshWallets()
+// AxiaWallets implements accounts.Backend, returning all the currently tracked smart
+// cards that appear to be hardware axiawallets.
+func (hub *Hub) AxiaWallets() []accounts.AxiaWallet {
+	// Make sure the list of axiawallets is up to date
+	hub.refreshAxiaWallets()
 
 	hub.stateLock.RLock()
 	defer hub.stateLock.RUnlock()
 
-	cpy := make([]accounts.Wallet, 0, len(hub.wallets))
-	for _, wallet := range hub.wallets {
-		cpy = append(cpy, wallet)
+	cpy := make([]accounts.AxiaWallet, 0, len(hub.axiawallets))
+	for _, axiawallet := range hub.axiawallets {
+		cpy = append(cpy, axiawallet)
 	}
-	sort.Sort(accounts.WalletsByURL(cpy))
+	sort.Sort(accounts.AxiaWalletsByURL(cpy))
 	return cpy
 }
 
-// refreshWallets scans the devices attached to the machine and updates the
-// list of wallets based on the found devices.
-func (hub *Hub) refreshWallets() {
-	// Don't scan the USB like crazy it the user fetches wallets in a loop
+// refreshAxiaWallets scans the devices attached to the machine and updates the
+// list of axiawallets based on the found devices.
+func (hub *Hub) refreshAxiaWallets() {
+	// Don't scan the USB like crazy it the user fetches axiawallets in a loop
 	hub.stateLock.RLock()
 	elapsed := time.Since(hub.refreshed)
 	hub.stateLock.RUnlock()
@@ -220,10 +220,10 @@ func (hub *Hub) refreshWallets() {
 			return
 		}
 	}
-	// Transform the current list of wallets into the new one
+	// Transform the current list of axiawallets into the new one
 	hub.stateLock.Lock()
 
-	events := []accounts.WalletEvent{}
+	events := []accounts.AxiaWalletEvent{}
 	seen := make(map[string]struct{})
 
 	for _, reader := range readers {
@@ -231,13 +231,13 @@ func (hub *Hub) refreshWallets() {
 		seen[reader] = struct{}{}
 
 		// If we already know about this card, skip to the next reader, otherwise clean up
-		if wallet, ok := hub.wallets[reader]; ok {
-			if err := wallet.ping(); err == nil {
+		if axiawallet, ok := hub.axiawallets[reader]; ok {
+			if err := axiawallet.ping(); err == nil {
 				continue
 			}
-			wallet.Close()
-			events = append(events, accounts.WalletEvent{Wallet: wallet, Kind: accounts.WalletDropped})
-			delete(hub.wallets, reader)
+			axiawallet.Close()
+			events = append(events, accounts.AxiaWalletEvent{AxiaWallet: axiawallet, Kind: accounts.AxiaWalletDropped})
+			delete(hub.axiawallets, reader)
 		}
 		// New card detected, try to connect to it
 		card, err := hub.context.Connect(reader, pcsc.ShareShared, pcsc.ProtocolAny)
@@ -245,22 +245,22 @@ func (hub *Hub) refreshWallets() {
 			log.Debug("Failed to open smart card", "reader", reader, "err", err)
 			continue
 		}
-		wallet := NewWallet(hub, card)
-		if err = wallet.connect(); err != nil {
+		axiawallet := NewAxiaWallet(hub, card)
+		if err = axiawallet.connect(); err != nil {
 			log.Debug("Failed to connect to smart card", "reader", reader, "err", err)
 			card.Disconnect(pcsc.LeaveCard)
 			continue
 		}
-		// Card connected, start tracking in amongs the wallets
-		hub.wallets[reader] = wallet
-		events = append(events, accounts.WalletEvent{Wallet: wallet, Kind: accounts.WalletArrived})
+		// Card connected, start tracking in amongs the axiawallets
+		hub.axiawallets[reader] = axiawallet
+		events = append(events, accounts.AxiaWalletEvent{AxiaWallet: axiawallet, Kind: accounts.AxiaWalletArrived})
 	}
-	// Remove any wallets no longer present
-	for reader, wallet := range hub.wallets {
+	// Remove any axiawallets no longer present
+	for reader, axiawallet := range hub.axiawallets {
 		if _, ok := seen[reader]; !ok {
-			wallet.Close()
-			events = append(events, accounts.WalletEvent{Wallet: wallet, Kind: accounts.WalletDropped})
-			delete(hub.wallets, reader)
+			axiawallet.Close()
+			events = append(events, accounts.AxiaWalletEvent{AxiaWallet: axiawallet, Kind: accounts.AxiaWalletDropped})
+			delete(hub.axiawallets, reader)
 		}
 	}
 	hub.refreshed = time.Now()
@@ -272,8 +272,8 @@ func (hub *Hub) refreshWallets() {
 }
 
 // Subscribe implements accounts.Backend, creating an async subscription to
-// receive notifications on the addition or removal of smart card wallets.
-func (hub *Hub) Subscribe(sink chan<- accounts.WalletEvent) event.Subscription {
+// receive notifications on the addition or removal of smart card axiawallets.
+func (hub *Hub) Subscribe(sink chan<- accounts.AxiaWalletEvent) event.Subscription {
 	// We need the mutex to reliably start/stop the update loop
 	hub.stateLock.Lock()
 	defer hub.stateLock.Unlock()
@@ -289,16 +289,16 @@ func (hub *Hub) Subscribe(sink chan<- accounts.WalletEvent) event.Subscription {
 	return sub
 }
 
-// updater is responsible for maintaining an up-to-date list of wallets managed
-// by the smart card hub, and for firing wallet addition/removal events.
+// updater is responsible for maintaining an up-to-date list of axiawallets managed
+// by the smart card hub, and for firing axiawallet addition/removal events.
 func (hub *Hub) updater() {
 	for {
 		// TODO: Wait for a USB hotplug event (not supported yet) or a refresh timeout
 		// <-hub.changes
 		time.Sleep(refreshCycle)
 
-		// Run the wallet refresher
-		hub.refreshWallets()
+		// Run the axiawallet refresher
+		hub.refreshAxiaWallets()
 
 		// If all our subscribers left, stop the updater
 		hub.stateLock.Lock()

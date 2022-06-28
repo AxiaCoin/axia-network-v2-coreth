@@ -37,7 +37,7 @@ import (
 	"github.com/axiacoin/axia-network-v2/ids"
 	"github.com/axiacoin/axia-network-v2-coreth/accounts"
 	"github.com/axiacoin/axia-network-v2-coreth/accounts/keystore"
-	"github.com/axiacoin/axia-network-v2-coreth/accounts/scwallet"
+	"github.com/axiacoin/axia-network-v2-coreth/accounts/scaxiawallet"
 	"github.com/axiacoin/axia-network-v2-coreth/core"
 	"github.com/axiacoin/axia-network-v2-coreth/core/state"
 	"github.com/axiacoin/axia-network-v2-coreth/core/types"
@@ -274,40 +274,40 @@ func (s *PrivateAccountAPI) ListAccounts() []common.Address {
 	return s.am.Accounts()
 }
 
-// rawWallet is a JSON representation of an accounts.Wallet interface, with its
+// rawAxiaWallet is a JSON representation of an accounts.AxiaWallet interface, with its
 // data contents extracted into plain fields.
-type rawWallet struct {
+type rawAxiaWallet struct {
 	URL      string             `json:"url"`
 	Status   string             `json:"status"`
 	Failure  string             `json:"failure,omitempty"`
 	Accounts []accounts.Account `json:"accounts,omitempty"`
 }
 
-// ListWallets will return a list of wallets this node manages.
-func (s *PrivateAccountAPI) ListWallets() []rawWallet {
-	wallets := make([]rawWallet, 0) // return [] instead of nil if empty
-	for _, wallet := range s.am.Wallets() {
-		status, failure := wallet.Status()
+// ListAxiaWallets will return a list of axiawallets this node manages.
+func (s *PrivateAccountAPI) ListAxiaWallets() []rawAxiaWallet {
+	axiawallets := make([]rawAxiaWallet, 0) // return [] instead of nil if empty
+	for _, axiawallet := range s.am.AxiaWallets() {
+		status, failure := axiawallet.Status()
 
-		raw := rawWallet{
-			URL:      wallet.URL().String(),
+		raw := rawAxiaWallet{
+			URL:      axiawallet.URL().String(),
 			Status:   status,
-			Accounts: wallet.Accounts(),
+			Accounts: axiawallet.Accounts(),
 		}
 		if failure != nil {
 			raw.Failure = failure.Error()
 		}
-		wallets = append(wallets, raw)
+		axiawallets = append(axiawallets, raw)
 	}
-	return wallets
+	return axiawallets
 }
 
-// OpenWallet initiates a hardware wallet opening procedure, establishing a USB
+// OpenAxiaWallet initiates a hardware axiawallet opening procedure, establishing a USB
 // connection and attempting to authenticate via the provided passphrase. Note,
 // the method may return an extra challenge requiring a second open (e.g. the
 // Trezor PIN matrix challenge).
-func (s *PrivateAccountAPI) OpenWallet(url string, passphrase *string) error {
-	wallet, err := s.am.Wallet(url)
+func (s *PrivateAccountAPI) OpenAxiaWallet(url string, passphrase *string) error {
+	axiawallet, err := s.am.AxiaWallet(url)
 	if err != nil {
 		return err
 	}
@@ -315,13 +315,13 @@ func (s *PrivateAccountAPI) OpenWallet(url string, passphrase *string) error {
 	if passphrase != nil {
 		pass = *passphrase
 	}
-	return wallet.Open(pass)
+	return axiawallet.Open(pass)
 }
 
-// DeriveAccount requests a HD wallet to derive a new account, optionally pinning
+// DeriveAccount requests a HD axiawallet to derive a new account, optionally pinning
 // it for later reuse.
 func (s *PrivateAccountAPI) DeriveAccount(url string, path string, pin *bool) (accounts.Account, error) {
-	wallet, err := s.am.Wallet(url)
+	axiawallet, err := s.am.AxiaWallet(url)
 	if err != nil {
 		return accounts.Account{}, err
 	}
@@ -332,7 +332,7 @@ func (s *PrivateAccountAPI) DeriveAccount(url string, path string, pin *bool) (a
 	if pin == nil {
 		pin = new(bool)
 	}
-	return wallet.Derive(derivPath, *pin)
+	return axiawallet.Derive(derivPath, *pin)
 }
 
 // NewAccount will create a new account and returns the address for the new account.
@@ -417,9 +417,9 @@ func (s *PrivateAccountAPI) LockAccount(addr common.Address) bool {
 // NOTE: the caller needs to ensure that the nonceLock is held, if applicable,
 // and release it after the transaction has been submitted to the tx pool
 func (s *PrivateAccountAPI) signTransaction(ctx context.Context, args *TransactionArgs, passwd string) (*types.Transaction, error) {
-	// Look up the wallet containing the requested signer
+	// Look up the axiawallet containing the requested signer
 	account := accounts.Account{Address: args.from()}
-	wallet, err := s.am.Find(account)
+	axiawallet, err := s.am.Find(account)
 	if err != nil {
 		return nil, err
 	}
@@ -427,10 +427,10 @@ func (s *PrivateAccountAPI) signTransaction(ctx context.Context, args *Transacti
 	if err := args.setDefaults(ctx, s.b); err != nil {
 		return nil, err
 	}
-	// Assemble the transaction and sign with the wallet
+	// Assemble the transaction and sign with the axiawallet
 	tx := args.toTransaction()
 
-	return wallet.SignTxWithPassphrase(account, passwd, tx, s.b.ChainConfig().ChainID)
+	return axiawallet.SignTxWithPassphrase(account, passwd, tx, s.b.ChainConfig().ChainID)
 }
 
 // SendTransaction will create a transaction from the given arguments and
@@ -497,15 +497,15 @@ func (s *PrivateAccountAPI) SignTransaction(ctx context.Context, args Transactio
 //
 // https://github.com/ethereum/go-ethereum/wiki/Management-APIs#personal_sign
 func (s *PrivateAccountAPI) Sign(ctx context.Context, data hexutil.Bytes, addr common.Address, passwd string) (hexutil.Bytes, error) {
-	// Look up the wallet containing the requested signer
+	// Look up the axiawallet containing the requested signer
 	account := accounts.Account{Address: addr}
 
-	wallet, err := s.b.AccountManager().Find(account)
+	axiawallet, err := s.b.AccountManager().Find(account)
 	if err != nil {
 		return nil, err
 	}
-	// Assemble sign the data with the wallet
-	signature, err := wallet.SignTextWithPassphrase(account, passwd, data)
+	// Assemble sign the data with the axiawallet
+	signature, err := axiawallet.SignTextWithPassphrase(account, passwd, data)
 	if err != nil {
 		log.Warn("Failed data sign attempt", "address", addr, "err", err)
 		return nil, err
@@ -546,9 +546,9 @@ func (s *PrivateAccountAPI) SignAndSendTransaction(ctx context.Context, args Tra
 	return s.SendTransaction(ctx, args, passwd)
 }
 
-// InitializeWallet initializes a new wallet at the provided URL, by generating and returning a new private key.
-func (s *PrivateAccountAPI) InitializeWallet(ctx context.Context, url string) (string, error) {
-	wallet, err := s.am.Wallet(url)
+// InitializeAxiaWallet initializes a new axiawallet at the provided URL, by generating and returning a new private key.
+func (s *PrivateAccountAPI) InitializeAxiaWallet(ctx context.Context, url string) (string, error) {
+	axiawallet, err := s.am.AxiaWallet(url)
 	if err != nil {
 		return "", err
 	}
@@ -565,26 +565,26 @@ func (s *PrivateAccountAPI) InitializeWallet(ctx context.Context, url string) (s
 
 	seed := bip39.NewSeed(mnemonic, "")
 
-	switch wallet := wallet.(type) {
-	case *scwallet.Wallet:
-		return mnemonic, wallet.Initialize(seed)
+	switch axiawallet := axiawallet.(type) {
+	case *scaxiawallet.AxiaWallet:
+		return mnemonic, axiawallet.Initialize(seed)
 	default:
-		return "", fmt.Errorf("specified wallet does not support initialization")
+		return "", fmt.Errorf("specified axiawallet does not support initialization")
 	}
 }
 
-// Unpair deletes a pairing between wallet and geth.
+// Unpair deletes a pairing between axiawallet and geth.
 func (s *PrivateAccountAPI) Unpair(ctx context.Context, url string, pin string) error {
-	wallet, err := s.am.Wallet(url)
+	axiawallet, err := s.am.AxiaWallet(url)
 	if err != nil {
 		return err
 	}
 
-	switch wallet := wallet.(type) {
-	case *scwallet.Wallet:
-		return wallet.Unpair([]byte(pin))
+	switch axiawallet := axiawallet.(type) {
+	case *scaxiawallet.AxiaWallet:
+		return axiawallet.Unpair([]byte(pin))
 	default:
-		return fmt.Errorf("specified wallet does not support pairing")
+		return fmt.Errorf("specified axiawallet does not support pairing")
 	}
 }
 
@@ -1705,15 +1705,15 @@ func (s *PublicTransactionPoolAPI) GetTransactionReceipt(ctx context.Context, ha
 
 // sign is a helper function that signs a transaction with the private key of the given address.
 func (s *PublicTransactionPoolAPI) sign(addr common.Address, tx *types.Transaction) (*types.Transaction, error) {
-	// Look up the wallet containing the requested signer
+	// Look up the axiawallet containing the requested signer
 	account := accounts.Account{Address: addr}
 
-	wallet, err := s.b.AccountManager().Find(account)
+	axiawallet, err := s.b.AccountManager().Find(account)
 	if err != nil {
 		return nil, err
 	}
-	// Request the wallet to sign the transaction
-	return wallet.SignTx(account, tx, s.b.ChainConfig().ChainID)
+	// Request the axiawallet to sign the transaction
+	return axiawallet.SignTx(account, tx, s.b.ChainConfig().ChainID)
 }
 
 // SubmitTransaction is a helper function that submits tx to txPool and logs a message.
@@ -1750,10 +1750,10 @@ func SubmitTransaction(ctx context.Context, b Backend, tx *types.Transaction) (c
 // SendTransaction creates a transaction for the given argument, sign it and submit it to the
 // transaction pool.
 func (s *PublicTransactionPoolAPI) SendTransaction(ctx context.Context, args TransactionArgs) (common.Hash, error) {
-	// Look up the wallet containing the requested signer
+	// Look up the axiawallet containing the requested signer
 	account := accounts.Account{Address: args.from()}
 
-	wallet, err := s.b.AccountManager().Find(account)
+	axiawallet, err := s.b.AccountManager().Find(account)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -1769,10 +1769,10 @@ func (s *PublicTransactionPoolAPI) SendTransaction(ctx context.Context, args Tra
 	if err := args.setDefaults(ctx, s.b); err != nil {
 		return common.Hash{}, err
 	}
-	// Assemble the transaction and sign with the wallet
+	// Assemble the transaction and sign with the axiawallet
 	tx := args.toTransaction()
 
-	signed, err := wallet.SignTx(account, tx, s.b.ChainConfig().ChainID)
+	signed, err := axiawallet.SignTx(account, tx, s.b.ChainConfig().ChainID)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -1816,15 +1816,15 @@ func (s *PublicTransactionPoolAPI) SendRawTransaction(ctx context.Context, input
 //
 // https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_sign
 func (s *PublicTransactionPoolAPI) Sign(addr common.Address, data hexutil.Bytes) (hexutil.Bytes, error) {
-	// Look up the wallet containing the requested signer
+	// Look up the axiawallet containing the requested signer
 	account := accounts.Account{Address: addr}
 
-	wallet, err := s.b.AccountManager().Find(account)
+	axiawallet, err := s.b.AccountManager().Find(account)
 	if err != nil {
 		return nil, err
 	}
-	// Sign the requested hash with the wallet
-	signature, err := wallet.SignText(account, data)
+	// Sign the requested hash with the axiawallet
+	signature, err := axiawallet.SignText(account, data)
 	if err == nil {
 		signature[64] += 27 // Transform V from 0/1 to 27/28 according to the yellow paper
 	}
@@ -1877,8 +1877,8 @@ func (s *PublicTransactionPoolAPI) PendingTransactions() ([]*RPCTransaction, err
 		return nil, err
 	}
 	accounts := make(map[common.Address]struct{})
-	for _, wallet := range s.b.AccountManager().Wallets() {
-		for _, account := range wallet.Accounts() {
+	for _, axiawallet := range s.b.AccountManager().AxiaWallets() {
+		for _, account := range axiawallet.Accounts() {
 			accounts[account.Address] = struct{}{}
 		}
 	}
