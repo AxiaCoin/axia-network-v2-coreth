@@ -37,9 +37,9 @@ func createImportTxOptions(t *testing.T, vm *VM, sharedMemory *atomic.Memory) []
 		t.Fatal(err)
 	}
 
-	xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.XChainID)
+	swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
 	inputID := utxo.InputID()
-	if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
+	if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
 		Key:   inputID[:],
 		Value: utxoBytes,
 		Traits: [][]byte{
@@ -51,7 +51,7 @@ func createImportTxOptions(t *testing.T, vm *VM, sharedMemory *atomic.Memory) []
 
 	importTxs := make([]*Tx, 0, 3)
 	for _, ethAddr := range testEthAddrs {
-		importTx, err := vm.newImportTx(vm.ctx.XChainID, ethAddr, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+		importTx, err := vm.newImportTx(vm.ctx.SwapChainID, ethAddr, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -69,7 +69,7 @@ func TestImportTxVerify(t *testing.T) {
 	importTx := &UnsignedImportTx{
 		NetworkID:    ctx.NetworkID,
 		BlockchainID: ctx.ChainID,
-		SourceChain:  ctx.XChainID,
+		SourceChain:  ctx.SwapChainID,
 		ImportedInputs: []*avax.TransferableInput{
 			{
 				UTXOID: avax.UTXOID{
@@ -342,7 +342,7 @@ func TestNewImportTx(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		tx, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+		tx, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -390,7 +390,7 @@ func TestNewImportTx(t *testing.T) {
 		// Ensure that the UTXO has been removed from shared memory within Accept
 		addrSet := ids.ShortSet{}
 		addrSet.Add(testShortIDAddrs[0])
-		utxos, _, _, err := vm.GetAtomicUTXOs(vm.ctx.XChainID, addrSet, ids.ShortEmpty, ids.Empty, -1)
+		utxos, _, _, err := vm.GetAtomicUTXOs(vm.ctx.SwapChainID, addrSet, ids.ShortEmpty, ids.Empty, -1)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -447,7 +447,7 @@ func TestImportTxGasCost(t *testing.T) {
 	avaxAssetID := ids.GenerateTestID()
 	antAssetID := ids.GenerateTestID()
 	chainID := ids.GenerateTestID()
-	xChainID := ids.GenerateTestID()
+	swapChainID := ids.GenerateTestID()
 	networkID := uint32(5)
 	importAmount := uint64(5000000)
 
@@ -464,7 +464,7 @@ func TestImportTxGasCost(t *testing.T) {
 			UnsignedImportTx: &UnsignedImportTx{
 				NetworkID:    networkID,
 				BlockchainID: chainID,
-				SourceChain:  xChainID,
+				SourceChain:  swapChainID,
 				ImportedInputs: []*avax.TransferableInput{{
 					UTXOID: avax.UTXOID{TxID: ids.GenerateTestID()},
 					Asset:  avax.Asset{ID: avaxAssetID},
@@ -488,7 +488,7 @@ func TestImportTxGasCost(t *testing.T) {
 			UnsignedImportTx: &UnsignedImportTx{
 				NetworkID:    networkID,
 				BlockchainID: chainID,
-				SourceChain:  xChainID,
+				SourceChain:  swapChainID,
 				ImportedInputs: []*avax.TransferableInput{{
 					UTXOID: avax.UTXOID{TxID: ids.GenerateTestID()},
 					Asset:  avax.Asset{ID: avaxAssetID},
@@ -512,7 +512,7 @@ func TestImportTxGasCost(t *testing.T) {
 			UnsignedImportTx: &UnsignedImportTx{
 				NetworkID:    networkID,
 				BlockchainID: chainID,
-				SourceChain:  xChainID,
+				SourceChain:  swapChainID,
 				ImportedInputs: []*avax.TransferableInput{{
 					UTXOID: avax.UTXOID{TxID: ids.GenerateTestID()},
 					Asset:  avax.Asset{ID: avaxAssetID},
@@ -537,7 +537,7 @@ func TestImportTxGasCost(t *testing.T) {
 			UnsignedImportTx: &UnsignedImportTx{
 				NetworkID:    networkID,
 				BlockchainID: chainID,
-				SourceChain:  xChainID,
+				SourceChain:  swapChainID,
 				ImportedInputs: []*avax.TransferableInput{
 					{
 						UTXOID: avax.UTXOID{TxID: ids.GenerateTestID()},
@@ -573,7 +573,7 @@ func TestImportTxGasCost(t *testing.T) {
 			UnsignedImportTx: &UnsignedImportTx{
 				NetworkID:    networkID,
 				BlockchainID: chainID,
-				SourceChain:  xChainID,
+				SourceChain:  swapChainID,
 				ImportedInputs: []*avax.TransferableInput{
 					{
 						UTXOID: avax.UTXOID{TxID: ids.GenerateTestID()},
@@ -614,7 +614,7 @@ func TestImportTxGasCost(t *testing.T) {
 			UnsignedImportTx: &UnsignedImportTx{
 				NetworkID:    networkID,
 				BlockchainID: chainID,
-				SourceChain:  xChainID,
+				SourceChain:  swapChainID,
 				ImportedInputs: []*avax.TransferableInput{{
 					UTXOID: avax.UTXOID{TxID: ids.GenerateTestID()},
 					Asset:  avax.Asset{ID: avaxAssetID},
@@ -638,7 +638,7 @@ func TestImportTxGasCost(t *testing.T) {
 			UnsignedImportTx: &UnsignedImportTx{
 				NetworkID:    networkID,
 				BlockchainID: chainID,
-				SourceChain:  xChainID,
+				SourceChain:  swapChainID,
 				ImportedInputs: []*avax.TransferableInput{
 					{
 						UTXOID: avax.UTXOID{TxID: ids.GenerateTestID()},
@@ -782,7 +782,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: avax.UTXOID{
 							TxID: ids.GenerateTestID(),
@@ -811,7 +811,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: avax.UTXOID{
 							TxID: ids.GenerateTestID(),
@@ -838,9 +838,9 @@ func TestImportTxSemanticVerify(t *testing.T) {
 		"garbage UTXO": {
 			setup: func(t *testing.T, vm *VM, sharedMemory *atomic.Memory) *Tx {
 				utxoID := avax.UTXOID{TxID: ids.GenerateTestID()}
-				xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.XChainID)
+				swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
 				inputID := utxoID.InputID()
-				if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
+				if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
 					Key:   inputID[:],
 					Value: []byte("hey there"),
 					Traits: [][]byte{
@@ -853,7 +853,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxoID,
 						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
@@ -887,7 +887,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
 						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID}, // Use a different assetID then the actual UTXO
@@ -920,7 +920,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
 						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
@@ -954,7 +954,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
 						Asset:  avax.Asset{ID: assetID},
@@ -987,7 +987,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
 						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
@@ -1020,7 +1020,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
 						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
@@ -1054,7 +1054,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
 						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
@@ -1107,7 +1107,7 @@ func TestImportTxEVMStateTransfer(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
 						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
@@ -1152,7 +1152,7 @@ func TestImportTxEVMStateTransfer(t *testing.T) {
 				tx := &Tx{UnsignedAtomicTx: &UnsignedImportTx{
 					NetworkID:    vm.ctx.NetworkID,
 					BlockchainID: vm.ctx.ChainID,
-					SourceChain:  vm.ctx.XChainID,
+					SourceChain:  vm.ctx.SwapChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
 						Asset:  avax.Asset{ID: assetID},

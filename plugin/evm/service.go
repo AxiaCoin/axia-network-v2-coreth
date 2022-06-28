@@ -203,8 +203,8 @@ func (service *AvaxAPI) ImportAVAX(_ *http.Request, args *ImportArgs, response *
 	return service.Import(nil, args, response)
 }
 
-// Import issues a transaction to import AVAX from the X-chain. The AVAX
-// must have already been exported from the X-Chain.
+// Import issues a transaction to import AVAX from the Swap-chain. The AVAX
+// must have already been exported from the Swap-Chain.
 func (service *AvaxAPI) Import(_ *http.Request, args *ImportArgs, response *api.JSONTxID) error {
 	log.Info("EVM: ImportAVAX called")
 
@@ -269,8 +269,8 @@ type ExportAVAXArgs struct {
 	To string `json:"to"`
 }
 
-// ExportAVAX exports AVAX from the C-Chain to the X-Chain
-// It must be imported on the X-Chain to complete the transfer
+// ExportAVAX exports AVAX from the C-Chain to the Swap-Chain
+// It must be imported on the Swap-Chain to complete the transfer
 func (service *AvaxAPI) ExportAVAX(_ *http.Request, args *ExportAVAXArgs, response *api.JSONTxID) error {
 	return service.Export(nil, &ExportArgs{
 		ExportAVAXArgs: *args,
@@ -285,8 +285,8 @@ type ExportArgs struct {
 	AssetID string `json:"assetID"`
 }
 
-// Export exports an asset from the C-Chain to the X-Chain
-// It must be imported on the X-Chain to complete the transfer
+// Export exports an asset from the C-Chain to the Swap-Chain
+// It must be imported on the Swap-Chain to complete the transfer
 func (service *AvaxAPI) Export(_ *http.Request, args *ExportArgs, response *api.JSONTxID) error {
 	log.Info("EVM: Export called")
 

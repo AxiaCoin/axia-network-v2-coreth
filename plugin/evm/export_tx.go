@@ -78,7 +78,7 @@ func (tx *UnsignedExportTx) Verify(
 			return errWrongChainID
 		}
 	} else {
-		if tx.DestinationChain != ctx.XChainID {
+		if tx.DestinationChain != ctx.SwapChainID {
 			return errWrongChainID
 		}
 	}
@@ -273,7 +273,7 @@ func (vm *VM) newExportTx(
 	baseFee *big.Int, // fee to use post-AP3
 	keys []*crypto.PrivateKeySECP256K1R, // Pay the fee and provide the tokens
 ) (*Tx, error) {
-	outs := []*avax.TransferableOutput{{ // Exported to X-Chain
+	outs := []*avax.TransferableOutput{{ // Exported to Swap-Chain
 		Asset: avax.Asset{ID: assetID},
 		Out: &secp256k1fx.TransferOutput{
 			Amt: amount,
