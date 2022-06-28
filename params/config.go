@@ -35,22 +35,22 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-// Avalanche ChainIDs
+// Axia ChainIDs
 var (
-	// AvalancheMainnetChainID ...
-	AvalancheMainnetChainID = big.NewInt(43114)
-	// AvalancheFujiChainID ...
-	AvalancheFujiChainID = big.NewInt(43113)
-	// AvalancheLocalChainID ...
-	AvalancheLocalChainID = big.NewInt(43112)
+	// AxiaMainnetChainID ...
+	AxiaMainnetChainID = big.NewInt(43114)
+	// AxiaFujiChainID ...
+	AxiaFujiChainID = big.NewInt(43113)
+	// AxiaLocalChainID ...
+	AxiaLocalChainID = big.NewInt(43112)
 
 	errNonGenesisForkByHeight = errors.New("coreth only supports forking by height at the genesis block")
 )
 
 var (
-	// AvalancheMainnetChainConfig is the configuration for Avalanche Main Network
-	AvalancheMainnetChainConfig = &ChainConfig{
-		ChainID:                     AvalancheMainnetChainID,
+	// AxiaMainnetChainConfig is the configuration for Axia Main Network
+	AxiaMainnetChainConfig = &ChainConfig{
+		ChainID:                     AxiaMainnetChainID,
 		HomesteadBlock:              big.NewInt(0),
 		DAOForkBlock:                big.NewInt(0),
 		DAOForkSupport:              true,
@@ -70,9 +70,9 @@ var (
 		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2021, time.December, 2, 18, 0, 0, 0, time.UTC).Unix()),
 	}
 
-	// AvalancheFujiChainConfig is the configuration for the Fuji Test Network
-	AvalancheFujiChainConfig = &ChainConfig{
-		ChainID:                     AvalancheFujiChainID,
+	// AxiaFujiChainConfig is the configuration for the Fuji Test Network
+	AxiaFujiChainConfig = &ChainConfig{
+		ChainID:                     AxiaFujiChainID,
 		HomesteadBlock:              big.NewInt(0),
 		DAOForkBlock:                big.NewInt(0),
 		DAOForkSupport:              true,
@@ -92,9 +92,9 @@ var (
 		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2021, time.November, 24, 15, 0, 0, 0, time.UTC).Unix()),
 	}
 
-	// AvalancheLocalChainConfig is the configuration for the Avalanche Local Network
-	AvalancheLocalChainConfig = &ChainConfig{
-		ChainID:                     AvalancheLocalChainID,
+	// AxiaLocalChainConfig is the configuration for the Axia Local Network
+	AxiaLocalChainConfig = &ChainConfig{
+		ChainID:                     AxiaLocalChainID,
 		HomesteadBlock:              big.NewInt(0),
 		DAOForkBlock:                big.NewInt(0),
 		DAOForkSupport:              true,
@@ -121,7 +121,7 @@ var (
 	TestApricotPhase3Config = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil}
 	TestApricotPhase4Config = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil}
 	TestApricotPhase5Config = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
-	TestRules               = TestChainConfig.AvalancheRules(new(big.Int), new(big.Int))
+	TestRules               = TestChainConfig.AxiaRules(new(big.Int), new(big.Int))
 )
 
 // ChainConfig is the core config which determines the blockchain settings.
@@ -150,7 +150,7 @@ type ChainConfig struct {
 	IstanbulBlock       *big.Int `json:"istanbulBlock,omitempty"`       // Istanbul switch block (nil = no fork, 0 = already on istanbul)
 	MuirGlacierBlock    *big.Int `json:"muirGlacierBlock,omitempty"`    // Eip-2384 (bomb delay) switch block (nil = no fork, 0 = already activated)
 
-	// Avalanche Network Upgrades
+	// Axia Network Upgrades
 	ApricotPhase1BlockTimestamp *big.Int `json:"apricotPhase1BlockTimestamp,omitempty"` // Apricot Phase 1 Block Timestamp (nil = no fork, 0 = already activated)
 	// Apricot Phase 2 Block Timestamp (nil = no fork, 0 = already activated)
 	// Apricot Phase 2 includes a modified version of the Berlin Hard Fork from Ethereum
@@ -238,7 +238,7 @@ func (c *ChainConfig) IsIstanbul(num *big.Int) bool {
 	return isForked(c.IstanbulBlock, num)
 }
 
-// Avalanche Upgrades:
+// Axia Upgrades:
 
 // IsApricotPhase1 returns whether [blockTimestamp] represents a block
 // with a timestamp after the Apricot Phase 1 upgrade time.
@@ -333,7 +333,7 @@ func (c *ChainConfig) CheckConfigForkOrder() error {
 	}
 
 	// Note: ApricotPhase1 and ApricotPhase2 override the rules set by block number
-	// hard forks. In Avalanche, hard forks must take place via block timestamps instead
+	// hard forks. In Axia, hard forks must take place via block timestamps instead
 	// of block numbers since blocks are produced asynchronously. Therefore, we do not
 	// check that the block timestamps for Apricot Phase1 and Phase2 in the same way as for
 	// the block number forks since it would not be a meaningful comparison.
@@ -363,7 +363,7 @@ func (c *ChainConfig) CheckConfigForkOrder() error {
 			lastFork = cur
 		}
 	}
-	// TODO(aaronbuchwald) check that avalanche block timestamps are at least possible with the other rule set changes
+	// TODO(aaronbuchwald) check that axia block timestamps are at least possible with the other rule set changes
 	// additional change: require that block number hard forks are either 0 or nil since they should not
 	// be enabled at a specific block number.
 
@@ -495,7 +495,7 @@ type Rules struct {
 	IsHomestead, IsEIP150, IsEIP155, IsEIP158               bool
 	IsByzantium, IsConstantinople, IsPetersburg, IsIstanbul bool
 
-	// Rules for Avalanche releases
+	// Rules for Axia releases
 	IsApricotPhase1, IsApricotPhase2, IsApricotPhase3, IsApricotPhase4, IsApricotPhase5 bool
 }
 
@@ -518,9 +518,9 @@ func (c *ChainConfig) rules(num *big.Int) Rules {
 	}
 }
 
-// AvalancheRules returns the Avalanche modified rules to support Avalanche
+// AxiaRules returns the Axia modified rules to support Axia
 // network upgrades
-func (c *ChainConfig) AvalancheRules(blockNum, blockTimestamp *big.Int) Rules {
+func (c *ChainConfig) AxiaRules(blockNum, blockTimestamp *big.Int) Rules {
 	rules := c.rules(blockNum)
 
 	rules.IsApricotPhase1 = c.IsApricotPhase1(blockTimestamp)

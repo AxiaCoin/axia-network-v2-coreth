@@ -185,7 +185,7 @@ func (tx *UnsignedImportTx) SemanticVerify(
 
 	// Apply fees to import transactions as of Apricot Phase 2
 	case rules.IsApricotPhase2:
-		fc.Produce(vm.ctx.AVAXAssetID, params.AvalancheAtomicTxFee)
+		fc.Produce(vm.ctx.AVAXAssetID, params.AxiaAtomicTxFee)
 	}
 	for _, out := range tx.Outs {
 		fc.Produce(out.AssetID, out.Amount)
@@ -367,8 +367,8 @@ func (vm *VM) newImportTxWithUTXOs(
 			return nil, err
 		}
 	case rules.IsApricotPhase2:
-		txFeeWithoutChange = params.AvalancheAtomicTxFee
-		txFeeWithChange = params.AvalancheAtomicTxFee
+		txFeeWithoutChange = params.AxiaAtomicTxFee
+		txFeeWithChange = params.AxiaAtomicTxFee
 	}
 
 	// AVAX output

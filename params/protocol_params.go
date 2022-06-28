@@ -161,7 +161,7 @@ const (
 	Bls12381MapG1Gas          uint64 = 5500   // Gas price for BLS12-381 mapping field element to G1 operation
 	Bls12381MapG2Gas          uint64 = 110000 // Gas price for BLS12-381 mapping field element to G2 operation
 
-	// Avalanche Stateful Precompile Params
+	// Axia Stateful Precompile Params
 	// Gas price for native asset balance lookup. Based on the cost of an SLOAD operation since native
 	// asset balances are kept in state storage.
 	AssetBalanceApricot uint64 = 2100
