@@ -3,7 +3,7 @@
 ## [v0.8.9](https://github.com/axiacoin/axia-network-v2-coreth/releases/tag/v0.8.9)
 - Fix deadlock bug on shutdown causing historical re-generation on restart
 - Add API endpoint to fetch running VM Config
-- Add AvalancheGo custom log formatting to C-Chain logs
+- Add AvalancheGo custom log formatting to AX-Chain logs
 - Deprecate support for JS Tracer
 
 ## [v0.8.8](https://github.com/axiacoin/axia-network-v2-coreth/releases/tag/v0.8.8)
@@ -22,7 +22,7 @@
 ## [v0.8.6](https://github.com/axiacoin/axia-network-v2-coreth/releases/tag/v0.8.6)
 
 - Migrate go-ethereum v1.10.16 changes
-- Increase FeeHistory maximum historical limit to improve MetaMask UI on C-Chain
+- Increase FeeHistory maximum historical limit to improve MetaMask UI on AX-Chain
 - Enable chain state metrics
 
 ## [v0.8.5](https://github.com/axiacoin/axia-network-v2-coreth/releases/tag/v0.8.5)

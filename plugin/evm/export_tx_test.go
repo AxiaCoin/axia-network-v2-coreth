@@ -1080,7 +1080,7 @@ func TestExportTxVerify(t *testing.T) {
 	var exportAmount uint64 = 10000000
 	exportTx := &UnsignedExportTx{
 		NetworkID:        testNetworkID,
-		BlockchainID:     testCChainID,
+		BlockchainID:     testAXChainID,
 		DestinationChain: testSwapChainID,
 		Ins: []EVMInput{
 			{
@@ -1147,7 +1147,7 @@ func TestExportTxVerify(t *testing.T) {
 		t.Fatal("ExportTx should have failed verification due to incorrect blockchain ID")
 	}
 
-	exportTx.BlockchainID = testCChainID
+	exportTx.BlockchainID = testAXChainID
 	exportTx.DestinationChain = nonExistentID
 	// Test Incorrect Destination Chain ID Errors
 	if err := exportTx.Verify(ctx, apricotRulesPhase1); err == nil {

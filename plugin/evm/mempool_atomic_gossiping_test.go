@@ -120,7 +120,7 @@ func createImportTx(t *testing.T, vm *VM, txID ids.ID, feeAmount uint64) *Tx {
 	var importAmount uint64 = 10000000
 	importTx := &UnsignedImportTx{
 		NetworkID:    testNetworkID,
-		BlockchainID: testCChainID,
+		BlockchainID: testAXChainID,
 		SourceChain:  testSwapChainID,
 		ImportedInputs: []*avax.TransferableInput{
 			{

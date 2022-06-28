@@ -88,7 +88,7 @@ const (
 
 var (
 	// x2cRate is the conversion rate between the smallest denomination on the Swap-Chain
-	// 1 nAVAX and the smallest denomination on the C-Chain 1 wei. Where 1 nAVAX = 1 gWei.
+	// 1 nAVAX and the smallest denomination on the AX-Chain 1 wei. Where 1 nAVAX = 1 gWei.
 	// This is only required for AVAX because the denomination of 1 AVAX is 9 decimal
 	// places on the X and P chains, but is 18 decimal places within the EVM.
 	x2cRate       = big.NewInt(x2cRateInt64)

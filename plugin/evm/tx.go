@@ -185,7 +185,7 @@ func (tx *Tx) BlockFeeContribution(fixedFee bool, avaxAssetID ids.ID, baseFee *b
 	excessBurned := burned - txFee
 
 	// Calculate the amount of AVAX that has been burned above the required fee denominated
-	// in C-Chain native 18 decimal places
+	// in AX-Chain native 18 decimal places
 	blockFeeContribution := new(big.Int).Mul(new(big.Int).SetUint64(excessBurned), x2cRate)
 	return blockFeeContribution, new(big.Int).SetUint64(gasUsed), nil
 }
