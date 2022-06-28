@@ -1,4 +1,4 @@
-// (c) 2019-2020, Ava Labs, Inc. All rights reserved.
+// (c) 2019-2020, Axia Systems, Inc. All rights reserved.
 
 // NOTE from Ted: to compile from solidity source using the code, make sure
 // your solc<0.8.0, as geth 1.9.21 does not support the JSON output from

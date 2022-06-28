@@ -1,4 +1,4 @@
-// (c) 2019-2020, Ava Labs, Inc.
+// (c) 2019-2020, Axia Systems, Inc.
 //
 // This file is a derived work, based on the go-ethereum library whose original
 // notices appear below.
@@ -8,7 +8,7 @@
 //
 // Much love to the original authors for their work.
 // **********
-// (c) 2019-2020, Ava Labs, Inc. All rights reserved.
+// (c) 2019-2020, Axia Systems, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 // NOTE from Ted: to compile from solidity source using the code, make sure
