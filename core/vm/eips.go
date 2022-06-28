@@ -98,15 +98,15 @@ func opSelfBalance(pc *uint64, interpreter *EVMInterpreter, scope *ScopeContext)
 func enable1344(jt *JumpTable) {
 	// New opcode
 	jt[CHAINID] = &operation{
-		execute:     opChainID,
+		execute:     ocoreChainID,
 		constantGas: GasQuickStep,
 		minStack:    minStack(0, 1),
 		maxStack:    maxStack(0, 1),
 	}
 }
 
-// opChainID implements CHAINID opcode
-func opChainID(pc *uint64, interpreter *EVMInterpreter, scope *ScopeContext) ([]byte, error) {
+// ocoreChainID implements CHAINID opcode
+func ocoreChainID(pc *uint64, interpreter *EVMInterpreter, scope *ScopeContext) ([]byte, error) {
 	chainId, _ := uint256.FromBig(interpreter.evm.chainConfig.ChainID)
 	scope.Stack.push(chainId)
 	return nil, nil
