@@ -3760,6 +3760,6 @@ func TestGetAtomicRepositoryRepairHeights(t *testing.T) {
 	assert.Len(t, mainnetHeights, 76)
 	sorted := sort.SliceIsSorted(mainnetHeights, func(i, j int) bool { return mainnetHeights[i] < mainnetHeights[j] })
 	assert.True(t, sorted)
-	testnetHeights := getAtomicRepositoryRepairHeights(params.AxiaFujiChainID)
+	testnetHeights := getAtomicRepositoryRepairHeights(params.AxiaTestChainID)
 	assert.Empty(t, testnetHeights)
 }

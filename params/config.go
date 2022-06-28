@@ -39,8 +39,8 @@ import (
 var (
 	// AxiaMainnetChainID ...
 	AxiaMainnetChainID = big.NewInt(43114)
-	// AxiaFujiChainID ...
-	AxiaFujiChainID = big.NewInt(43113)
+	// AxiaTestChainID ...
+	AxiaTestChainID = big.NewInt(43113)
 	// AxiaLocalChainID ...
 	AxiaLocalChainID = big.NewInt(43112)
 
@@ -70,9 +70,9 @@ var (
 		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2021, time.December, 2, 18, 0, 0, 0, time.UTC).Unix()),
 	}
 
-	// AxiaFujiChainConfig is the configuration for the Fuji Test Network
-	AxiaFujiChainConfig = &ChainConfig{
-		ChainID:                     AxiaFujiChainID,
+	// AxiaTestChainConfig is the configuration for the Test Test Network
+	AxiaTestChainConfig = &ChainConfig{
+		ChainID:                     AxiaTestChainID,
 		HomesteadBlock:              big.NewInt(0),
 		DAOForkBlock:                big.NewInt(0),
 		DAOForkSupport:              true,

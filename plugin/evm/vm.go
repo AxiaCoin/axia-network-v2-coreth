@@ -361,21 +361,21 @@ func (vm *VM) Initialize(
 		return err
 	}
 
-	// Set the chain config for mainnet/fuji chain IDs
+	// Set the chain config for mainnet/test chain IDs
 	switch {
 	case g.Config.ChainID.Cmp(params.AxiaMainnetChainID) == 0:
 		g.Config = params.AxiaMainnetChainConfig
 		phase0BlockValidator.extDataHashes = mainnetExtDataHashes
-	case g.Config.ChainID.Cmp(params.AxiaFujiChainID) == 0:
-		g.Config = params.AxiaFujiChainConfig
-		phase0BlockValidator.extDataHashes = fujiExtDataHashes
+	case g.Config.ChainID.Cmp(params.AxiaTestChainID) == 0:
+		g.Config = params.AxiaTestChainConfig
+		phase0BlockValidator.extDataHashes = testExtDataHashes
 	case g.Config.ChainID.Cmp(params.AxiaLocalChainID) == 0:
 		g.Config = params.AxiaLocalChainConfig
 	}
 
 	// Free the memory of the extDataHash map that is not used (i.e. if mainnet
-	// config, free fuji)
-	fujiExtDataHashes = nil
+	// config, free test)
+	testExtDataHashes = nil
 	mainnetExtDataHashes = nil
 
 	vm.chainID = g.Config.ChainID
