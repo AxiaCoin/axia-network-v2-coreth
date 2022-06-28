@@ -136,7 +136,7 @@ func NewContext() *snow.Context {
 	_ = aliaser.Alias(testSwapChainID, "X")
 	_ = aliaser.Alias(testSwapChainID, testSwapChainID.String())
 	ctx.SNLookup = &snLookup{
-		chainsToSubnet: map[ids.ID]ids.ID{
+		chainsToAllychain: map[ids.ID]ids.ID{
 			constants.PlatformChainID: constants.PrimaryNetworkID,
 			testSwapChainID:              constants.PrimaryNetworkID,
 			testAXChainID:              constants.PrimaryNetworkID,
@@ -146,15 +146,15 @@ func NewContext() *snow.Context {
 }
 
 type snLookup struct {
-	chainsToSubnet map[ids.ID]ids.ID
+	chainsToAllychain map[ids.ID]ids.ID
 }
 
-func (sn *snLookup) SubnetID(chainID ids.ID) (ids.ID, error) {
-	subnetID, ok := sn.chainsToSubnet[chainID]
+func (sn *snLookup) AllychainID(chainID ids.ID) (ids.ID, error) {
+	allychainID, ok := sn.chainsToAllychain[chainID]
 	if !ok {
 		return ids.ID{}, errors.New("unknown chain")
 	}
-	return subnetID, nil
+	return allychainID, nil
 }
 
 func setupGenesis(t *testing.T,

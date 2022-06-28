@@ -72,9 +72,9 @@ func (tx *UnsignedExportTx) Verify(
 
 	// Make sure that the tx has a valid peer chain ID
 	if rules.IsApricotPhase5 {
-		// Note that SameSubnet verifies that [tx.DestinationChain] isn't this
+		// Note that SameAllychain verifies that [tx.DestinationChain] isn't this
 		// chain's ID
-		if err := verify.SameSubnet(ctx, tx.DestinationChain); err != nil {
+		if err := verify.SameAllychain(ctx, tx.DestinationChain); err != nil {
 			return errWrongChainID
 		}
 	} else {
