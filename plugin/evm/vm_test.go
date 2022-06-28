@@ -1,4 +1,4 @@
-// (c) 2019-2020, Axia Systems, Inc. All rights reserved.
+// (c) 2019-2020, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package evm
@@ -38,7 +38,7 @@ import (
 	"github.com/axiacoin/axia-network-v2/utils/logging"
 	"github.com/axiacoin/axia-network-v2/utils/units"
 	"github.com/axiacoin/axia-network-v2/version"
-	"github.com/axiacoin/axia-network-v2/vms/components/axc"
+	"github.com/axiacoin/axia-network-v2/vms/components/avax"
 	"github.com/axiacoin/axia-network-v2/vms/components/chain"
 	"github.com/axiacoin/axia-network-v2/vms/secp256k1fx"
 
@@ -56,16 +56,16 @@ import (
 
 var (
 	testNetworkID    uint32 = 10
-	testAXCChainID            = ids.ID{'c', 'c', 'h', 'a', 'i', 'n', 't', 'e', 's', 't'}
-	testSwapChainID            = ids.ID{'t', 'e', 's', 't', 'x'}
+	testCChainID            = ids.ID{'c', 'c', 'h', 'a', 'i', 'n', 't', 'e', 's', 't'}
+	testXChainID            = ids.ID{'t', 'e', 's', 't', 'x'}
 	nonExistentID           = ids.ID{'F'}
 	testKeys         []*crypto.PrivateKeySECP256K1R
 	testEthAddrs     []common.Address // testEthAddrs[i] corresponds to testKeys[i]
 	testShortIDAddrs []ids.ShortID
-	testAxcAssetID  = ids.ID{1, 2, 3}
+	testAvaxAssetID  = ids.ID{1, 2, 3}
 	username         = "Johns"
 	password         = "CjasdjhiPeirbSenfeI13" // #nosec G101
-	// Use chainId: 43111, so that it does not overlap with any Axia ChainIDs, which may have their
+	// Use chainId: 43111, so that it does not overlap with any Avalanche ChainIDs, which may have their
 	// config overridden in vm.Initialize.
 	genesisJSONApricotPhase0 = "{\"config\":{\"chainId\":43111,\"homesteadBlock\":0,\"daoForkBlock\":0,\"daoForkSupport\":true,\"eip150Block\":0,\"eip150Hash\":\"0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0\",\"eip155Block\":0,\"eip158Block\":0,\"byzantiumBlock\":0,\"constantinopleBlock\":0,\"petersburgBlock\":0,\"istanbulBlock\":0,\"muirGlacierBlock\":0},\"nonce\":\"0x0\",\"timestamp\":\"0x0\",\"extraData\":\"0x00\",\"gasLimit\":\"0x5f5e100\",\"difficulty\":\"0x0\",\"mixHash\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"coinbase\":\"0x0000000000000000000000000000000000000000\",\"alloc\":{\"0100000000000000000000000000000000000000\":{\"code\":\"0x7300000000000000000000000000000000000000003014608060405260043610603d5760003560e01c80631e010439146042578063b6510bb314606e575b600080fd5b605c60048036036020811015605657600080fd5b503560b1565b60408051918252519081900360200190f35b818015607957600080fd5b5060af60048036036080811015608e57600080fd5b506001600160a01b03813516906020810135906040810135906060013560b6565b005b30cd90565b836001600160a01b031681836108fc8690811502906040516000604051808303818888878c8acf9550505050505015801560f4573d6000803e3d6000fd5b505050505056fea26469706673582212201eebce970fe3f5cb96bf8ac6ba5f5c133fc2908ae3dcd51082cfee8f583429d064736f6c634300060a0033\",\"balance\":\"0x0\"}},\"number\":\"0x0\",\"gasUsed\":\"0x0\",\"parentHash\":\"0x0000000000000000000000000000000000000000000000000000000000000000\"}"
 	genesisJSONApricotPhase1 = "{\"config\":{\"chainId\":43111,\"homesteadBlock\":0,\"daoForkBlock\":0,\"daoForkSupport\":true,\"eip150Block\":0,\"eip150Hash\":\"0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0\",\"eip155Block\":0,\"eip158Block\":0,\"byzantiumBlock\":0,\"constantinopleBlock\":0,\"petersburgBlock\":0,\"istanbulBlock\":0,\"muirGlacierBlock\":0,\"apricotPhase1BlockTimestamp\":0},\"nonce\":\"0x0\",\"timestamp\":\"0x0\",\"extraData\":\"0x00\",\"gasLimit\":\"0x5f5e100\",\"difficulty\":\"0x0\",\"mixHash\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"coinbase\":\"0x0000000000000000000000000000000000000000\",\"alloc\":{\"0100000000000000000000000000000000000000\":{\"code\":\"0x7300000000000000000000000000000000000000003014608060405260043610603d5760003560e01c80631e010439146042578063b6510bb314606e575b600080fd5b605c60048036036020811015605657600080fd5b503560b1565b60408051918252519081900360200190f35b818015607957600080fd5b5060af60048036036080811015608e57600080fd5b506001600160a01b03813516906020810135906040810135906060013560b6565b005b30cd90565b836001600160a01b031681836108fc8690811502906040516000604051808303818888878c8acf9550505050505015801560f4573d6000803e3d6000fd5b505050505056fea26469706673582212201eebce970fe3f5cb96bf8ac6ba5f5c133fc2908ae3dcd51082cfee8f583429d064736f6c634300060a0033\",\"balance\":\"0x0\"}},\"number\":\"0x0\",\"gasUsed\":\"0x0\",\"parentHash\":\"0x0000000000000000000000000000000000000000000000000000000000000000\"}"
@@ -126,35 +126,35 @@ func BuildGenesisTest(t *testing.T, genesisJSON string) []byte {
 func NewContext() *snow.Context {
 	ctx := snow.DefaultContextTest()
 	ctx.NetworkID = testNetworkID
-	ctx.ChainID = testAXCChainID
-	ctx.AXCAssetID = testAxcAssetID
-	ctx.SwapChainID = testSwapChainID
+	ctx.ChainID = testCChainID
+	ctx.AVAXAssetID = testAvaxAssetID
+	ctx.XChainID = testXChainID
 	ctx.SharedMemory = testSharedMemory()
 	aliaser := ctx.BCLookup.(ids.Aliaser)
-	_ = aliaser.Alias(testAXCChainID, "AXC")
-	_ = aliaser.Alias(testAXCChainID, testAXCChainID.String())
-	_ = aliaser.Alias(testSwapChainID, "Swap")
-	_ = aliaser.Alias(testSwapChainID, testSwapChainID.String())
+	_ = aliaser.Alias(testCChainID, "C")
+	_ = aliaser.Alias(testCChainID, testCChainID.String())
+	_ = aliaser.Alias(testXChainID, "X")
+	_ = aliaser.Alias(testXChainID, testXChainID.String())
 	ctx.SNLookup = &snLookup{
-		chainsToAllychain: map[ids.ID]ids.ID{
+		chainsToSubnet: map[ids.ID]ids.ID{
 			constants.PlatformChainID: constants.PrimaryNetworkID,
-			testSwapChainID:              constants.PrimaryNetworkID,
-			testAXCChainID:              constants.PrimaryNetworkID,
+			testXChainID:              constants.PrimaryNetworkID,
+			testCChainID:              constants.PrimaryNetworkID,
 		},
 	}
 	return ctx
 }
 
 type snLookup struct {
-	chainsToAllychain map[ids.ID]ids.ID
+	chainsToSubnet map[ids.ID]ids.ID
 }
 
-func (sn *snLookup) AllychainID(chainID ids.ID) (ids.ID, error) {
-	allychainID, ok := sn.chainsToAllychain[chainID]
+func (sn *snLookup) SubnetID(chainID ids.ID) (ids.ID, error) {
+	subnetID, ok := sn.chainsToSubnet[chainID]
 	if !ok {
 		return ids.ID{}, errors.New("unknown chain")
 	}
-	return allychainID, nil
+	return subnetID, nil
 }
 
 func setupGenesis(t *testing.T,
@@ -225,13 +225,13 @@ func GenesisVM(t *testing.T,
 	return issuer, vm, dbManager, m, appSender
 }
 
-func addUTXO(sharedMemory *atomic.Memory, ctx *snow.Context, txID ids.ID, index uint32, assetID ids.ID, amount uint64, addr ids.ShortID) (*axc.UTXO, error) {
-	utxo := &axc.UTXO{
-		UTXOID: axc.UTXOID{
+func addUTXO(sharedMemory *atomic.Memory, ctx *snow.Context, txID ids.ID, index uint32, assetID ids.ID, amount uint64, addr ids.ShortID) (*avax.UTXO, error) {
+	utxo := &avax.UTXO{
+		UTXOID: avax.UTXOID{
 			TxID:        txID,
 			OutputIndex: index,
 		},
-		Asset: axc.Asset{ID: assetID},
+		Asset: avax.Asset{ID: assetID},
 		Out: &secp256k1fx.TransferOutput{
 			Amt: amount,
 			OutputOwners: secp256k1fx.OutputOwners{
@@ -245,9 +245,9 @@ func addUTXO(sharedMemory *atomic.Memory, ctx *snow.Context, txID ids.ID, index 
 		return nil, err
 	}
 
-	swapChainSharedMemory := sharedMemory.NewSharedMemory(ctx.SwapChainID)
+	xChainSharedMemory := sharedMemory.NewSharedMemory(ctx.XChainID)
 	inputID := utxo.InputID()
-	if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{ctx.ChainID: {PutRequests: []*atomic.Element{{
+	if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{ctx.ChainID: {PutRequests: []*atomic.Element{{
 		Key:   inputID[:],
 		Value: utxoBytes,
 		Traits: [][]byte{
@@ -260,16 +260,16 @@ func addUTXO(sharedMemory *atomic.Memory, ctx *snow.Context, txID ids.ID, index 
 	return utxo, nil
 }
 
-// GenesisVMWithUTXOs creates a GenesisVM and generates UTXOs in the Swap-Chain Shared Memory containing AXC based on the [utxos] map
+// GenesisVMWithUTXOs creates a GenesisVM and generates UTXOs in the X-Chain Shared Memory containing AVAX based on the [utxos] map
 // Generates UTXOIDs by using a hash of the address in the [utxos] map such that the UTXOs will be generated deterministically.
 func GenesisVMWithUTXOs(t *testing.T, finishBootstrapping bool, genesisJSON string, configJSON string, upgradeJSON string, utxos map[ids.ShortID]uint64) (chan engCommon.Message, *VM, manager.Manager, *atomic.Memory, *engCommon.SenderTest) {
 	issuer, vm, dbManager, sharedMemory, sender := GenesisVM(t, finishBootstrapping, genesisJSON, configJSON, upgradeJSON)
-	for addr, axcAmount := range utxos {
+	for addr, avaxAmount := range utxos {
 		txID, err := ids.ToID(hashing.ComputeHash256(addr.Bytes()))
 		if err != nil {
 			t.Fatalf("Failed to generate txID from addr: %s", err)
 		}
-		if _, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.AXCAssetID, axcAmount, addr); err != nil {
+		if _, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.AVAXAssetID, avaxAmount, addr); err != nil {
 			t.Fatalf("Failed to add UTXO to shared memory: %s", err)
 		}
 	}
@@ -438,7 +438,7 @@ func TestIssueAtomicTxs(t *testing.T) {
 		}
 	}()
 
-	importTx, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -480,7 +480,7 @@ func TestIssueAtomicTxs(t *testing.T) {
 		t.Fatalf("Expected last accepted blockID to be the accepted block: %s, but found %s", blk.ID(), lastAcceptedID)
 	}
 
-	exportTx, err := vm.newExportTx(vm.ctx.AXCAssetID, importAmount-(2*params.AxiaAtomicTxFee), vm.ctx.SwapChainID, testShortIDAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	exportTx, err := vm.newExportTx(vm.ctx.AVAXAssetID, importAmount-(2*params.AvalancheAtomicTxFee), vm.ctx.XChainID, testShortIDAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -547,7 +547,7 @@ func TestBuildEthTxBlock(t *testing.T) {
 	newTxPoolHeadChan := make(chan core.NewTxPoolReorgEvent, 1)
 	vm.chain.GetTxPool().SubscribeNewReorgEvent(newTxPoolHeadChan)
 
-	importTx, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -707,14 +707,14 @@ func testConflictingImportTxs(t *testing.T, genesis string) {
 	importTxs := make([]*Tx, 0, 3)
 	conflictTxs := make([]*Tx, 0, 3)
 	for i, key := range testKeys {
-		importTx, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[i], initialBaseFee, []*crypto.PrivateKeySECP256K1R{key})
+		importTx, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[i], initialBaseFee, []*crypto.PrivateKeySECP256K1R{key})
 		if err != nil {
 			t.Fatal(err)
 		}
 		importTxs = append(importTxs, importTx)
 
 		conflictAddr := testEthAddrs[(i+1)%len(testEthAddrs)]
-		conflictTx, err := vm.newImportTx(vm.ctx.SwapChainID, conflictAddr, initialBaseFee, []*crypto.PrivateKeySECP256K1R{key})
+		conflictTx, err := vm.newImportTx(vm.ctx.XChainID, conflictAddr, initialBaseFee, []*crypto.PrivateKeySECP256K1R{key})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -877,15 +877,15 @@ func TestReissueAtomicTxHigherGasPrice(t *testing.T) {
 
 	for name, issueTxs := range map[string]func(t *testing.T, vm *VM, sharedMemory *atomic.Memory) (issued []*Tx, discarded []*Tx){
 		"single UTXO override": func(t *testing.T, vm *VM, sharedMemory *atomic.Memory) (issued []*Tx, evicted []*Tx) {
-			utxo, err := addUTXO(sharedMemory, vm.ctx, ids.GenerateTestID(), 0, vm.ctx.AXCAssetID, units.Axc, testShortIDAddrs[0])
+			utxo, err := addUTXO(sharedMemory, vm.ctx, ids.GenerateTestID(), 0, vm.ctx.AVAXAssetID, units.Avax, testShortIDAddrs[0])
 			if err != nil {
 				t.Fatal(err)
 			}
-			tx1, err := vm.newImportTxWithUTXOs(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, kc, []*axc.UTXO{utxo})
+			tx1, err := vm.newImportTxWithUTXOs(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, kc, []*avax.UTXO{utxo})
 			if err != nil {
 				t.Fatal(err)
 			}
-			tx2, err := vm.newImportTxWithUTXOs(vm.ctx.SwapChainID, testEthAddrs[0], new(big.Int).Mul(common.Big2, initialBaseFee), kc, []*axc.UTXO{utxo})
+			tx2, err := vm.newImportTxWithUTXOs(vm.ctx.XChainID, testEthAddrs[0], new(big.Int).Mul(common.Big2, initialBaseFee), kc, []*avax.UTXO{utxo})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -900,19 +900,19 @@ func TestReissueAtomicTxHigherGasPrice(t *testing.T) {
 			return []*Tx{tx2}, []*Tx{tx1}
 		},
 		"one of two UTXOs overrides": func(t *testing.T, vm *VM, sharedMemory *atomic.Memory) (issued []*Tx, evicted []*Tx) {
-			utxo1, err := addUTXO(sharedMemory, vm.ctx, ids.GenerateTestID(), 0, vm.ctx.AXCAssetID, units.Axc, testShortIDAddrs[0])
+			utxo1, err := addUTXO(sharedMemory, vm.ctx, ids.GenerateTestID(), 0, vm.ctx.AVAXAssetID, units.Avax, testShortIDAddrs[0])
 			if err != nil {
 				t.Fatal(err)
 			}
-			utxo2, err := addUTXO(sharedMemory, vm.ctx, ids.GenerateTestID(), 0, vm.ctx.AXCAssetID, units.Axc, testShortIDAddrs[0])
+			utxo2, err := addUTXO(sharedMemory, vm.ctx, ids.GenerateTestID(), 0, vm.ctx.AVAXAssetID, units.Avax, testShortIDAddrs[0])
 			if err != nil {
 				t.Fatal(err)
 			}
-			tx1, err := vm.newImportTxWithUTXOs(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, kc, []*axc.UTXO{utxo1, utxo2})
+			tx1, err := vm.newImportTxWithUTXOs(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, kc, []*avax.UTXO{utxo1, utxo2})
 			if err != nil {
 				t.Fatal(err)
 			}
-			tx2, err := vm.newImportTxWithUTXOs(vm.ctx.SwapChainID, testEthAddrs[0], new(big.Int).Mul(common.Big2, initialBaseFee), kc, []*axc.UTXO{utxo1})
+			tx2, err := vm.newImportTxWithUTXOs(vm.ctx.XChainID, testEthAddrs[0], new(big.Int).Mul(common.Big2, initialBaseFee), kc, []*avax.UTXO{utxo1})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -927,26 +927,26 @@ func TestReissueAtomicTxHigherGasPrice(t *testing.T) {
 			return []*Tx{tx2}, []*Tx{tx1}
 		},
 		"hola": func(t *testing.T, vm *VM, sharedMemory *atomic.Memory) (issued []*Tx, evicted []*Tx) {
-			utxo1, err := addUTXO(sharedMemory, vm.ctx, ids.GenerateTestID(), 0, vm.ctx.AXCAssetID, units.Axc, testShortIDAddrs[0])
+			utxo1, err := addUTXO(sharedMemory, vm.ctx, ids.GenerateTestID(), 0, vm.ctx.AVAXAssetID, units.Avax, testShortIDAddrs[0])
 			if err != nil {
 				t.Fatal(err)
 			}
-			utxo2, err := addUTXO(sharedMemory, vm.ctx, ids.GenerateTestID(), 0, vm.ctx.AXCAssetID, units.Axc, testShortIDAddrs[0])
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			importTx1, err := vm.newImportTxWithUTXOs(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, kc, []*axc.UTXO{utxo1})
+			utxo2, err := addUTXO(sharedMemory, vm.ctx, ids.GenerateTestID(), 0, vm.ctx.AVAXAssetID, units.Avax, testShortIDAddrs[0])
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			importTx2, err := vm.newImportTxWithUTXOs(vm.ctx.SwapChainID, testEthAddrs[0], new(big.Int).Mul(big.NewInt(3), initialBaseFee), kc, []*axc.UTXO{utxo2})
+			importTx1, err := vm.newImportTxWithUTXOs(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, kc, []*avax.UTXO{utxo1})
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			reissuanceTx1, err := vm.newImportTxWithUTXOs(vm.ctx.SwapChainID, testEthAddrs[0], new(big.Int).Mul(big.NewInt(2), initialBaseFee), kc, []*axc.UTXO{utxo1, utxo2})
+			importTx2, err := vm.newImportTxWithUTXOs(vm.ctx.XChainID, testEthAddrs[0], new(big.Int).Mul(big.NewInt(3), initialBaseFee), kc, []*avax.UTXO{utxo2})
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			reissuanceTx1, err := vm.newImportTxWithUTXOs(vm.ctx.XChainID, testEthAddrs[0], new(big.Int).Mul(big.NewInt(2), initialBaseFee), kc, []*avax.UTXO{utxo1, utxo2})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -966,7 +966,7 @@ func TestReissueAtomicTxHigherGasPrice(t *testing.T) {
 			assert.True(t, vm.mempool.has(importTx2.ID()))
 			assert.False(t, vm.mempool.has(reissuanceTx1.ID()))
 
-			reissuanceTx2, err := vm.newImportTxWithUTXOs(vm.ctx.SwapChainID, testEthAddrs[0], new(big.Int).Mul(big.NewInt(4), initialBaseFee), kc, []*axc.UTXO{utxo1, utxo2})
+			reissuanceTx2, err := vm.newImportTxWithUTXOs(vm.ctx.XChainID, testEthAddrs[0], new(big.Int).Mul(big.NewInt(4), initialBaseFee), kc, []*avax.UTXO{utxo1, utxo2})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -1043,7 +1043,7 @@ func TestSetPreferenceRace(t *testing.T) {
 	newTxPoolHeadChan2 := make(chan core.NewTxPoolReorgEvent, 1)
 	vm2.chain.GetTxPool().SubscribeNewReorgEvent(newTxPoolHeadChan2)
 
-	importTx, err := vm1.newImportTx(vm1.ctx.SwapChainID, testEthAddrs[1], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm1.newImportTx(vm1.ctx.XChainID, testEthAddrs[1], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1287,12 +1287,12 @@ func TestConflictingTransitiveAncestryWithGap(t *testing.T) {
 	newTxPoolHeadChan := make(chan core.NewTxPoolReorgEvent, 1)
 	vm.chain.GetTxPool().SubscribeNewReorgEvent(newTxPoolHeadChan)
 
-	importTx0A, err := vm.newImportTx(vm.ctx.SwapChainID, key.Address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{key0})
+	importTx0A, err := vm.newImportTx(vm.ctx.XChainID, key.Address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{key0})
 	if err != nil {
 		t.Fatal(err)
 	}
 	// Create a conflicting transaction
-	importTx0B, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[2], initialBaseFee, []*crypto.PrivateKeySECP256K1R{key0})
+	importTx0B, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[2], initialBaseFee, []*crypto.PrivateKeySECP256K1R{key0})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1350,7 +1350,7 @@ func TestConflictingTransitiveAncestryWithGap(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	importTx1, err := vm.newImportTx(vm.ctx.SwapChainID, key.Address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{key1})
+	importTx1, err := vm.newImportTx(vm.ctx.XChainID, key.Address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{key1})
 	if err != nil {
 		t.Fatalf("Failed to issue importTx1 due to: %s", err)
 	}
@@ -1399,11 +1399,11 @@ func TestBonusBlocksTxs(t *testing.T) {
 	}()
 
 	importAmount := uint64(10000000)
-	utxoID := axc.UTXOID{TxID: ids.GenerateTestID()}
+	utxoID := avax.UTXOID{TxID: ids.GenerateTestID()}
 
-	utxo := &axc.UTXO{
+	utxo := &avax.UTXO{
 		UTXOID: utxoID,
-		Asset:  axc.Asset{ID: vm.ctx.AXCAssetID},
+		Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
 		Out: &secp256k1fx.TransferOutput{
 			Amt: importAmount,
 			OutputOwners: secp256k1fx.OutputOwners{
@@ -1417,9 +1417,9 @@ func TestBonusBlocksTxs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
+	xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.XChainID)
 	inputID := utxo.InputID()
-	if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
+	if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
 		Key:   inputID[:],
 		Value: utxoBytes,
 		Traits: [][]byte{
@@ -1429,7 +1429,7 @@ func TestBonusBlocksTxs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	importTx, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1448,7 +1448,7 @@ func TestBonusBlocksTxs(t *testing.T) {
 	bonusBlocks.Add(blk.ID())
 
 	// Remove the UTXOs from shared memory, so that non-bonus blocks will fail verification
-	if err := vm.ctx.SharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.SwapChainID: {RemoveRequests: [][]byte{inputID[:]}}}); err != nil {
+	if err := vm.ctx.SharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.XChainID: {RemoveRequests: [][]byte{inputID[:]}}}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -1520,7 +1520,7 @@ func TestReorgProtection(t *testing.T) {
 	key := testKeys[0].ToECDSA()
 	address := testEthAddrs[0]
 
-	importTx, err := vm1.newImportTx(vm1.ctx.SwapChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm1.newImportTx(vm1.ctx.XChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1701,7 +1701,7 @@ func TestNonCanonicalAccept(t *testing.T) {
 	key := testKeys[0].ToECDSA()
 	address := testEthAddrs[0]
 
-	importTx, err := vm1.newImportTx(vm1.ctx.SwapChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm1.newImportTx(vm1.ctx.XChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1875,7 +1875,7 @@ func TestStickyPreference(t *testing.T) {
 	key := testKeys[0].ToECDSA()
 	address := testEthAddrs[0]
 
-	importTx, err := vm1.newImportTx(vm1.ctx.SwapChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm1.newImportTx(vm1.ctx.XChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2147,7 +2147,7 @@ func TestUncleBlock(t *testing.T) {
 	key := testKeys[0].ToECDSA()
 	address := testEthAddrs[0]
 
-	importTx, err := vm1.newImportTx(vm1.ctx.SwapChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm1.newImportTx(vm1.ctx.XChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2331,7 +2331,7 @@ func TestEmptyBlock(t *testing.T) {
 		}
 	}()
 
-	importTx, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2412,7 +2412,7 @@ func TestAcceptReorg(t *testing.T) {
 	key := testKeys[0].ToECDSA()
 	address := testEthAddrs[0]
 
-	importTx, err := vm1.newImportTx(vm1.ctx.SwapChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm1.newImportTx(vm1.ctx.XChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2607,7 +2607,7 @@ func TestFutureBlock(t *testing.T) {
 		}
 	}()
 
-	importTx, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2674,7 +2674,7 @@ func TestBuildApricotPhase1Block(t *testing.T) {
 	key := testKeys[0].ToECDSA()
 	address := testEthAddrs[0]
 
-	importTx, err := vm.newImportTx(vm.ctx.SwapChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm.newImportTx(vm.ctx.XChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2790,7 +2790,7 @@ func TestLastAcceptedBlockNumberAllow(t *testing.T) {
 		}
 	}()
 
-	importTx, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2868,7 +2868,7 @@ func TestReissueAtomicTx(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	importTx, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -3025,21 +3025,21 @@ func TestBuildInvalidBlockHead(t *testing.T) {
 		BlockchainID: vm.ctx.ChainID,
 		Outs: []EVMOutput{{
 			Address: common.Address(addr0),
-			Amount:  1 * units.Axc,
-			AssetID: vm.ctx.AXCAssetID,
+			Amount:  1 * units.Avax,
+			AssetID: vm.ctx.AVAXAssetID,
 		}},
-		ImportedInputs: []*axc.TransferableInput{
+		ImportedInputs: []*avax.TransferableInput{
 			{
-				Asset: axc.Asset{ID: vm.ctx.AXCAssetID},
+				Asset: avax.Asset{ID: vm.ctx.AVAXAssetID},
 				In: &secp256k1fx.TransferInput{
-					Amt: 1 * units.Axc,
+					Amt: 1 * units.Avax,
 					Input: secp256k1fx.Input{
 						SigIndices: []uint32{0},
 					},
 				},
 			},
 		},
-		SourceChain: vm.ctx.SwapChainID,
+		SourceChain: vm.ctx.XChainID,
 	}
 	tx := &Tx{UnsignedAtomicTx: utx}
 	if err := tx.Sign(vm.codec, [][]*crypto.PrivateKeySECP256K1R{{key0}}); err != nil {
@@ -3087,7 +3087,7 @@ func TestConfigureLogLevel(t *testing.T) {
 		},
 		{
 			name:        "Invalid log level",
-			logConfig:   "{\"log-level\": \"axcchain\"}",
+			logConfig:   "{\"log-level\": \"cchain\"}",
 			genesisJSON: genesisJSONApricotPhase3,
 			upgradeJSON: "",
 			expectedErr: "failed to initialize logger due to",
@@ -3162,11 +3162,11 @@ func TestBuildApricotPhase4Block(t *testing.T) {
 	address := testEthAddrs[0]
 
 	importAmount := uint64(1000000000)
-	utxoID := axc.UTXOID{TxID: ids.GenerateTestID()}
+	utxoID := avax.UTXOID{TxID: ids.GenerateTestID()}
 
-	utxo := &axc.UTXO{
+	utxo := &avax.UTXO{
 		UTXOID: utxoID,
-		Asset:  axc.Asset{ID: vm.ctx.AXCAssetID},
+		Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
 		Out: &secp256k1fx.TransferOutput{
 			Amt: importAmount,
 			OutputOwners: secp256k1fx.OutputOwners{
@@ -3180,9 +3180,9 @@ func TestBuildApricotPhase4Block(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
+	xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.XChainID)
 	inputID := utxo.InputID()
-	if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
+	if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
 		Key:   inputID[:],
 		Value: utxoBytes,
 		Traits: [][]byte{
@@ -3192,7 +3192,7 @@ func TestBuildApricotPhase4Block(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	importTx, err := vm.newImportTx(vm.ctx.SwapChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm.newImportTx(vm.ctx.XChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -3344,11 +3344,11 @@ func TestBuildApricotPhase5Block(t *testing.T) {
 	address := testEthAddrs[0]
 
 	importAmount := uint64(1000000000)
-	utxoID := axc.UTXOID{TxID: ids.GenerateTestID()}
+	utxoID := avax.UTXOID{TxID: ids.GenerateTestID()}
 
-	utxo := &axc.UTXO{
+	utxo := &avax.UTXO{
 		UTXOID: utxoID,
-		Asset:  axc.Asset{ID: vm.ctx.AXCAssetID},
+		Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
 		Out: &secp256k1fx.TransferOutput{
 			Amt: importAmount,
 			OutputOwners: secp256k1fx.OutputOwners{
@@ -3362,9 +3362,9 @@ func TestBuildApricotPhase5Block(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	swapChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.SwapChainID)
+	xChainSharedMemory := sharedMemory.NewSharedMemory(vm.ctx.XChainID)
 	inputID := utxo.InputID()
-	if err := swapChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
+	if err := xChainSharedMemory.Apply(map[ids.ID]*atomic.Requests{vm.ctx.ChainID: {PutRequests: []*atomic.Element{{
 		Key:   inputID[:],
 		Value: utxoBytes,
 		Traits: [][]byte{
@@ -3374,7 +3374,7 @@ func TestBuildApricotPhase5Block(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	importTx, err := vm.newImportTx(vm.ctx.SwapChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm.newImportTx(vm.ctx.XChainID, address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -3581,7 +3581,7 @@ func TestAtomicTxBuildBlockDropsConflicts(t *testing.T) {
 	// Create a conflict set for each pair of transactions
 	conflictSets := make([]ids.Set, len(testKeys))
 	for index, key := range testKeys {
-		importTx, err := vm.newImportTx(vm.ctx.SwapChainID, testEthAddrs[index], initialBaseFee, []*crypto.PrivateKeySECP256K1R{key})
+		importTx, err := vm.newImportTx(vm.ctx.XChainID, testEthAddrs[index], initialBaseFee, []*crypto.PrivateKeySECP256K1R{key})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -3589,7 +3589,7 @@ func TestAtomicTxBuildBlockDropsConflicts(t *testing.T) {
 			t.Fatal(err)
 		}
 		conflictSets[index].Add(importTx.ID())
-		conflictTx, err := vm.newImportTx(vm.ctx.SwapChainID, conflictKey.Address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{key})
+		conflictTx, err := vm.newImportTx(vm.ctx.XChainID, conflictKey.Address, initialBaseFee, []*crypto.PrivateKeySECP256K1R{key})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -3647,10 +3647,10 @@ func TestBuildBlockDoesNotExceedAtomicGasLimit(t *testing.T) {
 
 	mempoolTxs := 200
 	for i := 0; i < mempoolTxs; i++ {
-		utxo, err := addUTXO(sharedMemory, vm.ctx, txID, uint32(i), vm.ctx.AXCAssetID, importAmount, testShortIDAddrs[0])
+		utxo, err := addUTXO(sharedMemory, vm.ctx, txID, uint32(i), vm.ctx.AVAXAssetID, importAmount, testShortIDAddrs[0])
 		assert.NoError(t, err)
 
-		importTx, err := vm.newImportTxWithUTXOs(vm.ctx.SwapChainID, testEthAddrs[0], initialBaseFee, kc, []*axc.UTXO{utxo})
+		importTx, err := vm.newImportTxWithUTXOs(vm.ctx.XChainID, testEthAddrs[0], initialBaseFee, kc, []*avax.UTXO{utxo})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -3700,16 +3700,16 @@ func TestExtraStateChangeAtomicGasLimitExceeded(t *testing.T) {
 	// Add enough UTXOs, such that the created import transaction will attempt to consume more gas than allowed
 	// in ApricotPhase5.
 	for i := 0; i < 100; i++ {
-		_, err := addUTXO(sharedMemory1, vm1.ctx, txID, uint32(i), vm1.ctx.AXCAssetID, importAmount, testShortIDAddrs[0])
+		_, err := addUTXO(sharedMemory1, vm1.ctx, txID, uint32(i), vm1.ctx.AVAXAssetID, importAmount, testShortIDAddrs[0])
 		assert.NoError(t, err)
 
-		_, err = addUTXO(sharedMemory2, vm2.ctx, txID, uint32(i), vm2.ctx.AXCAssetID, importAmount, testShortIDAddrs[0])
+		_, err = addUTXO(sharedMemory2, vm2.ctx, txID, uint32(i), vm2.ctx.AVAXAssetID, importAmount, testShortIDAddrs[0])
 		assert.NoError(t, err)
 	}
 
 	// Double the initial base fee used when estimating the cost of this transaction to ensure that when it is
 	// used in ApricotPhase5 it still pays a sufficient fee with the fixed fee per atomic transaction.
-	importTx, err := vm1.newImportTx(vm1.ctx.SwapChainID, testEthAddrs[0], new(big.Int).Mul(common.Big2, initialBaseFee), []*crypto.PrivateKeySECP256K1R{testKeys[0]})
+	importTx, err := vm1.newImportTx(vm1.ctx.XChainID, testEthAddrs[0], new(big.Int).Mul(common.Big2, initialBaseFee), []*crypto.PrivateKeySECP256K1R{testKeys[0]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -3756,10 +3756,10 @@ func TestExtraStateChangeAtomicGasLimitExceeded(t *testing.T) {
 }
 
 func TestGetAtomicRepositoryRepairHeights(t *testing.T) {
-	mainnetHeights := getAtomicRepositoryRepairHeights(params.AxiaMainnetChainID)
+	mainnetHeights := getAtomicRepositoryRepairHeights(params.AvalancheMainnetChainID)
 	assert.Len(t, mainnetHeights, 76)
 	sorted := sort.SliceIsSorted(mainnetHeights, func(i, j int) bool { return mainnetHeights[i] < mainnetHeights[j] })
 	assert.True(t, sorted)
-	testnetHeights := getAtomicRepositoryRepairHeights(params.AxiaTestChainID)
+	testnetHeights := getAtomicRepositoryRepairHeights(params.AvalancheFujiChainID)
 	assert.Empty(t, testnetHeights)
 }

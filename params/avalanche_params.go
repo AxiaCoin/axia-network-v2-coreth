@@ -1,4 +1,4 @@
-// (c) 2019-2020, Axia Systems, Inc. All rights reserved.
+// (c) 2019-2020, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package params
@@ -11,12 +11,12 @@ import (
 
 // Minimum Gas Price
 const (
-	// MinGasPrice is the number of nAXC required per gas unit for a
+	// MinGasPrice is the number of nAVAX required per gas unit for a
 	// transaction to be valid, measured in wei
 	LaunchMinGasPrice        int64 = 470_000_000_000
 	ApricotPhase1MinGasPrice int64 = 225_000_000_000
 
-	AxiaAtomicTxFee = units.MilliAxc
+	AvalancheAtomicTxFee = units.MilliAvax
 
 	ApricotPhase1GasLimit uint64 = 8_000_000
 

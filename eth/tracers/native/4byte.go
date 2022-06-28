@@ -1,4 +1,4 @@
-// (c) 2020-2021, Axia Systems, Inc.
+// (c) 2020-2021, Ava Labs, Inc.
 //
 // This file is a derived work, based on the go-ethereum library whose original
 // notices appear below.
@@ -93,7 +93,7 @@ func (t *fourByteTracer) CaptureStart(env *vm.EVM, from common.Address, to commo
 	t.env = env
 
 	// Update list of precompiles based on current block
-	rules := env.ChainConfig().AxiaRules(env.Context.BlockNumber, env.Context.Time)
+	rules := env.ChainConfig().AvalancheRules(env.Context.BlockNumber, env.Context.Time)
 	t.activePrecompiles = vm.ActivePrecompiles(rules)
 
 	// Save the outer calldata also

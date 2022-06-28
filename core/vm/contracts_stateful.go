@@ -1,4 +1,4 @@
-// (c) 2019-2020, Axia Systems, Inc. All rights reserved.
+// (c) 2019-2020, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package vm
@@ -14,7 +14,7 @@ import (
 
 // PrecompiledContractsApricot contains the default set of pre-compiled Ethereum
 // contracts used in the Istanbul release and the stateful precompiled contracts
-// added for the Axia Apricot release.
+// added for the Avalanche Apricot release.
 // Apricot is incompatible with the YoloV3 Release since it does not include the
 // BLS12-381 Curve Operations added to the set of precompiled contracts
 
@@ -26,7 +26,7 @@ var (
 
 // StatefulPrecompiledContract is the interface for executing a precompiled contract
 // This wraps the PrecompiledContracts native to Ethereum and allows adding in stateful
-// precompiled contracts to support native Axia asset transfers.
+// precompiled contracts to support native Avalanche asset transfers.
 type StatefulPrecompiledContract interface {
 	// Run executes a precompiled contract in the current state
 	// assumes that it has already been verified that [caller] can

@@ -1,4 +1,4 @@
-// (c) 2019-2021, Axia Systems, Inc. All rights reserved.
+// (c) 2019-2021, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package evm
@@ -41,7 +41,7 @@ func fundAddressByGenesis(addrs []common.Address) (string, error) {
 	genesis.Alloc = funds
 
 	genesis.Config = &params.ChainConfig{
-		ChainID:                     params.AxiaLocalChainID,
+		ChainID:                     params.AvalancheLocalChainID,
 		ApricotPhase1BlockTimestamp: big.NewInt(0),
 		ApricotPhase2BlockTimestamp: big.NewInt(0),
 		ApricotPhase3BlockTimestamp: big.NewInt(0),

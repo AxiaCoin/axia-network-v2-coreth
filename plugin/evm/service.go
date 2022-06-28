@@ -1,4 +1,4 @@
-// (c) 2019-2020, Axia Systems, Inc. All rights reserved.
+// (c) 2019-2020, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package evm
@@ -67,15 +67,15 @@ func (api *SnowmanAPI) IssueBlock(ctx context.Context) error {
 	return nil
 }
 
-// AxcAPI offers Axia network related API methods
-type AxcAPI struct{ vm *VM }
+// AvaxAPI offers Avalanche network related API methods
+type AvaxAPI struct{ vm *VM }
 
 // parseAssetID parses an assetID string into an ID
-func (service *AxcAPI) parseAssetID(assetID string) (ids.ID, error) {
+func (service *AvaxAPI) parseAssetID(assetID string) (ids.ID, error) {
 	if assetID == "" {
 		return ids.ID{}, fmt.Errorf("assetID is required")
-	} else if assetID == "AXC" {
-		return service.vm.ctx.AXCAssetID, nil
+	} else if assetID == "AVAX" {
+		return service.vm.ctx.AVAXAssetID, nil
 	} else {
 		return ids.FromString(assetID)
 	}
@@ -86,7 +86,7 @@ type VersionReply struct {
 }
 
 // ClientVersion returns the version of the VM running
-func (service *AxcAPI) Version(r *http.Request, args *struct{}, reply *VersionReply) error {
+func (service *AvaxAPI) Version(r *http.Request, args *struct{}, reply *VersionReply) error {
 	reply.Version = Version
 	return nil
 }
@@ -105,7 +105,7 @@ type ExportKeyReply struct {
 }
 
 // ExportKey returns a private key from the provided user
-func (service *AxcAPI) ExportKey(r *http.Request, args *ExportKeyArgs, reply *ExportKeyReply) error {
+func (service *AvaxAPI) ExportKey(r *http.Request, args *ExportKeyArgs, reply *ExportKeyReply) error {
 	log.Info("EVM: ExportKey called")
 
 	address, err := ParseEthAddress(args.Address)
@@ -143,7 +143,7 @@ type ImportKeyArgs struct {
 }
 
 // ImportKey adds a private key to the provided user
-func (service *AxcAPI) ImportKey(r *http.Request, args *ImportKeyArgs, reply *api.JSONAddress) error {
+func (service *AvaxAPI) ImportKey(r *http.Request, args *ImportKeyArgs, reply *api.JSONAddress) error {
 	log.Info("EVM: ImportKey called", "username", args.Username)
 
 	if !strings.HasPrefix(args.PrivateKey, constants.SecretKeyPrefix) {
@@ -198,15 +198,15 @@ type ImportArgs struct {
 	To string `json:"to"`
 }
 
-// ImportAXC is a deprecated name for Import.
-func (service *AxcAPI) ImportAXC(_ *http.Request, args *ImportArgs, response *api.JSONTxID) error {
+// ImportAVAX is a deprecated name for Import.
+func (service *AvaxAPI) ImportAVAX(_ *http.Request, args *ImportArgs, response *api.JSONTxID) error {
 	return service.Import(nil, args, response)
 }
 
-// Import issues a transaction to import AXC from the Swap-chain. The AXC
-// must have already been exported from the Swap-Chain.
-func (service *AxcAPI) Import(_ *http.Request, args *ImportArgs, response *api.JSONTxID) error {
-	log.Info("EVM: ImportAXC called")
+// Import issues a transaction to import AVAX from the X-chain. The AVAX
+// must have already been exported from the X-Chain.
+func (service *AvaxAPI) Import(_ *http.Request, args *ImportArgs, response *api.JSONTxID) error {
+	log.Info("EVM: ImportAVAX called")
 
 	chainID, err := service.vm.ctx.BCLookup.Lookup(args.SourceChain)
 	if err != nil {
@@ -254,8 +254,8 @@ func (service *AxcAPI) Import(_ *http.Request, args *ImportArgs, response *api.J
 	return service.vm.issueTx(tx, true /*=local*/)
 }
 
-// ExportAXCArgs are the arguments to ExportAXC
-type ExportAXCArgs struct {
+// ExportAVAXArgs are the arguments to ExportAVAX
+type ExportAVAXArgs struct {
 	api.UserPass
 
 	// Fee that should be used when creating the tx
@@ -264,30 +264,30 @@ type ExportAXCArgs struct {
 	// Amount of asset to send
 	Amount json.Uint64 `json:"amount"`
 
-	// ID of the address that will receive the AXC. This address includes the
+	// ID of the address that will receive the AVAX. This address includes the
 	// chainID, which is used to determine what the destination chain is.
 	To string `json:"to"`
 }
 
-// ExportAXC exports AXC from the AXC-Chain to the Swap-Chain
-// It must be imported on the Swap-Chain to complete the transfer
-func (service *AxcAPI) ExportAXC(_ *http.Request, args *ExportAXCArgs, response *api.JSONTxID) error {
+// ExportAVAX exports AVAX from the C-Chain to the X-Chain
+// It must be imported on the X-Chain to complete the transfer
+func (service *AvaxAPI) ExportAVAX(_ *http.Request, args *ExportAVAXArgs, response *api.JSONTxID) error {
 	return service.Export(nil, &ExportArgs{
-		ExportAXCArgs: *args,
-		AssetID:        service.vm.ctx.AXCAssetID.String(),
+		ExportAVAXArgs: *args,
+		AssetID:        service.vm.ctx.AVAXAssetID.String(),
 	}, response)
 }
 
 // ExportArgs are the arguments to Export
 type ExportArgs struct {
-	ExportAXCArgs
+	ExportAVAXArgs
 	// AssetID of the tokens
 	AssetID string `json:"assetID"`
 }
 
-// Export exports an asset from the AXC-Chain to the Swap-Chain
-// It must be imported on the Swap-Chain to complete the transfer
-func (service *AxcAPI) Export(_ *http.Request, args *ExportArgs, response *api.JSONTxID) error {
+// Export exports an asset from the C-Chain to the X-Chain
+// It must be imported on the X-Chain to complete the transfer
+func (service *AvaxAPI) Export(_ *http.Request, args *ExportArgs, response *api.JSONTxID) error {
 	log.Info("EVM: Export called")
 
 	assetID, err := service.parseAssetID(args.AssetID)
@@ -349,7 +349,7 @@ func (service *AxcAPI) Export(_ *http.Request, args *ExportArgs, response *api.J
 }
 
 // GetUTXOs gets all utxos for passed in addresses
-func (service *AxcAPI) GetUTXOs(r *http.Request, args *api.GetUTXOsArgs, reply *api.GetUTXOsReply) error {
+func (service *AvaxAPI) GetUTXOs(r *http.Request, args *api.GetUTXOsArgs, reply *api.GetUTXOsReply) error {
 	service.vm.ctx.Log.Info("EVM: GetUTXOs called for with %s", args.Addresses)
 
 	if len(args.Addresses) == 0 {
@@ -428,7 +428,7 @@ func (service *AxcAPI) GetUTXOs(r *http.Request, args *api.GetUTXOsArgs, reply *
 }
 
 // IssueTx ...
-func (service *AxcAPI) IssueTx(r *http.Request, args *api.FormattedTx, response *api.JSONTxID) error {
+func (service *AvaxAPI) IssueTx(r *http.Request, args *api.FormattedTx, response *api.JSONTxID) error {
 	log.Info("EVM: IssueTx called")
 
 	txBytes, err := formatting.Decode(args.Encoding, args.Tx)
@@ -455,7 +455,7 @@ type GetAtomicTxStatusReply struct {
 }
 
 // GetAtomicTxStatus returns the status of the specified transaction
-func (service *AxcAPI) GetAtomicTxStatus(r *http.Request, args *api.JSONTxID, reply *GetAtomicTxStatusReply) error {
+func (service *AvaxAPI) GetAtomicTxStatus(r *http.Request, args *api.JSONTxID, reply *GetAtomicTxStatusReply) error {
 	log.Info("EVM: GetAtomicTxStatus called", "txID", args.TxID)
 
 	if args.TxID == ids.Empty {
@@ -478,7 +478,7 @@ type FormattedTx struct {
 }
 
 // GetAtomicTx returns the specified transaction
-func (service *AxcAPI) GetAtomicTx(r *http.Request, args *api.GetTxArgs, reply *FormattedTx) error {
+func (service *AvaxAPI) GetAtomicTx(r *http.Request, args *api.GetTxArgs, reply *FormattedTx) error {
 	log.Info("EVM: GetAtomicTx called", "txID", args.TxID)
 
 	if args.TxID == ids.Empty {

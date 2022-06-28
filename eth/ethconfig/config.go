@@ -1,4 +1,4 @@
-// (c) 2019-2020, Axia Systems, Inc.
+// (c) 2019-2020, Ava Labs, Inc.
 //
 // This file is a derived work, based on the go-ethereum library whose original
 // notices appear below.
@@ -46,7 +46,7 @@ var DefaultFullGPOConfig = gasprice.Config{
 	MinGasUsed:          gasprice.DefaultMinGasUsed,
 }
 
-// DefaultConfig contains default settings for use on the Axia main net.
+// DefaultConfig contains default settings for use on the Avalanche main net.
 var DefaultConfig = NewDefaultConfig()
 
 func NewDefaultConfig() Config {
@@ -63,7 +63,7 @@ func NewDefaultConfig() Config {
 		RPCGasCap:          25000000,
 		RPCEVMTimeout:      5 * time.Second,
 		GPO:                DefaultFullGPOConfig,
-		RPCTxFeeCap:        1, // 1 AXC
+		RPCTxFeeCap:        1, // 1 AVAX
 	}
 }
 

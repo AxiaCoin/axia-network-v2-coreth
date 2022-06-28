@@ -1,4 +1,4 @@
-// (c) 2019-2021, Axia Systems, Inc.
+// (c) 2019-2021, Ava Labs, Inc.
 //
 // This file is a derived work, based on the go-ethereum library whose original
 // notices appear below.
@@ -115,7 +115,7 @@ func TestSetupGenesis(t *testing.T) {
 			wantConfig: customg.Config,
 		},
 		{
-			name: "incompatible config for axia fork in DB",
+			name: "incompatible config for avalanche fork in DB",
 			fn: func(db ethdb.Database) (*params.ChainConfig, common.Hash, error) {
 				// Commit the 'old' genesis block with ApricotPhase1 transition at 90.
 				// Advance to block #4, past the ApricotPhase1 transition block of customg.

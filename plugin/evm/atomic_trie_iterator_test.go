@@ -1,4 +1,4 @@
-// (c) 2020-2021, Axia Systems, Inc. All rights reserved.
+// (c) 2020-2021, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package evm
@@ -19,7 +19,7 @@ import (
 func testSharedMemory() atomic.SharedMemory {
 	m := &atomic.Memory{}
 	m.Initialize(logging.NoLog{}, memdb.New())
-	return m.NewSharedMemory(testAXCChainID)
+	return m.NewSharedMemory(testCChainID)
 }
 
 func TestIteratorCanIterate(t *testing.T) {

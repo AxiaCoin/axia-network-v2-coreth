@@ -1,4 +1,4 @@
-// (c) 2020-2021, Axia Systems, Inc. All rights reserved.
+// (c) 2020-2021, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package evm
@@ -491,7 +491,7 @@ func TestApplyToSharedMemory(t *testing.T) {
 			writeTxs(t, repo, 1, test.lastAcceptedHeight+1, constTxsPerHeight(2), nil, operationsMap)
 
 			// Initialize atomic repository
-			sharedMemories := newSharedMemories(db, testAXCChainID, blockChainID)
+			sharedMemories := newSharedMemories(db, testCChainID, blockChainID)
 			atomicTrie, err := newAtomicTrie(db, sharedMemories.thisChain, nil, repo, codec, test.lastAcceptedHeight, test.commitInterval)
 			assert.NoError(t, err)
 

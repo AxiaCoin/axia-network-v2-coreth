@@ -1,4 +1,4 @@
-// (c) 2019-2020, Axia Systems, Inc. All rights reserved.
+// (c) 2019-2020, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package evm
@@ -16,7 +16,7 @@ const (
 	defaultPruningEnabled                         = true
 	defaultSnapshotAsync                          = true
 	defaultRpcGasCap                              = 50_000_000 // Default to 50M Gas Limit
-	defaultRpcTxFeeCap                            = 100        // 100 AXC
+	defaultRpcTxFeeCap                            = 100        // 100 AVAX
 	defaultMetricsEnabled                         = true
 	defaultMetricsExpensiveEnabled                = false
 	defaultApiMaxDuration                         = 0 // Default to no maximum API call duration

@@ -1,4 +1,4 @@
-// (c) 2019-2020, Axia Systems, Inc. All rights reserved.
+// (c) 2019-2020, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package evm
@@ -28,7 +28,7 @@ type Client interface {
 	ExportKey(ctx context.Context, userPass api.UserPass, addr string) (string, string, error)
 	ImportKey(ctx context.Context, userPass api.UserPass, privateKey string) (string, error)
 	Import(ctx context.Context, userPass api.UserPass, to string, sourceChain string) (ids.ID, error)
-	ExportAXC(ctx context.Context, userPass api.UserPass, amount uint64, to string) (ids.ID, error)
+	ExportAVAX(ctx context.Context, userPass api.UserPass, amount uint64, to string) (ids.ID, error)
 	Export(ctx context.Context, userPass api.UserPass, amount uint64, to string, assetID string) (ids.ID, error)
 	StartCPUProfiler(ctx context.Context) (bool, error)
 	StopCPUProfiler(ctx context.Context) (bool, error)
@@ -47,14 +47,14 @@ type client struct {
 // NewClient returns a Client for interacting with EVM [chain]
 func NewClient(uri, chain string) Client {
 	return &client{
-		requester:      rpc.NewEndpointRequester(uri, fmt.Sprintf("/ext/bc/%s/axc", chain), "axc"),
+		requester:      rpc.NewEndpointRequester(uri, fmt.Sprintf("/ext/bc/%s/avax", chain), "avax"),
 		adminRequester: rpc.NewEndpointRequester(uri, fmt.Sprintf("/ext/bc/%s/admin", chain), "admin"),
 	}
 }
 
-// NewAXCChainClient returns a Client for interacting with the C Chain
-func NewAXCChainClient(uri string) Client {
-	return NewClient(uri, "AXC")
+// NewCChainClient returns a Client for interacting with the C Chain
+func NewCChainClient(uri string) Client {
+	return NewClient(uri, "C")
 }
 
 // IssueTx issues a transaction to a node and returns the TxID
@@ -131,7 +131,7 @@ func (c *client) ListAddresses(ctx context.Context, user api.UserPass) ([]string
 }
 
 // ExportKey returns the private key corresponding to [addr] controlled by [user]
-// in both Axia standard format and hex format
+// in both Avalanche standard format and hex format
 func (c *client) ExportKey(ctx context.Context, user api.UserPass, addr string) (string, string, error) {
 	res := &ExportKeyReply{}
 	err := c.requester.SendRequest(ctx, "exportKey", &ExportKeyArgs{
@@ -163,19 +163,19 @@ func (c *client) Import(ctx context.Context, user api.UserPass, to, sourceChain 
 	return res.TxID, err
 }
 
-// ExportAXC sends AXC from this chain to the address specified by [to].
+// ExportAVAX sends AVAX from this chain to the address specified by [to].
 // Returns the ID of the newly created atomic transaction
-func (c *client) ExportAXC(
+func (c *client) ExportAVAX(
 	ctx context.Context,
 	user api.UserPass,
 	amount uint64,
 	to string,
 ) (ids.ID, error) {
-	return c.Export(ctx, user, amount, to, "AXC")
+	return c.Export(ctx, user, amount, to, "AVAX")
 }
 
-// Export sends an asset from this chain to the P/AXC-Chain.
-// After this tx is accepted, the AXC must be imported to the P/AXC-chain with an importTx.
+// Export sends an asset from this chain to the P/C-Chain.
+// After this tx is accepted, the AVAX must be imported to the P/C-chain with an importTx.
 // Returns the ID of the newly created atomic transaction
 func (c *client) Export(
 	ctx context.Context,
@@ -186,7 +186,7 @@ func (c *client) Export(
 ) (ids.ID, error) {
 	res := &api.JSONTxID{}
 	err := c.requester.SendRequest(ctx, "export", &ExportArgs{
-		ExportAXCArgs: ExportAXCArgs{
+		ExportAVAXArgs: ExportAVAXArgs{
 			UserPass: user,
 			Amount:   cjson.Uint64(amount),
 			To:       to,

@@ -1,4 +1,4 @@
-// (c) 2019-2022, Axia Systems, Inc. All rights reserved.
+// (c) 2019-2022, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package peer
@@ -43,7 +43,7 @@ var (
 func TestNetworkDoesNotConnectToItself(t *testing.T) {
 	selfNodeID := ids.GenerateTestShortID()
 	n := NewNetwork(nil, nil, selfNodeID, 1)
-	assert.NoError(t, n.Connected(selfNodeID, version.NewDefaultApplication("axia", 1, 0, 0)))
+	assert.NoError(t, n.Connected(selfNodeID, version.NewDefaultApplication("avalanchego", 1, 0, 0)))
 	assert.EqualValues(t, 0, n.Size())
 }
 

@@ -1,4 +1,4 @@
-// (c) 2019-2020, Axia Systems, Inc. All rights reserved.
+// (c) 2019-2020, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
 
 package evm
@@ -121,7 +121,7 @@ func (v blockValidatorPhase0) SyntacticVerify(b *Block) error {
 	if uncleHash != ethHeader.UncleHash {
 		return errUncleHashMismatch
 	}
-	// Coinbase must be zero on AXC-Chain
+	// Coinbase must be zero on C-Chain
 	if b.ethBlock.Coinbase() != coreth.BlackholeAddr {
 		return errInvalidBlock
 	}
@@ -220,7 +220,7 @@ func (blockValidatorPhase1) SyntacticVerify(b *Block) error {
 	if uncleHash != ethHeader.UncleHash {
 		return errUncleHashMismatch
 	}
-	// Coinbase must be zero on AXC-Chain
+	// Coinbase must be zero on C-Chain
 	if b.ethBlock.Coinbase() != coreth.BlackholeAddr {
 		return errInvalidBlock
 	}
@@ -324,7 +324,7 @@ func (blockValidatorPhase3) SyntacticVerify(b *Block) error {
 	if uncleHash != ethHeader.UncleHash {
 		return errUncleHashMismatch
 	}
-	// Coinbase must be zero on AXC-Chain
+	// Coinbase must be zero on C-Chain
 	if b.ethBlock.Coinbase() != coreth.BlackholeAddr {
 		return errInvalidBlock
 	}
@@ -421,7 +421,7 @@ func (blockValidatorPhase4) SyntacticVerify(b *Block) error {
 	if uncleHash != ethHeader.UncleHash {
 		return errUncleHashMismatch
 	}
-	// Coinbase must be zero on AXC-Chain
+	// Coinbase must be zero on C-Chain
 	if b.ethBlock.Coinbase() != coreth.BlackholeAddr {
 		return errInvalidBlock
 	}
@@ -551,7 +551,7 @@ func (blockValidatorPhase5) SyntacticVerify(b *Block) error {
 	if uncleHash != ethHeader.UncleHash {
 		return errUncleHashMismatch
 	}
-	// Coinbase must be zero on AXC-Chain
+	// Coinbase must be zero on C-Chain
 	if b.ethBlock.Coinbase() != coreth.BlackholeAddr {
 		return errInvalidBlock
 	}
