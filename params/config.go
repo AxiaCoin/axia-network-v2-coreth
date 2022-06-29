@@ -42,7 +42,7 @@ var (
 	// AxiaTestChainID ...
 	AxiaTestChainID = big.NewInt(43113)
 	// AxiaLocalChainID ...
-	AxiaLocalChainID = big.NewInt(43112)
+	AxiaLocalChainID = big.NewInt(4000)
 
 	errNonGenesisForkByHeight = errors.New("coreth only supports forking by height at the genesis block")
 )
