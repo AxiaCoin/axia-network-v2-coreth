@@ -65,6 +65,8 @@ github.com/axiacoin/axia-network-v2 v0.0.0-20220628071156-93755b2ca420 h1:0r9CiJ
 github.com/axiacoin/axia-network-v2 v0.0.0-20220628071156-93755b2ca420/go.mod h1:OuQMqton9ILexB3TPuz5J4SxF1VwoazOeHaVKPmfx74=
 github.com/axiacoin/axia-network-v2 v0.0.0-20220628074935-083407329de0 h1:amNM67sillFbqEir0CcrtPrk3t1WcmQBkMvmNm5Crvo=
 github.com/axiacoin/axia-network-v2 v0.0.0-20220628074935-083407329de0/go.mod h1:yPkk+nNkoD90xf6bmHShlt7extWx58xwyKC4O7TeCpg=
+github.com/axiacoin/axia-network-v2 v0.0.0-20220705131353-cd8e09ac049f h1:vusmjAJXfi2AygEJpvOXbUTmeHiPGWgHm0ME14RVe3I=
+github.com/axiacoin/axia-network-v2 v0.0.0-20220705131353-cd8e09ac049f/go.mod h1:E25TUa1k+RR0uXr/yOjl/aodT84jVMZyCR3THmz4Ps0=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+CedLV8=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=

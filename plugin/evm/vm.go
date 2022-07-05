@@ -12,14 +12,12 @@ import (
 	"math/big"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/axiacoin/axia-network-v2-coreth/plugin/evm/message"
 
-	axiaMetrics "github.com/axiacoin/axia-network-v2/api/metrics"
 	coreth "github.com/axiacoin/axia-network-v2-coreth/chain"
 	"github.com/axiacoin/axia-network-v2-coreth/consensus/dummy"
 	"github.com/axiacoin/axia-network-v2-coreth/core"
@@ -31,6 +29,7 @@ import (
 	"github.com/axiacoin/axia-network-v2-coreth/params"
 	"github.com/axiacoin/axia-network-v2-coreth/peer"
 	"github.com/axiacoin/axia-network-v2-coreth/rpc"
+	axiaMetrics "github.com/axiacoin/axia-network-v2/api/metrics"
 
 	"github.com/prometheus/client_golang/prometheus"
 	// Force-load tracer engine to trigger registration
@@ -116,7 +115,7 @@ const (
 
 // Define the API endpoints for the VM
 const (
-	axcEndpoint   = "/axc"
+	axcEndpoint    = "/axc"
 	adminEndpoint  = "/admin"
 	ethRPCEndpoint = "/rpc"
 	ethWSEndpoint  = "/ws"
@@ -1512,20 +1511,21 @@ func (vm *VM) estimateBaseFee(ctx context.Context) (*big.Int, error) {
 }
 
 func getAtomicRepositoryRepairHeights(chainID *big.Int) []uint64 {
-	if chainID.Cmp(params.AxiaMainnetChainID) != 0 {
-		return nil
-	}
-	repairHeights := make([]uint64, 0, len(bonusBlockMainnetHeights)+len(canonicalBonusBlocks))
-	for height := range bonusBlockMainnetHeights {
-		repairHeights = append(repairHeights, height)
-	}
-	for _, height := range canonicalBonusBlocks {
-		if _, exists := bonusBlockMainnetHeights[height]; !exists {
-			repairHeights = append(repairHeights, height)
-		}
-	}
-	sort.Slice(repairHeights, func(i, j int) bool { return repairHeights[i] < repairHeights[j] })
-	return repairHeights
+	return nil
+	// if chainID.Cmp(params.AxiaMainnetChainID) != 0 {
+	// 	return nil
+	// }
+	// repairHeights := make([]uint64, 0, len(bonusBlockMainnetHeights)+len(canonicalBonusBlocks))
+	// for height := range bonusBlockMainnetHeights {
+	// 	repairHeights = append(repairHeights, height)
+	// }
+	// for _, height := range canonicalBonusBlocks {
+	// 	if _, exists := bonusBlockMainnetHeights[height]; !exists {
+	// 		repairHeights = append(repairHeights, height)
+	// 	}
+	// }
+	// sort.Slice(repairHeights, func(i, j int) bool { return repairHeights[i] < repairHeights[j] })
+	// return repairHeights
 }
 
 func (vm *VM) getAtomicTxFromPreApricot5BlockByHeight(height uint64) (*Tx, error) {

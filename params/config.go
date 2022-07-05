@@ -30,7 +30,8 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
-	"time"
+
+	// "time"
 
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -38,11 +39,11 @@ import (
 // Axia ChainIDs
 var (
 	// AxiaMainnetChainID ...
-	AxiaMainnetChainID = big.NewInt(43114)
+	AxiaMainnetChainID = big.NewInt(4001)
 	// AxiaTestChainID ...
-	AxiaTestChainID = big.NewInt(43113)
+	AxiaTestChainID = big.NewInt(4000)
 	// AxiaLocalChainID ...
-	AxiaLocalChainID = big.NewInt(4000)
+	AxiaLocalChainID = big.NewInt(4002)
 
 	errNonGenesisForkByHeight = errors.New("coreth only supports forking by height at the genesis block")
 )
@@ -63,11 +64,11 @@ var (
 		PetersburgBlock:             big.NewInt(0),
 		IstanbulBlock:               big.NewInt(0),
 		MuirGlacierBlock:            big.NewInt(0),
-		ApricotPhase1BlockTimestamp: big.NewInt(time.Date(2021, time.March, 31, 14, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase2BlockTimestamp: big.NewInt(time.Date(2021, time.May, 10, 11, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase3BlockTimestamp: big.NewInt(time.Date(2021, time.August, 24, 14, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase4BlockTimestamp: big.NewInt(time.Date(2021, time.September, 22, 21, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2021, time.December, 2, 18, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase1BlockTimestamp: big.NewInt(0),
+		ApricotPhase2BlockTimestamp: big.NewInt(0),
+		ApricotPhase3BlockTimestamp: big.NewInt(0),
+		ApricotPhase4BlockTimestamp: big.NewInt(0),
+		ApricotPhase5BlockTimestamp: big.NewInt(0),
 	}
 
 	// AxiaTestChainConfig is the configuration for the Test Test Network
@@ -85,11 +86,11 @@ var (
 		PetersburgBlock:             big.NewInt(0),
 		IstanbulBlock:               big.NewInt(0),
 		MuirGlacierBlock:            big.NewInt(0),
-		ApricotPhase1BlockTimestamp: big.NewInt(time.Date(2021, time.March, 26, 14, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase2BlockTimestamp: big.NewInt(time.Date(2021, time.May, 5, 14, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase3BlockTimestamp: big.NewInt(time.Date(2021, time.August, 16, 19, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase4BlockTimestamp: big.NewInt(time.Date(2021, time.September, 16, 21, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2021, time.November, 24, 15, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase1BlockTimestamp: big.NewInt(0),
+		ApricotPhase2BlockTimestamp: big.NewInt(0),
+		ApricotPhase3BlockTimestamp: big.NewInt(0),
+		ApricotPhase4BlockTimestamp: big.NewInt(0),
+		ApricotPhase5BlockTimestamp: big.NewInt(0),
 	}
 
 	// AxiaLocalChainConfig is the configuration for the Axia Local Network
