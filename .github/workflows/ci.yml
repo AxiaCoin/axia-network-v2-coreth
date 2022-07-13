@@ -9,7 +9,7 @@ on:
       axiaRepo:
         description: 'axia github repository'
         required: true
-        default: 'ava-labs/axia'
+        default: 'axiacoin/axia'
       axiaBranch:
         description: 'axia branch'
         required: true
