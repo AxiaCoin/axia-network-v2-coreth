@@ -105,7 +105,7 @@ func init() {
 	}
 }
 
-// Block implements the snowman.Block interface
+// Block implements the kleroterion.Block interface
 type Block struct {
 	id        ids.ID
 	ethBlock  *types.Block
@@ -114,10 +114,10 @@ type Block struct {
 	atomicTxs []*Tx
 }
 
-// ID implements the snowman.Block interface
+// ID implements the kleroterion.Block interface
 func (b *Block) ID() ids.ID { return b.id }
 
-// Accept implements the snowman.Block interface
+// Accept implements the kleroterion.Block interface
 func (b *Block) Accept() error {
 	vm := b.vm
 
@@ -183,7 +183,7 @@ func (b *Block) indexAtomics(vm *VM, height uint64, atomicTxs []*Tx, batchChains
 	return b.vm.atomicTrie.Index(height, batchChainsAndInputs)
 }
 
-// Reject implements the snowman.Block interface
+// Reject implements the kleroterion.Block interface
 // If [b] contains an atomic transaction, attempt to re-issue it
 func (b *Block) Reject() error {
 	b.status = choices.Rejected
@@ -201,22 +201,22 @@ func (b *Block) Reject() error {
 // to set the status on an existing block
 func (b *Block) SetStatus(status choices.Status) { b.status = status }
 
-// Status implements the snowman.Block interface
+// Status implements the kleroterion.Block interface
 func (b *Block) Status() choices.Status {
 	return b.status
 }
 
-// Parent implements the snowman.Block interface
+// Parent implements the kleroterion.Block interface
 func (b *Block) Parent() ids.ID {
 	return ids.ID(b.ethBlock.ParentHash())
 }
 
-// Height implements the snowman.Block interface
+// Height implements the kleroterion.Block interface
 func (b *Block) Height() uint64 {
 	return b.ethBlock.NumberU64()
 }
 
-// Timestamp implements the snowman.Block interface
+// Timestamp implements the kleroterion.Block interface
 func (b *Block) Timestamp() time.Time {
 	return time.Unix(int64(b.ethBlock.Time()), 0)
 }
@@ -232,7 +232,7 @@ func (b *Block) syntacticVerify() (params.Rules, error) {
 	return rules, b.vm.getBlockValidator(rules).SyntacticVerify(b)
 }
 
-// Verify implements the snowman.Block interface
+// Verify implements the kleroterion.Block interface
 func (b *Block) Verify() error {
 	return b.verify(true)
 }
@@ -295,7 +295,7 @@ func (b *Block) verifyAtomicTxs(rules params.Rules) error {
 	return nil
 }
 
-// Bytes implements the snowman.Block interface
+// Bytes implements the kleroterion.Block interface
 func (b *Block) Bytes() []byte {
 	res, err := rlp.EncodeToBytes(b.ethBlock)
 	if err != nil {

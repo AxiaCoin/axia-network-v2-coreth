@@ -50,7 +50,7 @@ type Duration struct {
 // Config ...
 type Config struct {
 	// Coreth APIs
-	SnowmanAPIEnabled     bool   `json:"snowman-api-enabled"`
+	KleroterionAPIEnabled     bool   `json:"kleroterion-api-enabled"`
 	CorethAdminAPIEnabled bool   `json:"coreth-admin-api-enabled"`
 	CorethAdminAPIDir     string `json:"coreth-admin-api-dir"`
 

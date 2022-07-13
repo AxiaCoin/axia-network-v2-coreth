@@ -40,8 +40,8 @@ var (
 	initialBaseFee = big.NewInt(params.ApricotPhase3InitialBaseFee)
 )
 
-// SnowmanAPI introduces snowman specific functionality to the evm
-type SnowmanAPI struct{ vm *VM }
+// KleroterionAPI introduces kleroterion specific functionality to the evm
+type KleroterionAPI struct{ vm *VM }
 
 // GetAcceptedFrontReply defines the reply that will be sent from the
 // GetAcceptedFront API call
@@ -51,7 +51,7 @@ type GetAcceptedFrontReply struct {
 }
 
 // GetAcceptedFront returns the last accepted block's hash and height
-func (api *SnowmanAPI) GetAcceptedFront(ctx context.Context) (*GetAcceptedFrontReply, error) {
+func (api *KleroterionAPI) GetAcceptedFront(ctx context.Context) (*GetAcceptedFrontReply, error) {
 	blk := api.vm.chain.LastAcceptedBlock()
 	return &GetAcceptedFrontReply{
 		Hash:   blk.Hash(),
@@ -60,7 +60,7 @@ func (api *SnowmanAPI) GetAcceptedFront(ctx context.Context) (*GetAcceptedFrontR
 }
 
 // IssueBlock to the chain
-func (api *SnowmanAPI) IssueBlock(ctx context.Context) error {
+func (api *KleroterionAPI) IssueBlock(ctx context.Context) error {
 	log.Info("Issuing a new block")
 
 	api.vm.builder.signalTxsReady()

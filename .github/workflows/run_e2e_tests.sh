@@ -80,7 +80,7 @@ custom_params_json="{
 # >>>>>>>> axia-testing custom parameters <<<<<<<<<<<<<
 
 bash "$CORETH_PATH/.kurtosis/kurtosis.sh" \
-    --tests "AX-Chain Bombard WorkFlow,Dynamic Fees,Snowman++ Correct Proposers and Timestamps" \
+    --tests "AX-Chain Bombard WorkFlow,Dynamic Fees,Kleroterion++ Correct Proposers and Timestamps" \
     --custom-params "${custom_params_json}" \
     "${axia_testing_image}" \
     $@

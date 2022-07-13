@@ -56,8 +56,8 @@ import (
 	"github.com/axiacoin/axia-network-v2/ids"
 	"github.com/axiacoin/axia-network-v2/snow"
 	"github.com/axiacoin/axia-network-v2/snow/choices"
-	"github.com/axiacoin/axia-network-v2/snow/consensus/snowman"
-	"github.com/axiacoin/axia-network-v2/snow/engine/snowman/block"
+	"github.com/axiacoin/axia-network-v2/snow/consensus/kleroterion"
+	"github.com/axiacoin/axia-network-v2/snow/engine/kleroterion/block"
 	"github.com/axiacoin/axia-network-v2/utils/constants"
 	"github.com/axiacoin/axia-network-v2/utils/crypto"
 	"github.com/axiacoin/axia-network-v2/utils/formatting"
@@ -124,7 +124,7 @@ const (
 var (
 	// Set last accepted key to be longer than the keys used to store accepted block IDs.
 	lastAcceptedKey = []byte("last_accepted_key")
-	acceptedPrefix  = []byte("snowman_accepted")
+	acceptedPrefix  = []byte("kleroterion_accepted")
 	ethDBPrefix     = []byte("ethdb")
 
 	// Prefixes for atomic trie
@@ -182,7 +182,7 @@ func init() {
 	log.Root().SetHandler(log.LvlFilterHandler(log.LvlDebug, log.StreamHandler(originalStderr, log.TerminalFormat(false))))
 }
 
-// VM implements the snowman.ChainVM interface
+// VM implements the kleroterion.ChainVM interface
 type VM struct {
 	ctx *snow.Context
 	// *chain.State helps to implement the VM interface by wrapping blocks
@@ -296,16 +296,16 @@ func CorethFormat(prefix string, doCopy bool) log.Format {
 
 /*
  ******************************************************************************
- ********************************* Snowman API ********************************
+ ********************************* Kleroterion API ********************************
  ******************************************************************************
  */
 
-// implements SnowmanPlusPlusVM interface
+// implements KleroterionPlusPlusVM interface
 func (vm *VM) GetActivationTime() time.Time {
 	return time.Unix(vm.chainConfig.ApricotPhase4BlockTimestamp.Int64(), 0)
 }
 
-// Initialize implements the snowman.ChainVM interface
+// Initialize implements the kleroterion.ChainVM interface
 func (vm *VM) Initialize(
 	ctx *snow.Context,
 	dbManager manager.Manager,
@@ -821,7 +821,7 @@ func (vm *VM) SetState(state snow.State) error {
 	}
 }
 
-// Shutdown implements the snowman.ChainVM interface
+// Shutdown implements the kleroterion.ChainVM interface
 func (vm *VM) Shutdown() error {
 	if vm.ctx == nil {
 		return nil
@@ -834,7 +834,7 @@ func (vm *VM) Shutdown() error {
 }
 
 // buildBlock builds a block to be wrapped by ChainState
-func (vm *VM) buildBlock() (snowman.Block, error) {
+func (vm *VM) buildBlock() (kleroterion.Block, error) {
 	block, err := vm.chain.GenerateBlock()
 	vm.builder.handleGenerateBlock()
 	if err != nil {
@@ -881,7 +881,7 @@ func (vm *VM) buildBlock() (snowman.Block, error) {
 }
 
 // parseBlock parses [b] into a block to be wrapped by ChainState.
-func (vm *VM) parseBlock(b []byte) (snowman.Block, error) {
+func (vm *VM) parseBlock(b []byte) (kleroterion.Block, error) {
 	ethBlock := new(types.Block)
 	if err := rlp.DecodeBytes(b, ethBlock); err != nil {
 		return nil, err
@@ -909,7 +909,7 @@ func (vm *VM) parseBlock(b []byte) (snowman.Block, error) {
 
 // getBlock attempts to retrieve block [id] from the VM to be wrapped
 // by ChainState.
-func (vm *VM) getBlock(id ids.ID) (snowman.Block, error) {
+func (vm *VM) getBlock(id ids.ID) (kleroterion.Block, error) {
 	ethBlock := vm.chain.GetBlockByHash(common.Hash(id))
 	// If [ethBlock] is nil, return [database.ErrNotFound] here
 	// so that the miss is considered cacheable.
@@ -1016,11 +1016,11 @@ func (vm *VM) CreateHandlers() (map[string]*commonEng.HTTPHandler, error) {
 		enabledAPIs = append(enabledAPIs, "coreth-admin")
 	}
 
-	if vm.config.SnowmanAPIEnabled {
-		if err := handler.RegisterName("snowman", &SnowmanAPI{vm}); err != nil {
+	if vm.config.KleroterionAPIEnabled {
+		if err := handler.RegisterName("kleroterion", &KleroterionAPI{vm}); err != nil {
 			return nil, err
 		}
-		enabledAPIs = append(enabledAPIs, "snowman")
+		enabledAPIs = append(enabledAPIs, "kleroterion")
 	}
 
 	log.Info(fmt.Sprintf("Enabled APIs: %s", strings.Join(enabledAPIs, ", ")))
