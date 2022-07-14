@@ -9,8 +9,8 @@ if [[ -z ${DOCKER_USERNAME} ]]; then
 fi
 
 # Testing specific variables
-axia_testing_repo="avaplatform/axia-testing"
-axia_repo="avaplatform/axia"
+axia_testing_repo="axiaplatform/axia-testing"
+axia_repo="axiaplatform/axia"
 # Define default axia testing version to use
 axia_testing_image="${axia_testing_repo}:master"
 
@@ -64,7 +64,7 @@ git_commit_id=$( git rev-list -1 HEAD )
 source "$CORETH_PATH"/scripts/build_image.sh
 
 # Target built version to use in axia-testing
-axia_image="avaplatform/axia:$build_image_id"
+axia_image="axiaplatform/axia:$build_image_id"
 
 echo "Running Axia Image: ${axia_image}"
 echo "Running Axia Testing Image: ${axia_testing_image}"

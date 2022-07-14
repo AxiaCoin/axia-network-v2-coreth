@@ -6,8 +6,8 @@ GOPATH="$(go env GOPATH)"
 # Set binary location
 binary_path=${CORETH_BINARY_PATH:-"$GOPATH/src/github.com/axiacoin/axia-network-v2/build/plugins/evm"}
 
-# Avalabs docker hub
-dockerhub_repo="avaplatform/axia"
+# Axia Systems docker hub
+dockerhub_repo="axiaplatform/axia"
 
 # Current branch
 current_branch=${CURRENT_BRANCH:-$(git describe --tags --exact-match 2> /dev/null || git symbolic-ref -q --short HEAD || git rev-parse --short HEAD)}
