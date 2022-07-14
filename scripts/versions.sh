@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
 # Set up the versions to be used
-coreth_version=${CORETH_VERSION:-'v0.1.2-0.20220713145751-55eb3537825b'}
+coreth_version=${CORETH_VERSION:-'v0.1.2-0.20220714061456-c0872cd33683'}
 # Don't export them as they're used in the context of other calls
-axia_version=${AXIA_VERSION:-'v0.1.2-0.20220713145751-55eb3537825b'}
+axia_version=${AXIA_VERSION:-'v0.1.2-0.20220714061456-c0872cd33683'}
