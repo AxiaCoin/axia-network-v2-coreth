@@ -56,13 +56,13 @@ import (
 
 var (
 	testNetworkID    uint32 = 10
-	testAXChainID            = ids.ID{'c', 'c', 'h', 'a', 'i', 'n', 't', 'e', 's', 't'}
-	testSwapChainID            = ids.ID{'t', 'e', 's', 't', 'x'}
+	testAXChainID           = ids.ID{'c', 'c', 'h', 'a', 'i', 'n', 't', 'e', 's', 't'}
+	testSwapChainID         = ids.ID{'t', 'e', 's', 't', 'x'}
 	nonExistentID           = ids.ID{'F'}
 	testKeys         []*crypto.PrivateKeySECP256K1R
 	testEthAddrs     []common.Address // testEthAddrs[i] corresponds to testKeys[i]
 	testShortIDAddrs []ids.ShortID
-	testAxcAssetID  = ids.ID{1, 2, 3}
+	testAxcAssetID   = ids.ID{1, 2, 3}
 	username         = "Johns"
 	password         = "CjasdjhiPeirbSenfeI13" // #nosec G101
 	// Use chainId: 43111, so that it does not overlap with any Axia ChainIDs, which may have their
@@ -138,8 +138,8 @@ func NewContext() *snow.Context {
 	ctx.SNLookup = &snLookup{
 		chainsToAllychain: map[ids.ID]ids.ID{
 			constants.PlatformChainID: constants.PrimaryNetworkID,
-			testSwapChainID:              constants.PrimaryNetworkID,
-			testAXChainID:              constants.PrimaryNetworkID,
+			testSwapChainID:           constants.PrimaryNetworkID,
+			testAXChainID:             constants.PrimaryNetworkID,
 		},
 	}
 	return ctx
@@ -167,7 +167,7 @@ func setupGenesis(t *testing.T,
 	genesisBytes := BuildGenesisTest(t, genesisJSON)
 	ctx := NewContext()
 
-	baseDBManager := manager.NewMemDB(version.NewDefaultVersion(1, 4, 5))
+	baseDBManager := manager.NewMemDB(version.NewDefaultVersion(2, 4, 5))
 
 	m := &atomic.Memory{}
 	m.Initialize(logging.NoLog{}, prefixdb.New([]byte{0}, baseDBManager.Current().Database))
@@ -177,7 +177,7 @@ func setupGenesis(t *testing.T,
 	// The caller of this function is responsible for unlocking.
 	ctx.Lock.Lock()
 
-	userKeystore := keystore.New(logging.NoLog{}, manager.NewMemDB(version.NewDefaultVersion(1, 4, 5)))
+	userKeystore := keystore.New(logging.NoLog{}, manager.NewMemDB(version.NewDefaultVersion(2, 4, 5)))
 	if err := userKeystore.CreateUser(username, password); err != nil {
 		t.Fatal(err)
 	}
